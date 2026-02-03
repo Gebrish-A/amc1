@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporter Dashboard - Amhara Media</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --reporter-color: #3498db;
+            --reporter-dark: #2980b9;
+            --accent-color: #2ecc71;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #2980b9 0%, #3498db 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .sidebar-menu .nav-link:hover,
+        .sidebar-menu .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .sidebar-menu .nav-link.active {
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stats-card.available { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .stats-card.my-assignments { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .stats-card.pending { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .stats-card.completed { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background: white;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .assignment-item {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s;
+        }
+
+        .assignment-item.my-assignment {
+            border-left-color: #2ecc71;
+        }
+
+        .assignment-item:hover {
+            background: #e9ecef;
+        }
+
+        .priority-badge, .status-badge, .progress-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .priority-high { background-color: #f8d7da; color: #721c24; }
+        .priority-medium { background-color: #fff3cd; color: #856404; }
+        .priority-low { background-color: #d1ecf1; color: #0c5460; }
+
+        .status-approved { background-color: #d4edda; color: #155724; }
+        .status-in-progress { background-color: #cce5ff; color: #004085; }
+        .status-submitted { background-color: #fff3cd; color: #856404; }
+        .status-completed { background-color: #d4edda; color: #155724; }
+
+        .progress-not-started { background-color: #e9ecef; color: #6c757d; }
+        .progress-researching { background-color: #cce5ff; color: #004085; }
+        .progress-writing { background-color: #d1ecf1; color: #0c5460; }
+        .progress-editing { background-color: #fff3cd; color: #856404; }
+        .progress-ready { background-color: #d4edda; color: #155724; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+            border-left: 4px solid #3498db;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast-success { border-left-color: #27ae60; }
+        .toast-error { border-left-color: #e74c3c; }
+        .toast-warning { border-left-color: #f39c12; }
+        .toast-info { border-left-color: #3498db; }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+        }
+
+        .modal-custom {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 8px;
+            z-index: 1050;
+            max-width: 90%;
+            width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .modal-custom {
+                width: 95%;
+            }
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+
+        .assignment-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .detail-item label {
+            font-weight: 600;
+            color: #495057;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .detail-item .value {
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>AMC</h3>
+            <span class="badge">Reporter</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="profileLink">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="user-profile p-3">
+            <div class="user-info d-flex align-items-center gap-3">
+                <div class="avatar-initials" id="userAvatar">RP</div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">Reporter</h6>
+                    <small class="text-white-50" id="userEmail">reporter@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <nav class="navbar-top">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <h4 class="mb-0 fw-bold">Reporter Dashboard</h4>
+                        <small class="text-muted" id="currentDate">Loading date...</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-primary" id="refreshBtn">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                    <div class="position-relative">
+                        <button class="btn btn-light position-relative" id="notificationsBtn">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="content-wrapper" id="dashboardSection">
+            <div class="welcome-banner">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 id="welcomeMessage">Welcome, Reporter</h1>
+                        <p>Manage your assignments - browse available requests or work on your accepted assignments.</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                            <i class="bi bi-briefcase me-2"></i>
+                            <span id="totalAssignments">0</span> Total Assignments
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card available" id="availableCard">
+                        <i class="bi bi-inbox"></i>
+                        <h3 class="count" id="availableCount">0</h3>
+                        <p class="label">Available</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card my-assignments" id="myAssignmentsCard">
+                        <i class="bi bi-briefcase"></i>
+                        <h3 class="count" id="myAssignmentsCount">0</h3>
+                        <p class="label">My Assignments</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card pending" id="inProgressCard">
+                        <i class="bi bi-clock-history"></i>
+                        <h3 class="count" id="inProgressCount">0</h3>
+                        <p class="label">In Progress</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card completed" id="completedCard">
+                        <i class="bi bi-check-circle"></i>
+                        <h3 class="count" id="completedCount">0</h3>
+                        <p class="label">Completed</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="assignmentsTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available">
+                                <i class="bi bi-inbox me-1"></i> Available Assignments
+                                <span class="badge bg-primary ms-1" id="availableBadge">0</span>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="my-assignments-tab" data-bs-toggle="tab" data-bs-target="#my-assignments">
+                                <i class="bi bi-briefcase me-1"></i> My Assignments
+                                <span class="badge bg-success ms-1" id="myAssignmentsBadge">0</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="available" role="tabpanel">
+                            <div class="mb-3">
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="searchAvailable" placeholder="Search available assignments...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="filterCategory">
+                                            <option value="">All Categories</option>
+                                            <option value="breaking_news">Breaking News</option>
+                                            <option value="politics">Politics</option>
+                                            <option value="sports">Sports</option>
+                                            <option value="culture">Culture</option>
+                                            <option value="business">Business</option>
+                                            <option value="health">Health</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="filterPriority">
+                                            <option value="">All Priorities</option>
+                                            <option value="high">High Priority</option>
+                                            <option value="medium">Medium Priority</option>
+                                            <option value="low">Low Priority</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary w-100" id="clearFilters">
+                                            <i class="bi bi-x-circle"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="availableList">
+                                <div class="empty-state">
+                                    <div class="spinner-border text-primary mb-3"></div>
+                                    <p>Loading available assignments...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="my-assignments" role="tabpanel">
+                            <div class="mb-3">
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="searchMyAssignments" placeholder="Search my assignments...">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-select" id="filterProgress">
+                                            <option value="">All Progress</option>
+                                            <option value="not_started">Not Started</option>
+                                            <option value="researching">Researching</option>
+                                            <option value="writing">Writing</option>
+                                            <option value="editing">Editing</option>
+                                            <option value="ready">Ready to Submit</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-success w-100" id="submitWorkBtn" style="display: none;">
+                                            <i class="bi bi-send me-1"></i> Submit Selected Work
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="myAssignmentsList">
+                                <div class="empty-state">
+                                    <div class="spinner-border text-success mb-3"></div>
+                                    <p>Loading your assignments...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class ReporterDashboard {
+            constructor() {
+                this.config = {
+                    apiBaseUrl: 'http://localhost:5001/api',
+                    toastDuration: 5000
+                };
+                
+                this.data = {
+                    user: null,
+                    availableAssignments: [],
+                    myAssignments: []
+                };
+            }
+            
+            async init() {
+                this.loadUserData();
+                this.setupEventListeners();
+                this.updateDateTime();
+                await this.loadAllAssignments();
+            }
+            
+            loadUserData() {
+                const savedUser = localStorage.getItem('reporterUser');
+                if (savedUser) {
+                    this.data.user = JSON.parse(savedUser);
+                } else {
+                    this.data.user = {
+                        id: 'reporter001',
+                        name: 'Reporter User',
+                        email: 'reporter@ameco.et',
+                        role: 'Reporter',
+                        avatar: 'RU'
+                    };
+                    localStorage.setItem('reporterUser', JSON.stringify(this.data.user));
+                }
+                
+                document.getElementById('userName').textContent = this.data.user.name;
+                document.getElementById('userEmail').textContent = this.data.user.email;
+                document.getElementById('userAvatar').textContent = this.data.user.avatar;
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${this.data.user.name}`;
+            }
+            
+           async loadAllAssignments() {
+    try {
+        const response = await fetch(`${this.config.apiBaseUrl}/requests`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            const allRequests = result.data || [];
+
+            // ✅ Save all requests for stats
+            this.data.allRequests = allRequests;
+
+            // ✅ Available = approved AND not assigned
+            this.data.availableAssignments = allRequests.filter(req => 
+                req.status === 'approved' && (!req.assignedReporter || !req.assignedReporter.id)
+            );
+
+            // ✅ My Assignments = in_progress ONLY
+            this.data.myAssignments = allRequests.filter(req => 
+                req.status === 'in_progress'
+            );
+
+            this.updateStats();
+            this.renderAvailableAssignments();
+            this.renderMyAssignments();
+
+            this.showToast(`Loaded ${allRequests.length} requests`, 'success');
+        } else {
+            throw new Error(result.message || 'Failed to load requests');
+        }
+
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        this.showToast(`Failed to load assignments: ${error.message}`, 'error');
+
+        const availableList = document.getElementById('availableList');
+        const myAssignmentsList = document.getElementById('myAssignmentsList');
+
+        if (availableList) {
+            availableList.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h4>Failed to Load</h4>
+                    <p>${error.message}</p>
+                    <button class="btn btn-primary mt-2" onclick="window.reporterDashboard?.loadAllAssignments()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        if (myAssignmentsList) {
+            myAssignmentsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h4>Failed to Load</h4>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
+    }
+}
+
+            
+           updateStats() {
+    const available = this.data.availableAssignments.length;
+    const myAssignments = this.data.myAssignments.length;
+
+    // ✅ Use allRequests for correct stats
+    const all = this.data.allRequests || [];
+
+    const inProgress = all.filter(a => a.status === 'in_progress').length;
+    const completed = all.filter(a => a.status === 'completed').length;
+
+    document.getElementById('availableCount').textContent = available;
+    document.getElementById('myAssignmentsCount').textContent = myAssignments;
+    document.getElementById('inProgressCount').textContent = inProgress;
+    document.getElementById('completedCount').textContent = completed;
+    document.getElementById('totalAssignments').textContent = available + myAssignments;
+
+    document.getElementById('availableBadge').textContent = available;
+    document.getElementById('myAssignmentsBadge').textContent = myAssignments;
+}
+
+            
+            renderAvailableAssignments() {
+                const container = document.getElementById('availableList');
+                
+                if (this.data.availableAssignments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h4>No available assignments</h4>
+                            <p>Check back later for new assignments</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                this.data.availableAssignments.forEach(assignment => {
+                    html += this.createAvailableAssignmentCard(assignment);
+                });
+                
+                container.innerHTML = html;
+                this.addAvailableAssignmentListeners();
+            }
+            
+            createAvailableAssignmentCard(assignment) {
+                const date = assignment.date ? new Date(assignment.date).toLocaleDateString() : 'Not set';
+                const categoryColor = this.getCategoryColor(assignment.category);
+                
+                return `
+                    <div class="assignment-item" data-id="${assignment._id}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${assignment.title || 'Untitled Request'}</h6>
+                                <p class="mb-1 small text-muted">
+                                    <i class="bi bi-person me-1"></i>
+                                    ${assignment.submittedBy || 'Unknown'} • 
+                                    <i class="bi bi-building me-1"></i>
+                                    ${assignment.submitterDepartment || 'No department'}
+                                </p>
+                                <div class="d-flex align-items-center gap-3 mt-2">
+                                    <span class="badge" style="background-color: ${categoryColor}">
+                                        ${assignment.category || 'Uncategorized'}
+                                    </span>
+                                    <span class="priority-badge priority-${assignment.priority || 'medium'}">
+                                        ${assignment.priority || 'medium'} priority
+                                    </span>
+                                    <span class="status-badge status-approved">
+                                        <i class="bi bi-check-circle me-1"></i>Approved
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">${date}</div>
+                                <small class="text-muted">${assignment.startTime || ''}</small>
+                            </div>
+                        </div>
+                        
+                        ${assignment.description ? `
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    ${assignment.description.substring(0, 100)}${assignment.description.length > 100 ? '...' : ''}
+                                </small>
+                            </div>
+                        ` : ''}
+                        
+                        ${assignment.editorNotes ? `
+                            <div class="mt-2 p-2 bg-light rounded">
+                                <small class="text-muted">
+                                    <i class="bi bi-chat-left-text me-1"></i>
+                                    <strong>Editor Notes:</strong> ${assignment.editorNotes}
+                                </small>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="mt-3 d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="${assignment._id}">
+                                <i class="bi bi-eye me-1"></i> View Details
+                            </button>
+                            <button class="btn btn-sm btn-success accept-btn" data-id="${assignment._id}">
+                                <i class="bi bi-check-circle me-1"></i> Accept Assignment
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderMyAssignments() {
+                const container = document.getElementById('myAssignmentsList');
+                
+                if (this.data.myAssignments.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h4>No assignments yet</h4>
+                            <p>Accept assignments from the Available tab</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                this.data.myAssignments.forEach(assignment => {
+                    html += this.createMyAssignmentCard(assignment);
+                });
+                
+                container.innerHTML = html;
+                this.addMyAssignmentListeners();
+            }
+            
+            createMyAssignmentCard(assignment) {
+                const date = assignment.date ? new Date(assignment.date).toLocaleDateString() : 'Not set';
+                const categoryColor = this.getCategoryColor(assignment.category);
+                const progress = assignment.progress || 'not_started';
+                const progressPercent = this.getProgressPercent(progress);
+                const progressText = this.getProgressText(progress);
+                
+                return `
+                    <div class="assignment-item my-assignment" data-id="${assignment._id}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${assignment.title || 'Untitled Request'}</h6>
+                                <p class="mb-1 small text-muted">
+                                    <i class="bi bi-person me-1"></i>
+                                    ${assignment.submittedBy || 'Unknown'} • 
+                                    <i class="bi bi-calendar me-1"></i>
+                                    ${date}
+                                </p>
+                                <div class="d-flex align-items-center gap-3 mt-2">
+                                    <span class="badge" style="background-color: ${categoryColor}">
+                                        ${assignment.category || 'Uncategorized'}
+                                    </span>
+                                    <span class="status-badge status-${assignment.status === 'in_progress' ? 'in-progress' : assignment.status}">
+                                        ${assignment.status === 'in_progress' ? 'In Progress' : assignment.status}
+                                    </span>
+                                    <span class="progress-badge progress-${progress}">
+                                        ${progressText}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="progress-bar-custom" style="width: 100px;">
+                                    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                                </div>
+                                <small class="text-muted">${progressPercent}% complete</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary update-progress-btn" data-id="${assignment._id}">
+                                <i class="bi bi-pencil me-1"></i> Update Progress
+                            </button>
+                            <button class="btn btn-sm btn-primary submit-assignment-btn" data-id="${assignment._id}">
+                                <i class="bi bi-send me-1"></i> Submit for Review
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getProgressPercent(progress) {
+                const progressMap = {
+                    'not_started': 0,
+                    'researching': 25,
+                    'writing': 50,
+                    'editing': 75,
+                    'ready': 100
+                };
+                return progressMap[progress] || 0;
+            }
+            
+            getProgressText(progress) {
+                const textMap = {
+                    'not_started': 'Not Started',
+                    'researching': 'Researching',
+                    'writing': 'Writing',
+                    'editing': 'Editing',
+                    'ready': 'Ready to Submit'
+                };
+                return textMap[progress] || 'Not Started';
+            }
+            
+            getCategoryColor(category) {
+                const colors = {
+                    'breaking_news': '#e74c3c',
+                    'politics': '#3498db',
+                    'sports': '#2ecc71',
+                    'culture': '#9b59b6',
+                    'business': '#f39c12',
+                    'health': '#1abc9c'
+                };
+                return colors[category] || '#6c757d';
+            }
+            
+            addAvailableAssignmentListeners() {
+                // View Details Button
+                document.querySelectorAll('.view-details-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const assignmentId = btn.getAttribute('data-id');
+                        this.viewAssignmentDetails(assignmentId);
+                    });
+                });
+                
+                // Accept Assignment Button
+                document.querySelectorAll('.accept-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const assignmentId = btn.getAttribute('data-id');
+                        await this.acceptAssignment(assignmentId);
+                    });
+                });
+            }
+            
+            addMyAssignmentListeners() {
+                document.querySelectorAll('.update-progress-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const assignmentId = btn.getAttribute('data-id');
+                        this.updateProgress(assignmentId);
+                    });
+                });
+                
+                document.querySelectorAll('.submit-assignment-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const assignmentId = btn.getAttribute('data-id');
+                        await this.submitAssignment(assignmentId);
+                    });
+                });
+            }
+            
+              async acceptAssignment(assignmentId) {
+    const assignment = this.data.availableAssignments.find(a => a._id === assignmentId);
+    
+    if (!assignment) {
+        this.showToast('Assignment not found', 'error');
+        return;
+    }
+    
+    if (confirm(`Accept assignment: "${assignment.title}"?`)) {
+        try {
+            // Disable button to prevent double-click
+            const acceptBtn = document.querySelector(`.accept-btn[data-id="${assignmentId}"]`);
+            if (acceptBtn) {
+                acceptBtn.disabled = true;
+                acceptBtn.innerHTML = '<i class="bi bi-hourglass me-1"></i> Accepting...';
+            }
+            
+            // Try two possible endpoints - first the status endpoint
+            let response;
+            let result;
+            
+            // Option 1: Try /status endpoint first
+            try {
+                response = await fetch(`${this.config.apiBaseUrl}/requests/${assignmentId}/status`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                    },
+                    body: JSON.stringify({
+                        status: 'in_progress'
+                    })
+                });
+                
+                result = await response.json();
+            } catch (statusError) {
+                console.log('Status endpoint failed, trying update endpoint:', statusError);
+                
+                // Option 2: Try the general update endpoint
+                response = await fetch(`${this.config.apiBaseUrl}/requests/${assignmentId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                    },
+                    body: JSON.stringify({
+                        status: 'in_progress',
+                        assignedReporter: {
+                            reporterId: this.data.user.id || this.data.user._id,
+                            name: this.data.user.name,
+                            email: this.data.user.email
+                        },
+                        acceptedAt: new Date().toISOString()
+                    })
+                });
+                
+                result = await response.json();
+            }
+            
+            if (response.ok && result.success) {
+                // Remove from available
+                this.data.availableAssignments = this.data.availableAssignments.filter(a => a._id !== assignmentId);
+                
+                // Add to my assignments with initial progress
+                const acceptedAssignment = {
+                    ...assignment,
+                    status: 'in_progress',
+                    assignedReporter: {
+                        reporterId: this.data.user.id || this.data.user._id,
+                        id: this.data.user.id || this.data.user._id,
+                        name: this.data.user.name,
+                        email: this.data.user.email
+                    },
+                    progress: 'not_started',
+                    acceptedAt: new Date().toISOString()
+                };
+                
+                this.data.myAssignments.push(acceptedAssignment);
+                
+                this.updateStats();
+                this.renderAvailableAssignments();
+                this.renderMyAssignments();
+                
+                this.showToast(`✓ Assignment accepted: ${assignment.title}`, 'success');
+                
+                // Switch to My Assignments tab
+                const myAssignmentsTab = document.getElementById('my-assignments-tab');
+                if (myAssignmentsTab) {
+                    const tab = new bootstrap.Tab(myAssignmentsTab);
+                    tab.show();
+                }
+            } else {
+                throw new Error(result.message || 'Failed to accept assignment');
+            }
+            
+        } catch (error) {
+            console.error('Error accepting assignment:', error);
+            this.showToast(`❌ Failed to accept assignment: ${error.message}`, 'error');
+            
+            // Re-enable button on error
+            const acceptBtn = document.querySelector(`.accept-btn[data-id="${assignmentId}"]`);
+            if (acceptBtn) {
+                acceptBtn.disabled = false;
+                acceptBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Accept Assignment';
+            }
+        }
+    }
+}
+            
+            async updateProgress(assignmentId) {
+                const assignment = this.data.myAssignments.find(a => a._id === assignmentId);
+                
+                if (!assignment) {
+                    this.showToast('Assignment not found', 'error');
+                    return;
+                }
+                
+                const progressOptions = [
+                    { value: 'not_started', label: 'Not Started' },
+                    { value: 'researching', label: 'Researching' },
+                    { value: 'writing', label: 'Writing' },
+                    { value: 'editing', label: 'Editing' },
+                    { value: 'ready', label: 'Ready to Submit' }
+                ];
+                
+                const optionsHtml = progressOptions.map(opt => `
+                    <option value="${opt.value}" ${assignment.progress === opt.value ? 'selected' : ''}>
+                        ${opt.label}
+                    </option>
+                `).join('');
+                
+                const modalHtml = `
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-custom">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Update Progress</h5>
+                            <button type="button" class="btn-close close-modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6>${assignment.title}</h6>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Current Progress</label>
+                                <select class="form-select" id="progressSelect">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Additional Notes (Optional)</label>
+                                <textarea class="form-control" id="progressNotes" rows="3" placeholder="Add any notes about your progress...">${assignment.reporterNotes || ''}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary close-modal-btn">
+                                Cancel
+                            </button>
+                            <button type="button" class="btn btn-primary save-progress-btn" data-id="${assignmentId}">
+                                Save Progress
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.showModal(modalHtml);
+                
+                // Add event listeners for the modal
+                document.querySelector('.close-modal').addEventListener('click', () => this.closeModal());
+                document.querySelector('.close-modal-btn').addEventListener('click', () => this.closeModal());
+                document.querySelector('.modal-backdrop').addEventListener('click', () => this.closeModal());
+                
+                document.querySelector('.save-progress-btn').addEventListener('click', async () => {
+                    const progress = document.getElementById('progressSelect').value;
+                    const notes = document.getElementById('progressNotes').value;
+                    
+                    try {
+                        const response = await fetch(`${this.config.apiBaseUrl}/requests/${assignmentId}/progress`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                progress: progress,
+                                reporterNotes: notes,
+                                lastUpdated: new Date().toISOString()
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            const index = this.data.myAssignments.findIndex(a => a._id === assignmentId);
+                            if (index !== -1) {
+                                this.data.myAssignments[index].progress = progress;
+                                this.data.myAssignments[index].reporterNotes = notes;
+                                this.data.myAssignments[index].lastUpdated = new Date().toISOString();
+                            }
+                            
+                            this.renderMyAssignments();
+                            this.closeModal();
+                            this.showToast('Progress updated successfully', 'success');
+                        } else {
+                            throw new Error(result.message || 'Failed to update progress');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error updating progress:', error);
+                        this.showToast(`Failed to update progress: ${error.message}`, 'error');
+                    }
+                });
+            }
+            
+            async submitAssignment(assignmentId) {
+                const assignment = this.data.myAssignments.find(a => a._id === assignmentId);
+                
+                if (!assignment) {
+                    this.showToast('Assignment not found', 'error');
+                    return;
+                }
+                
+                if (confirm(`Submit "${assignment.title}" for editor review?\n\nMake sure your work is complete before submitting.`)) {
+                    try {
+                        const response = await fetch(`${this.config.apiBaseUrl}/requests/${assignmentId}/status`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                status: 'completed',
+                                submittedAt: new Date().toISOString()
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            const index = this.data.myAssignments.findIndex(a => a._id === assignmentId);
+                            if (index !== -1) {
+                                this.data.myAssignments[index].status = 'completed';
+                                this.data.myAssignments[index].submittedAt = new Date().toISOString();
+                            }
+                            
+                            this.updateStats();
+                            await this.loadAllAssignments();
+                            
+                            this.showToast(`Assignment submitted for review: ${assignment.title}`, 'success');
+                        } else {
+                            throw new Error(result.message || 'Failed to submit assignment');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error submitting assignment:', error);
+                        this.showToast(`Failed to submit assignment: ${error.message}`, 'error');
+                    }
+                }
+            }
+            
+            async viewAssignmentDetails(assignmentId) {
+                try {
+                    const response = await fetch(`${this.config.apiBaseUrl}/requests/${assignmentId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.data) {
+                        const assignment = result.data;
+                        this.showAssignmentDetailsModal(assignment);
+                    } else {
+                        throw new Error('Assignment not found');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error fetching assignment details:', error);
+                    this.showToast('Failed to load assignment details', 'error');
+                }
+            }
+            
+            showAssignmentDetailsModal(assignment) {
+                const date = assignment.date ? new Date(assignment.date).toLocaleDateString() : 'Not set';
+                const categoryColor = this.getCategoryColor(assignment.category);
+                const isAvailable = assignment.status === 'approved' && (!assignment.assignedReporter || !assignment.assignedReporter.id);
+                
+                const modalHtml = `
+                    <div class="modal-backdrop"></div>
+                    <div class="modal-custom">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Assignment Details</h5>
+                            <button type="button" class="btn-close close-modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h4 class="mb-3">${assignment.title || 'Untitled Request'}</h4>
+                            
+                            <div class="assignment-details-grid">
+                                <div class="detail-item">
+                                    <label>Category</label>
+                                    <div class="value">
+                                        <span class="badge" style="background-color: ${categoryColor}">
+                                            ${assignment.category || 'Uncategorized'}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <label>Priority</label>
+                                    <div class="value">
+                                        <span class="priority-badge priority-${assignment.priority || 'medium'}">
+                                            ${assignment.priority || 'medium'} priority
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <label>Status</label>
+                                    <div class="value">
+                                        <span class="status-badge status-${assignment.status}">
+                                            ${assignment.status === 'in_progress' ? 'In Progress' : assignment.status}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <label>Date</label>
+                                    <div class="value">${date}</div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <label>Submitted By</label>
+                                    <div class="value">${assignment.submittedBy || 'Unknown'}</div>
+                                </div>
+                                
+                                <div class="detail-item">
+                                    <label>Department</label>
+                                    <div class="value">${assignment.submitterDepartment || 'No department'}</div>
+                                </div>
+                                
+                                ${assignment.address ? `
+                                    <div class="detail-item">
+                                        <label>Location</label>
+                                        <div class="value">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            ${assignment.address}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${assignment.startTime ? `
+                                    <div class="detail-item">
+                                        <label>Time</label>
+                                        <div class="value">
+                                            <i class="bi bi-clock me-1"></i>
+                                            ${assignment.startTime} ${assignment.endTime ? `- ${assignment.endTime}` : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${assignment.assignedEditor ? `
+                                    <div class="detail-item">
+                                        <label>Assigned Editor</label>
+                                        <div class="value">
+                                            <i class="bi bi-person me-1"></i>
+                                            ${assignment.assignedEditor.name || 'N/A'}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            ${assignment.description ? `
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Description</label>
+                                    <div class="p-3 bg-light rounded">
+                                        ${assignment.description}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${assignment.editorNotes ? `
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Editor Notes</label>
+                                    <div class="p-3 bg-info bg-opacity-10 rounded">
+                                        <i class="bi bi-chat-left-text me-1"></i>
+                                        ${assignment.editorNotes}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${assignment.reporterNotes ? `
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold">Your Notes</label>
+                                    <div class="p-3 bg-success bg-opacity-10 rounded">
+                                        <i class="bi bi-journal-text me-1"></i>
+                                        ${assignment.reporterNotes}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="modal-footer">
+                            ${isAvailable ? `
+                                <button type="button" class="btn btn-success accept-btn-modal" data-id="${assignment._id}">
+                                    <i class="bi bi-check-circle me-1"></i> Accept Assignment
+                                </button>
+                            ` : ''}
+                            <button type="button" class="btn btn-secondary close-modal-btn">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                this.showModal(modalHtml);
+                
+                // Add event listeners
+                document.querySelector('.close-modal').addEventListener('click', () => this.closeModal());
+                document.querySelector('.close-modal-btn').addEventListener('click', () => this.closeModal());
+                document.querySelector('.modal-backdrop').addEventListener('click', () => this.closeModal());
+                
+                // If available assignment, add accept button listener
+                const acceptBtn = document.querySelector('.accept-btn-modal');
+                if (acceptBtn) {
+                    acceptBtn.addEventListener('click', async () => {
+                        const assignmentId = acceptBtn.getAttribute('data-id');
+                        this.closeModal();
+                        await this.acceptAssignment(assignmentId);
+                    });
+                }
+            }
+            
+            showModal(html) {
+                // Remove existing modal if any
+                const existingModal = document.querySelector('.modal-backdrop');
+                if (existingModal) existingModal.remove();
+                
+                const existingModalContent = document.querySelector('.modal-custom');
+                if (existingModalContent) existingModalContent.remove();
+                
+                // Add new modal
+                document.body.insertAdjacentHTML('beforeend', html);
+            }
+            
+            closeModal() {
+                const backdrop = document.querySelector('.modal-backdrop');
+                const modal = document.querySelector('.modal-custom');
+                
+                if (backdrop) backdrop.remove();
+                if (modal) modal.remove();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                document.getElementById('refreshBtn').addEventListener('click', async () => {
+                    await this.loadAllAssignments();
+                });
+                
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        localStorage.removeItem('reporterUser');
+                        this.showToast('Logged out successfully', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1000);
+                    }
+                });
+                
+                document.getElementById('availableCard').addEventListener('click', () => {
+                    const availableTab = document.getElementById('available-tab');
+                    if (availableTab) {
+                        const tab = new bootstrap.Tab(availableTab);
+                        tab.show();
+                    }
+                });
+                
+                document.getElementById('myAssignmentsCard').addEventListener('click', () => {
+                    const myAssignmentsTab = document.getElementById('my-assignments-tab');
+                    if (myAssignmentsTab) {
+                        const tab = new bootstrap.Tab(myAssignmentsTab);
+                        tab.show();
+                    }
+                });
+                
+                document.getElementById('clearFilters').addEventListener('click', () => {
+                    document.getElementById('searchAvailable').value = '';
+                    document.getElementById('filterCategory').value = '';
+                    document.getElementById('filterPriority').value = '';
+                });
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                const dateElement = document.getElementById('currentDate');
+                
+                if (dateElement) {
+                    dateElement.textContent = now.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                }
+                
+                setTimeout(() => this.updateDateTime(), 60000);
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-x-circle' : 'bi-info-circle'} me-2"></i>
+                        <span>${message}</span>
+                        <button class="btn btn-sm btn-link ms-auto close-toast">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(toast);
+                
+                toast.querySelector('.close-toast').addEventListener('click', () => {
+                    toast.remove();
+                });
+                
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, this.config.toastDuration);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const dashboard = new ReporterDashboard();
+            await dashboard.init();
+            window.reporterDashboard = dashboard;
+        });
+    </script>
+</body>
+</html>

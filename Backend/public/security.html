@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Documentation | Frontend Security Best Practices</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #7c3aed;
+            --danger-color: #dc2626;
+            --warning-color: #d97706;
+            --success-color: #059669;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --gray-color: #6b7280;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .logo-text span {
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 8px 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        nav a.active {
+            color: var(--primary-color);
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--dark-color);
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 60px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            color: var(--dark-color);
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar a {
+            color: var(--gray-color);
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            padding-left: 15px;
+        }
+
+        .sidebar a:hover {
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .sidebar a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left-color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .section {
+            margin-bottom: 50px;
+            scroll-margin-top: 30px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section h2 i {
+            color: var(--primary-color);
+        }
+
+        .section p {
+            margin-bottom: 20px;
+            color: var(--gray-color);
+            line-height: 1.7;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            border-left: 4px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .card.danger {
+            border-left-color: var(--danger-color);
+        }
+
+        .card.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .card.success {
+            border-left-color: var(--success-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(37, 99, 235, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .card.danger .card-icon {
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--danger-color);
+        }
+
+        .card.warning .card-icon {
+            background-color: rgba(217, 119, 6, 0.1);
+            color: var(--warning-color);
+        }
+
+        .card.success .card-icon {
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--success-color);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            color: var(--dark-color);
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 25px 0;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .code-language {
+            color: #569cd6;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background-color: #333;
+            color: #d4d4d4;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            background-color: #444;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .function {
+            color: #dcdcaa;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+            }
+            
+            .hero h1 {
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .main-content {
+                padding: 30px 20px;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="logo-text">Frontend<span>Security</span></div>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <nav>
+                    <ul id="navMenu">
+                        <li><a href="#introduction" class="active">Introduction</a></li>
+                        <li><a href="#principles">Principles</a></li>
+                        <li><a href="#authentication">Authentication</a></li>
+                        <li><a href="#data-security">Data Security</a></li>
+                        <li><a href="#xss">XSS Prevention</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-lock"></i> SECURE CODING GUIDELINES
+                </div>
+                <h1>Frontend Security Best Practices</h1>
+                <p>Comprehensive guide to implementing robust security measures in modern web applications. Learn how to protect your users and data from common vulnerabilities.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <h3>Security Topics</h3>
+                <ul id="sidebarNav">
+                    <li><a href="#introduction" class="active">Introduction to Security</a></li>
+                    <li><a href="#principles">Core Security Principles</a></li>
+                    <li><a href="#authentication">Authentication & Authorization</a></li>
+                    <li><a href="#data-security">Data Security & Encryption</a></li>
+                    <li><a href="#xss">XSS Prevention</a></li>
+                    <li><a href="#csrf">CSRF Protection</a></li>
+                    <li><a href="#cors">CORS Configuration</a></li>
+                    <li><a href="#headers">Security Headers</a></li>
+                    <li><a href="#dependencies">Dependency Management</a></li>
+                    <li><a href="#tools">Security Tools</a></li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Introduction Section -->
+                <section id="introduction" class="section">
+                    <h2><i class="fas fa-info-circle"></i> Introduction to Frontend Security</h2>
+                    <p>Frontend security is a critical aspect of web development that focuses on protecting client-side applications from threats and vulnerabilities. While backend security often gets more attention, frontend security is equally important as it's the first line of defense against attacks targeting users.</p>
+                    <p>Modern web applications handle sensitive data, process user inputs, and interact with various APIs, making them potential targets for attacks like Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), and data theft.</p>
+                    
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <h3>User Protection</h3>
+                            </div>
+                            <p>Implement measures to protect user data, prevent identity theft, and secure authentication flows.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <h3>Code Integrity</h3>
+                            </div>
+                            <p>Ensure your frontend code is free from vulnerabilities that could be exploited by attackers.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <h3>Secure Communication</h3>
+                            </div>
+                            <p>Protect data in transit using encryption and secure communication protocols.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Core Principles Section -->
+                <section id="principles" class="section">
+                    <h2><i class="fas fa-star"></i> Core Security Principles</h2>
+                    <p>Following these fundamental principles will help you build more secure frontend applications:</p>
+                    
+                    <div class="card danger">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <h3>Never Trust User Input</h3>
+                        </div>
+                        <p>All user input should be treated as potentially malicious. Always validate, sanitize, and escape user input before processing or displaying it.</p>
+                    </div>
+                    
+                    <div class="card warning">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3>Defense in Depth</h3>
+                        </div>
+                        <p>Implement multiple layers of security controls. If one layer fails, others will still provide protection.</p>
+                    </div>
+                    
+                    <div class="card success">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3>Least Privilege</h3>
+                        </div>
+                        <p>Users and systems should have only the minimum permissions necessary to perform their functions.</p>
+                    </div>
+                </section>
+
+                <!-- Authentication Section -->
+                <section id="authentication" class="section">
+                    <h2><i class="fas fa-key"></i> Authentication & Authorization</h2>
+                    <p>Proper authentication and authorization mechanisms are essential for controlling access to your application's resources.</p>
+                    
+                    <h3>Best Practices:</h3>
+                    <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--gray-color);">
+                        <li>Always use HTTPS for authentication pages</li>
+                        <li>Implement secure password policies</li>
+                        <li>Use multi-factor authentication (MFA) when possible</li>
+                        <li>Store tokens securely (HttpOnly, Secure cookies)</li>
+                        <li>Implement proper session management</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">JavaScript</span>
+                            <button class="copy-btn">Copy Code</button>
+                        </div>
+                        <pre><code><span class="comment">// Secure token storage example</span>
+<span class="keyword">function</span> <span class="function">setAuthToken</span>(token) {
+    <span class="comment">// Store token in HttpOnly cookie for security</span>
+    document.cookie = <span class="string">`authToken=${token}; HttpOnly; Secure; SameSite=Strict; path=/; max-age=86400`</span>;
+    
+    <span class="comment">// Or use secure storage for SPA authentication</span>
+    <span class="keyword">if</span> (<span class="keyword">typeof</span> localStorage !== <span class="string">'undefined'</span>) {
+        <span class="comment">// Consider additional encryption for sensitive tokens</span>
+        localStorage.setItem(<span class="string">'authToken'</span>, encryptToken(token));
+    }
+}
+
+<span class="keyword">function</span> <span class="function">validatePassword</span>(password) {
+    <span class="comment">// Password validation with security requirements</span>
+    <span class="keyword">const</span> minLength = <span class="number">8</span>;
+    <span class="keyword">const</span> hasUpperCase = <span class="regex">/[A-Z]/</span>.test(password);
+    <span class="keyword">const</span> hasLowerCase = <span class="regex">/[a-z]/</span>.test(password);
+    <span class="keyword">const</span> hasNumbers = <span class="regex">/\d/</span>.test(password);
+    <span class="keyword">const</span> hasSpecialChar = <span class="regex">/[!@#$%^&*(),.?":{}|<>]/</span>.test(password);
+    
+    <span class="keyword">return</span> password.length >= minLength && 
+           hasUpperCase && 
+           hasLowerCase && 
+           hasNumbers && 
+           hasSpecialChar;
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Data Security Section -->
+                <section id="data-security" class="section">
+                    <h2><i class="fas fa-database"></i> Data Security & Encryption</h2>
+                    <p>Protecting sensitive data on the client side is crucial for maintaining user privacy and preventing data breaches.</p>
+                    
+                    <h3>Key Considerations:</h3>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <h3>PII Protection</h3>
+                            </div>
+                            <p>Personally Identifiable Information (PII) should never be stored in localStorage or exposed in URLs. Use encryption for sensitive data at rest.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h3>Secure Transmission</h3>
+                            </div>
+                            <p>Always use HTTPS for data transmission. Implement additional encryption for highly sensitive data even over HTTPS.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- XSS Prevention Section -->
+                <section id="xss" class="section">
+                    <h2><i class="fas fa-exclamation-triangle"></i> XSS Prevention</h2>
+                    <p>Cross-Site Scripting (XSS) is one of the most common web application vulnerabilities. It allows attackers to inject malicious scripts into web pages viewed by other users.</p>
+                    
+                    <h3>Prevention Techniques:</h3>
+                    <ul style="margin-left: 20px; margin-bottom: 20px; color: var(--gray-color);">
+                        <li>Escape all user input before rendering</li>
+                        <li>Use Content Security Policy (CSP) headers</li>
+                        <li>Sanitize HTML input with trusted libraries</li>
+                        <li>Avoid inline JavaScript and eval()</li>
+                        <li>Implement proper output encoding</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">HTML</span>
+                            <button class="copy-btn">Copy Code</button>
+                        </div>
+                        <pre><code><span class="comment">&lt;!-- Content Security Policy Header Example --&gt;</span>
+<span class="comment">&lt;!-- This should be set in your server configuration --&gt;</span>
+&lt;meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' https://trusted.cdn.com; 
+               style-src 'self' 'unsafe-inline'; 
+               img-src 'self' data: https:; 
+               font-src 'self';
+               connect-src 'self' https://api.example.com;"&gt;
+
+<span class="comment">&lt;!-- Safe rendering of user content --&gt;</span>
+&lt;div id="userContent"&gt;
+    <span class="comment">&lt;!-- Content will be safely inserted here --&gt;</span>
+&lt;/div&gt;
+
+&lt;script&gt;
+    <span class="comment">// Safely render user content with textContent (not innerHTML)</span>
+    <span class="keyword">function</span> <span class="function">safeRenderUserContent</span>(userInput, elementId) {
+        <span class="keyword">const</span> element = document.getElementById(elementId);
+        
+        <span class="comment">// Always use textContent for plain text</span>
+        element.textContent = userInput;
+        
+        <span class="comment">// If HTML is needed, use DOMPurify or similar library</span>
+        <span class="comment">// element.innerHTML = DOMPurify.sanitize(userInput);</span>
+    }
+&lt;/script&gt;</code></pre>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Frontend Security</h3>
+                    <p>Comprehensive security guidelines and best practices for modern web applications.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#introduction">Introduction</a></li>
+                        <li><a href="#principles">Core Principles</a></li>
+                        <li><a href="#authentication">Authentication</a></li>
+                        <li><a href="#data-security">Data Security</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="https://owasp.org/www-project-top-ten/" target="_blank">OWASP Top 10</a></li>
+                        <li><a href="https://cheatsheetseries.owasp.org/" target="_blank">OWASP Cheat Sheets</a></li>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/Security" target="_blank">MDN Web Security</a></li>
+                        <li><a href="https://web.dev/security/" target="_blank">Web.dev Security</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> security@example.com</li>
+                        <li><i class="fas fa-globe"></i> security.example.com</li>
+                        <li><i class="fas fa-file-contract"></i> Security Policy</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Frontend Security Documentation. All rights reserved. This content is for educational purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+            
+            if (navMenu.style.display === 'flex') {
+                navMenu.style.flexDirection = 'column';
+                navMenu.style.position = 'absolute';
+                navMenu.style.top = '80px';
+                navMenu.style.right = '20px';
+                navMenu.style.background = 'white';
+                navMenu.style.padding = '20px';
+                navMenu.style.borderRadius = '8px';
+                navMenu.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+                navMenu.style.width = '200px';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Update active states
+                    document.querySelectorAll('nav a, .sidebar a').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('navMenu').style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Copy code button functionality
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const codeBlock = this.parentElement.parentElement;
+                const codeText = codeBlock.querySelector('code').textContent;
+                
+                navigator.clipboard.writeText(codeText).then(() => {
+                    const originalText = this.textContent;
+                    this.textContent = 'Copied!';
+                    this.style.backgroundColor = '#059669';
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.backgroundColor = '';
+                    }, 2000);
+                });
+            });
+        });
+
+        // Update sidebar active link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const sidebarLinks = document.querySelectorAll('.sidebar a');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollY >= sectionTop - 150) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Highlight active nav link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('nav a');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                
+                if (scrollY >= sectionTop - 150) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Initialize active states on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set first nav link as active
+            document.querySelector('nav a').classList.add('active');
+            document.querySelector('.sidebar a').classList.add('active');
+        });
+    </script>
+</body>
+</html>

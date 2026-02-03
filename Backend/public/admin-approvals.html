@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Approvals - Amhara Media</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .approval-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .approval-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        
+        .approved-card {
+            border-left-color: #2ecc71;
+        }
+        
+        .rejected-card {
+            border-left-color: #e74c3c;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.4em 0.8em;
+        }
+        
+        .btn-approve {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+        }
+        
+        .btn-reject {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+        }
+        
+        .btn-view {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #95a5a6;
+            margin-bottom: 1rem;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        
+        .stats-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .approval-card {
+                padding: 1.25rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">
+                        <i class="bi bi-shield-check text-primary me-2"></i>
+                        Admin Approvals
+                    </h1>
+                    <p class="text-muted mb-0">Review and approve administrator registrations</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshApprovals()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="goToDashboard()">
+                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <i class="bi bi-clock-history text-warning fs-4"></i>
+                        <div class="stats-number" id="pendingCount">0</div>
+                        <div class="stats-label">Pending Approval</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <i class="bi bi-check-circle text-success fs-4"></i>
+                        <div class="stats-number" id="approvedCount">0</div>
+                        <div class="stats-label">Approved</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <i class="bi bi-x-circle text-danger fs-4"></i>
+                        <div class="stats-number" id="rejectedCount">0</div>
+                        <div class="stats-label">Rejected</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stats-card">
+                        <i class="bi bi-people text-primary fs-4"></i>
+                        <div class="stats-number" id="totalCount">0</div>
+                        <div class="stats-label">Total Requests</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Buttons -->
+        <div class="mb-4">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" onclick="filterApprovals('all')">
+                    All Requests
+                </button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterApprovals('pending')">
+                    <i class="bi bi-clock me-1"></i>Pending
+                </button>
+                <button type="button" class="btn btn-outline-success" onclick="filterApprovals('approved')">
+                    <i class="bi bi-check-circle me-1"></i>Approved
+                </button>
+                <button type="button" class="btn btn-outline-danger" onclick="filterApprovals('rejected')">
+                    <i class="bi bi-x-circle me-1"></i>Rejected
+                </button>
+            </div>
+        </div>
+        
+        <!-- Approval List -->
+        <div id="approvalsList">
+            <!-- Approvals will be loaded here -->
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="bi bi-shield-check"></i>
+            <h3>No Pending Approvals</h3>
+            <p class="text-muted">All administrator requests have been reviewed.</p>
+            <button class="btn btn-primary mt-3" onclick="refreshApprovals()">
+                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
+        </div>
+        
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto" id="toastTitle">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body" id="toastMessage">
+                    Message will appear here
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Master admin check
+        function checkMasterAdmin() {
+            const sessionStr = localStorage.getItem('userSession');
+            if (!sessionStr) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            try {
+                const session = JSON.parse(sessionStr);
+                const realUsersKey = 'amecoRealUsers';
+                const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+                const user = realUsers[session.email];
+                
+                // Check if user is master admin
+                if (user && (user.isMasterAdmin || user.email === 'master@ameco.et')) {
+                    return true;
+                }
+                
+                alert('Access denied. Master admin privileges required.');
+                window.location.href = 'dashboard-admin.html';
+                return false;
+            } catch (error) {
+                console.error('Admin check error:', error);
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+        
+        // Load approvals
+        function loadApprovals() {
+            if (!checkMasterAdmin()) return;
+            
+            const realUsersKey = 'amecoRealUsers';
+            const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            
+            // Get all admin users
+            const adminUsers = Object.entries(realUsers)
+                .filter(([email, user]) => user.role === 'admin')
+                .map(([email, user]) => ({ 
+                    email, 
+                    ...user,
+                    avatar: user.avatar || getInitials(user.name || email)
+                }));
+            
+            // Update stats
+            const pendingCount = adminUsers.filter(u => u.status === 'pending').length;
+            const approvedCount = adminUsers.filter(u => u.status === 'active').length;
+            const rejectedCount = adminUsers.filter(u => u.status === 'rejected').length;
+            
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('approvedCount').textContent = approvedCount;
+            document.getElementById('rejectedCount').textContent = rejectedCount;
+            document.getElementById('totalCount').textContent = adminUsers.length;
+            
+            // Display approvals
+            displayApprovals(adminUsers);
+        }
+        
+        // Display approvals
+        function displayApprovals(users, filter = 'all') {
+            const container = document.getElementById('approvalsList');
+            const emptyState = document.getElementById('emptyState');
+            
+            // Filter users
+            let filteredUsers = users;
+            if (filter === 'pending') {
+                filteredUsers = users.filter(u => u.status === 'pending');
+            } else if (filter === 'approved') {
+                filteredUsers = users.filter(u => u.status === 'active');
+            } else if (filter === 'rejected') {
+                filteredUsers = users.filter(u => u.status === 'rejected');
+            }
+            
+            if (filteredUsers.length === 0) {
+                container.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Sort by registration date (newest first)
+            filteredUsers.sort((a, b) => new Date(b.registered) - new Date(a.registered));
+            
+            container.innerHTML = filteredUsers.map(user => `
+                <div class="approval-card ${user.status === 'active' ? 'approved-card' : user.status === 'rejected' ? 'rejected-card' : ''}">
+                    <div class="row align-items-center">
+                        <div class="col-md-1">
+                            <div class="user-avatar">
+                                ${user.avatar}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="mb-1">${user.name}</h6>
+                            <small class="text-muted">${user.email}</small>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge bg-${getDepartmentColor(user.department)}">
+                                ${user.department || 'Not specified'}
+                            </span>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="badge bg-${getStatusColor(user.status)}">
+                                ${getStatusText(user.status)}
+                            </span>
+                        </div>
+                        <div class="col-md-2">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-1"></i>
+                                ${new Date(user.registered).toLocaleDateString()}
+                            </small>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="btn-group" role="group">
+                                ${user.status === 'pending' ? `
+                                    <button class="btn btn-approve btn-sm" onclick="approveAdmin('${user.email}')">
+                                        <i class="bi bi-check-lg"></i> Approve
+                                    </button>
+                                    <button class="btn btn-reject btn-sm" onclick="rejectAdmin('${user.email}')">
+                                        <i class="bi bi-x-lg"></i> Reject
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-view btn-sm" onclick="viewAdmin('${user.email}')">
+                                        <i class="bi bi-eye"></i> View
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Helper functions
+        function getInitials(name) {
+            if (!name) return 'AD';
+            return name.split(' ')
+                .map(word => word[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+        }
+        
+        function getDepartmentColor(dept) {
+            const colors = {
+                'Administration': 'danger',
+                'IT': 'info',
+                'Management': 'primary',
+                'Editorial': 'warning',
+                'Production': 'success'
+            };
+            return colors[dept] || 'secondary';
+        }
+        
+        function getStatusColor(status) {
+            const colors = {
+                'pending': 'warning',
+                'active': 'success',
+                'rejected': 'danger',
+                'inactive': 'secondary'
+            };
+            return colors[status] || 'secondary';
+        }
+        
+        function getStatusText(status) {
+            const texts = {
+                'pending': 'Pending Approval',
+                'active': 'Approved',
+                'rejected': 'Rejected',
+                'inactive': 'Inactive'
+            };
+            return texts[status] || status;
+        }
+        
+        // Approval actions
+        function approveAdmin(email) {
+            if (!confirm(`Approve ${email} as administrator?`)) return;
+            
+            const realUsersKey = 'amecoRealUsers';
+            const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            
+            if (realUsers[email]) {
+                realUsers[email].status = 'active';
+                realUsers[email].approvedBy = getCurrentAdminEmail();
+                realUsers[email].approvedAt = new Date().toISOString();
+                realUsers[email].isMasterAdmin = false; // Only one master admin
+                
+                localStorage.setItem(realUsersKey, JSON.stringify(realUsers));
+                
+                showToast('Success', `${email} has been approved as administrator!`, 'success');
+                loadApprovals();
+                
+                // Log activity
+                logAdminActivity('approve', `Approved admin: ${email}`);
+            }
+        }
+        
+        function rejectAdmin(email) {
+            if (!confirm(`Reject ${email}'s administrator request?`)) return;
+            
+            const realUsersKey = 'amecoRealUsers';
+            const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            
+            if (realUsers[email]) {
+                realUsers[email].status = 'rejected';
+                realUsers[email].rejectedBy = getCurrentAdminEmail();
+                realUsers[email].rejectedAt = new Date().toISOString();
+                realUsers[email].rejectionReason = 'Rejected by administrator';
+                
+                localStorage.setItem(realUsersKey, JSON.stringify(realUsers));
+                
+                showToast('Rejected', `${email}'s admin request has been rejected.`, 'warning');
+                loadApprovals();
+                
+                // Log activity
+                logAdminActivity('reject', `Rejected admin: ${email}`);
+            }
+        }
+        
+        function viewAdmin(email) {
+            const realUsersKey = 'amecoRealUsers';
+            const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            const user = realUsers[email];
+            
+            if (user) {
+                const details = `
+                    <strong>Name:</strong> ${user.name}<br>
+                    <strong>Email:</strong> ${email}<br>
+                    <strong>Department:</strong> ${user.department || 'Not specified'}<br>
+                    <strong>Role:</strong> ${user.role}<br>
+                    <strong>Status:</strong> ${getStatusText(user.status)}<br>
+                    <strong>Registered:</strong> ${new Date(user.registered).toLocaleString()}<br>
+                    ${user.approvedBy ? `<strong>Approved By:</strong> ${user.approvedBy}<br>` : ''}
+                    ${user.approvedAt ? `<strong>Approved At:</strong> ${new Date(user.approvedAt).toLocaleString()}<br>` : ''}
+                    ${user.rejectedBy ? `<strong>Rejected By:</strong> ${user.rejectedBy}<br>` : ''}
+                    ${user.rejectionReason ? `<strong>Rejection Reason:</strong> ${user.rejectionReason}<br>` : ''}
+                `;
+                
+                alert(`Admin Details:\n\n${details}`);
+            }
+        }
+        
+        // Get current admin email
+        function getCurrentAdminEmail() {
+            const sessionStr = localStorage.getItem('userSession');
+            if (sessionStr) {
+                try {
+                    const session = JSON.parse(sessionStr);
+                    return session.email || 'System';
+                } catch (error) {
+                    return 'System';
+                }
+            }
+            return 'System';
+        }
+        
+        // Filter approvals
+        function filterApprovals(filter) {
+            // Update active button
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const realUsersKey = 'amecoRealUsers';
+            const realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            const adminUsers = Object.entries(realUsers)
+                .filter(([email, user]) => user.role === 'admin')
+                .map(([email, user]) => ({ email, ...user }));
+            
+            displayApprovals(adminUsers, filter);
+        }
+        
+        // Refresh approvals
+        function refreshApprovals() {
+            showToast('Refreshing', 'Loading latest approval requests...', 'info');
+            loadApprovals();
+        }
+        
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = 'dashboard-admin.html';
+        }
+        
+        // Toast notification
+        function showToast(title, message, type = 'info') {
+            const toastEl = document.getElementById('liveToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set type-based styling
+            const typeClasses = {
+                'success': 'bg-success text-white',
+                'error': 'bg-danger text-white',
+                'warning': 'bg-warning text-dark',
+                'info': 'bg-info text-white'
+            };
+            
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            
+            // Update header color
+            toastEl.querySelector('.toast-header').className = `toast-header ${typeClasses[type] || 'bg-primary text-white'}`;
+            
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+        
+        // Log admin activity
+        function logAdminActivity(action, description) {
+            const logsKey = 'adminActivityLogs';
+            const logs = JSON.parse(localStorage.getItem(logsKey) || '[]');
+            
+            logs.unshift({
+                action,
+                description,
+                admin: getCurrentAdminEmail(),
+                timestamp: new Date().toISOString(),
+                ip: '127.0.0.1' // In real app, get actual IP
+            });
+            
+            // Keep only last 100 logs
+            if (logs.length > 100) logs.pop();
+            
+            localStorage.setItem(logsKey, JSON.stringify(logs));
+        }
+        
+        // Initialize master admin on first load
+        function initializeMasterAdmin() {
+            const realUsersKey = 'amecoRealUsers';
+            let realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            
+            // Create master admin if doesn't exist
+            if (!realUsers['master@ameco.et']) {
+                realUsers['master@ameco.et'] = {
+                    password: 'Master@2024',
+                    role: 'admin',
+                    name: 'Master Administrator',
+                    firstName: 'Master',
+                    lastName: 'Administrator',
+                    department: 'Administration',
+                    phone: '',
+                    isRealAccount: true,
+                    registered: new Date().toISOString(),
+                    status: 'active',
+                    isMasterAdmin: true,
+                    canApproveAdmins: true,
+                    avatar: 'MA'
+                };
+                
+                localStorage.setItem(realUsersKey, JSON.stringify(realUsers));
+                console.log('Master admin created');
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMasterAdmin();
+            loadApprovals();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(loadApprovals, 30000);
+        });
+    </script>
+</body>
+</html>

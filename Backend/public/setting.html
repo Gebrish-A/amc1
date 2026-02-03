@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - AMC Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Theme Toggle CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-dark-5@1.1.3/dist/css/bootstrap-dark.min.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --accent-color: #3498db;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --card-bg: #2d2d2d;
+            --border-color: #404040;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --card-bg: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .settings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .settings-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+
+        .settings-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .settings-card h5 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-section {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .theme-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            margin: 0.5rem;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .theme-preview:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-preview.active {
+            border-color: var(--primary-color);
+        }
+
+        .theme-light {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        }
+
+        .theme-dark {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+        }
+
+        .theme-blue {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .theme-green {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            border: 4px solid var(--border-color);
+        }
+
+        .password-strength {
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .weak { background: #e74c3c; }
+        .fair { background: #f39c12; }
+        .good { background: #3498db; }
+        .strong { background: #2ecc71; }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .backup-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(0,0,0,0.1));
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backup-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(var(--primary-color-rgb), 0.1);
+        }
+
+        .danger-zone {
+            border: 2px solid var(--danger-color);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .danger-zone h5 {
+            color: var(--danger-color) !important;
+            border-bottom-color: var(--danger-color) !important;
+        }
+
+        @media (max-width: 768px) {
+            .settings-container {
+                padding: 1rem;
+            }
+            
+            .settings-header {
+                padding: 1.5rem;
+            }
+            
+            .settings-card {
+                padding: 1rem;
+            }
+        }
+
+        /* Theme-specific adjustments */
+        [data-theme="dark"] .form-section {
+            background: rgba(255,255,255,0.05);
+        }
+
+        [data-theme="dark"] .settings-card {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .success-toast { border-left-color: #2ecc71; }
+        .error-toast { border-left-color: #e74c3c; }
+        .warning-toast { border-left-color: #f39c12; }
+        .info-toast { border-left-color: #3498db; }
+    </style>
+</head>
+<body data-theme="light">
+    <div class="settings-container">
+        <!-- Header -->
+        <div class="settings-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="bi bi-gear me-3"></i>Settings</h1>
+                    <p class="mb-0">Manage your account preferences and dashboard settings</p>
+                </div>
+                <button class="btn btn-light" onclick="window.history.back()">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Column: Profile & Security -->
+            <div class="col-lg-8">
+                <!-- Profile Settings -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-person me-2"></i>Profile Settings</h5>
+                    
+                    <div class="form-section">
+                        <div class="text-center mb-4">
+                            <div class="avatar-preview" id="avatarPreview">JD</div>
+                            <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="Settings.uploadAvatar(event)">
+                            <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('avatarUpload').click()">
+                                <i class="bi bi-camera me-1"></i>Change Avatar
+                            </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" value="John">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" value="Doe">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" value="john.doe@ameco.et">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" value="+251 91 234 5678">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <select class="form-select" id="department">
+                                <option value="editorial">Editorial</option>
+                                <option value="production" selected>Production</option>
+                                <option value="technical">Technical</option>
+                                <option value="management">Management</option>
+                                <option value="marketing">Marketing</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" rows="3" placeholder="Tell us about yourself...">Senior Production Manager with 5+ years experience in media production.</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" onclick="Settings.saveProfile()">
+                                <i class="bi bi-save me-2"></i>Save Profile Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-shield-lock me-2"></i>Security Settings</h5>
+                    
+                    <div class="form-section">
+                        <h6>Change Password</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" oninput="Settings.checkPasswordStrength()">
+                            <div class="password-strength">
+                                <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                            </div>
+                            <small class="text-muted">Password must be at least 8 characters with letters and numbers</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary" onclick="Settings.changePassword()">
+                                <i class="bi bi-key me-2"></i>Update Password
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section mt-4">
+                        <h6>Two-Factor Authentication</h6>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Enable 2FA</h6>
+                                <p class="mb-0 text-muted">Add an extra layer of security to your account</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="enable2FA">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section mt-4">
+                        <h6>Login Sessions</h6>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Device</th>
+                                        <th>Location</th>
+                                        <th>Last Active</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="bi bi-laptop me-2"></i>Windows Chrome</td>
+                                        <td>Addis Ababa, ET</td>
+                                        <td>Just now</td>
+                                        <td><span class="badge bg-success">Current</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-phone me-2"></i>Android Chrome</td>
+                                        <td>Addis Ababa, ET</td>
+                                        <td>2 hours ago</td>
+                                        <td><button class="btn btn-sm btn-outline-danger">Revoke</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-tablet me-2"></i>iPad Safari</td>
+                                        <td>Bahir Dar, ET</td>
+                                        <td>1 day ago</td>
+                                        <td><button class="btn btn-sm btn-outline-danger">Revoke</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="settings-card danger-zone">
+                    <h5><i class="bi bi-exclamation-triangle me-2"></i>Danger Zone</h5>
+                    
+                    <div class="form-section">
+                        <div class="mb-4">
+                            <h6>Account Deactivation</h6>
+                            <p class="text-muted">Temporarily disable your account. You can reactivate it anytime by logging in.</p>
+                            <button class="btn btn-warning" onclick="Settings.deactivateAccount()">
+                                <i class="bi bi-pause-circle me-2"></i>Deactivate Account
+                            </button>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Export Data</h6>
+                            <p class="text-muted">Download all your personal data in JSON format.</p>
+                            <button class="btn btn-outline-primary" onclick="Settings.exportData()">
+                                <i class="bi bi-download me-2"></i>Export My Data
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <h6 class="text-danger">Delete Account</h6>
+                            <p class="text-muted">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                            <button class="btn btn-danger" onclick="Settings.deleteAccount()">
+                                <i class="bi bi-trash me-2"></i>Delete Account Permanently
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Preferences & Theme -->
+            <div class="col-lg-4">
+                <!-- Theme Settings -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-palette me-2"></i>Theme & Appearance</h5>
+                    
+                    <div class="form-section">
+                        <h6>Theme Selection</h6>
+                        <div class="d-flex flex-wrap justify-content-center mb-4">
+                            <div class="theme-preview theme-light active" data-theme="light" onclick="Settings.setTheme('light')" title="Light Theme"></div>
+                            <div class="theme-preview theme-dark" data-theme="dark" onclick="Settings.setTheme('dark')" title="Dark Theme"></div>
+                            <div class="theme-preview theme-blue" data-theme="blue" onclick="Settings.setTheme('blue')" title="Blue Theme"></div>
+                            <div class="theme-preview theme-green" data-theme="green" onclick="Settings.setTheme('green')" title="Green Theme"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Font Size</label>
+                            <select class="form-select" id="fontSize" onchange="Settings.setFontSize()">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                                <option value="x-large">Extra Large</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Sidebar Width</label>
+                            <select class="form-select" id="sidebarWidth" onchange="Settings.setSidebarWidth()">
+                                <option value="narrow">Narrow (200px)</option>
+                                <option value="normal" selected>Normal (260px)</option>
+                                <option value="wide">Wide (320px)</option>
+                            </select>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Reduce Animations</h6>
+                                <p class="mb-0 text-muted">Minimize motion effects</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="reduceAnimations">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">High Contrast Mode</h6>
+                                <p class="mb-0 text-muted">Increase contrast for readability</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="highContrast">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-bell me-2"></i>Notifications</h5>
+                    
+                    <div class="form-section">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Email Notifications</h6>
+                                <p class="mb-0 text-muted">Receive email alerts</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Push Notifications</h6>
+                                <p class="mb-0 text-muted">Browser notifications</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pushNotifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Assignment Alerts</h6>
+                                <p class="mb-0 text-muted">New assignments</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="assignmentAlerts" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Deadline Reminders</h6>
+                                <p class="mb-0 text-muted">Approaching deadlines</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="deadlineReminders" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Weekly Reports</h6>
+                                <p class="mb-0 text-muted">Weekly summary emails</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="weeklyReports" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section mt-4">
+                        <h6>Notification Sound</h6>
+                        <select class="form-select" id="notificationSound">
+                            <option value="default" selected>Default</option>
+                            <option value="chime">Chime</option>
+                            <option value="bell">Bell</option>
+                            <option value="ding">Ding</option>
+                            <option value="silent">Silent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-eye me-2"></i>Privacy</h5>
+                    
+                    <div class="form-section">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Online Status</h6>
+                                <p class="mb-0 text-muted">Show when you're online</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showOnlineStatus" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Activity Feed</h6>
+                                <p class="mb-0 text-muted">Share your activity</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="shareActivity" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Profile Visibility</h6>
+                                <p class="mb-0 text-muted">Make profile public</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="profilePublic">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Data Retention</label>
+                            <select class="form-select" id="dataRetention">
+                                <option value="30">30 days</option>
+                                <option value="90" selected>90 days</option>
+                                <option value="180">180 days</option>
+                                <option value="365">1 year</option>
+                                <option value="forever">Forever</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup & Export -->
+                <div class="settings-card">
+                    <h5><i class="bi bi-cloud-arrow-down me-2"></i>Backup & Export</h5>
+                    
+                    <div class="form-section text-center">
+                        <div class="backup-card mb-3" onclick="Settings.createBackup()">
+                            <i class="bi bi-cloud-arrow-up" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <h6 class="mt-2">Create Backup</h6>
+                            <p class="text-muted small">Backup all your settings and preferences</p>
+                        </div>
+
+                        <div class="backup-card" onclick="Settings.restoreBackup()">
+                            <i class="bi bi-cloud-arrow-down" style="font-size: 2rem; color: var(--primary-color);"></i>
+                            <h6 class="mt-2">Restore Backup</h6>
+                            <p class="text-muted small">Restore from a previous backup file</p>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-outline-primary w-100" onclick="Settings.resetToDefault()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Reset to Default Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Settings Management Class
+        class SettingsManager {
+            constructor() {
+                this.currentUser = this.getCurrentUser();
+                this.settings = this.loadSettings();
+                this.init();
+            }
+
+            init() {
+                this.loadUserData();
+                this.loadTheme();
+                this.loadPreferences();
+                this.setupEventListeners();
+            }
+
+            getCurrentUser() {
+                // Try to get user from different storage locations
+                const crewUser = JSON.parse(localStorage.getItem('crewUserData'));
+                const editorUser = JSON.parse(localStorage.getItem('editorUserData'));
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                
+                return crewUser || editorUser || users[0] || {
+                    name: 'John Doe',
+                    email: 'john.doe@ameco.et',
+                    role: 'Staff',
+                    avatar: 'JD'
+                };
+            }
+
+            loadSettings() {
+                const savedSettings = JSON.parse(localStorage.getItem('dashboardSettings')) || {};
+                return {
+                    theme: savedSettings.theme || 'light',
+                    fontSize: savedSettings.fontSize || 'medium',
+                    sidebarWidth: savedSettings.sidebarWidth || 'normal',
+                    reduceAnimations: savedSettings.reduceAnimations || false,
+                    highContrast: savedSettings.highContrast || false,
+                    notifications: savedSettings.notifications || {
+                        email: true,
+                        push: true,
+                        assignments: true,
+                        deadlines: true,
+                        weekly: true,
+                        sound: 'default'
+                    },
+                    privacy: savedSettings.privacy || {
+                        onlineStatus: true,
+                        activityFeed: true,
+                        profilePublic: false,
+                        dataRetention: '90'
+                    }
+                };
+            }
+
+            loadUserData() {
+                if (this.currentUser) {
+                    document.getElementById('firstName').value = this.currentUser.name?.split(' ')[0] || 'John';
+                    document.getElementById('lastName').value = this.currentUser.name?.split(' ')[1] || 'Doe';
+                    document.getElementById('email').value = this.currentUser.email || 'john.doe@ameco.et';
+                    document.getElementById('phone').value = this.currentUser.phone || '+251 91 234 5678';
+                    document.getElementById('department').value = this.currentUser.department || 'production';
+                    document.getElementById('bio').value = this.currentUser.bio || '';
+                    
+                    // Update avatar preview
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    if (this.currentUser.avatar) {
+                        avatarPreview.textContent = this.currentUser.avatar;
+                    } else {
+                        avatarPreview.textContent = this.currentUser.name?.substring(0, 2).toUpperCase() || 'JD';
+                    }
+                }
+            }
+
+            loadTheme() {
+                const theme = this.settings.theme;
+                document.body.setAttribute('data-theme', theme);
+                
+                // Update theme preview selection
+                document.querySelectorAll('.theme-preview').forEach(preview => {
+                    preview.classList.remove('active');
+                    if (preview.getAttribute('data-theme') === theme) {
+                        preview.classList.add('active');
+                    }
+                });
+                
+                // Update theme-specific variables
+                this.updateThemeVariables(theme);
+            }
+
+            updateThemeVariables(theme) {
+                const root = document.documentElement;
+                switch(theme) {
+                    case 'dark':
+                        root.style.setProperty('--primary-color', '#3498db');
+                        root.style.setProperty('--secondary-color', '#2980b9');
+                        break;
+                    case 'blue':
+                        root.style.setProperty('--primary-color', '#3498db');
+                        root.style.setProperty('--secondary-color', '#2980b9');
+                        break;
+                    case 'green':
+                        root.style.setProperty('--primary-color', '#2ecc71');
+                        root.style.setProperty('--secondary-color', '#27ae60');
+                        break;
+                    default: // light
+                        root.style.setProperty('--primary-color', '#2ecc71');
+                        root.style.setProperty('--secondary-color', '#27ae60');
+                }
+            }
+
+            loadPreferences() {
+                // Load saved preferences
+                document.getElementById('fontSize').value = this.settings.fontSize;
+                document.getElementById('sidebarWidth').value = this.settings.sidebarWidth;
+                document.getElementById('reduceAnimations').checked = this.settings.reduceAnimations;
+                document.getElementById('highContrast').checked = this.settings.highContrast;
+                document.getElementById('enable2FA').checked = this.currentUser.twoFactorEnabled || false;
+                
+                // Load notification settings
+                if (this.settings.notifications) {
+                    document.getElementById('emailNotifications').checked = this.settings.notifications.email;
+                    document.getElementById('pushNotifications').checked = this.settings.notifications.push;
+                    document.getElementById('assignmentAlerts').checked = this.settings.notifications.assignments;
+                    document.getElementById('deadlineReminders').checked = this.settings.notifications.deadlines;
+                    document.getElementById('weeklyReports').checked = this.settings.notifications.weekly;
+                    document.getElementById('notificationSound').value = this.settings.notifications.sound;
+                }
+                
+                // Load privacy settings
+                if (this.settings.privacy) {
+                    document.getElementById('showOnlineStatus').checked = this.settings.privacy.onlineStatus;
+                    document.getElementById('shareActivity').checked = this.settings.privacy.activityFeed;
+                    document.getElementById('profilePublic').checked = this.settings.privacy.profilePublic;
+                    document.getElementById('dataRetention').value = this.settings.privacy.dataRetention;
+                }
+            }
+
+            setupEventListeners() {
+                // Auto-save theme changes
+                document.querySelectorAll('.theme-preview').forEach(preview => {
+                    preview.addEventListener('click', (e) => {
+                        const theme = e.target.getAttribute('data-theme');
+                        this.setTheme(theme);
+                    });
+                });
+
+                // Auto-save toggle switches
+                document.querySelectorAll('.toggle-switch input').forEach(switchEl => {
+                    switchEl.addEventListener('change', (e) => {
+                        this.saveSettings();
+                    });
+                });
+
+                // Auto-save select changes
+                document.querySelectorAll('select').forEach(selectEl => {
+                    selectEl.addEventListener('change', () => {
+                        this.saveSettings();
+                    });
+                });
+            }
+
+            setTheme(theme) {
+                this.settings.theme = theme;
+                this.saveSettings();
+                this.loadTheme();
+                this.showToast(`Theme changed to ${theme}`, 'success');
+            }
+
+            setFontSize() {
+                const fontSize = document.getElementById('fontSize').value;
+                this.settings.fontSize = fontSize;
+                this.saveSettings();
+                
+                // Apply font size to body
+                const sizeMap = {
+                    'small': '14px',
+                    'medium': '16px',
+                    'large': '18px',
+                    'x-large': '20px'
+                };
+                document.body.style.fontSize = sizeMap[fontSize];
+                
+                this.showToast(`Font size updated to ${fontSize}`, 'success');
+            }
+
+            setSidebarWidth() {
+                const width = document.getElementById('sidebarWidth').value;
+                this.settings.sidebarWidth = width;
+                this.saveSettings();
+                this.showToast(`Sidebar width updated`, 'success');
+            }
+
+            saveProfile() {
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const department = document.getElementById('department').value;
+                const bio = document.getElementById('bio').value.trim();
+
+                // Validate
+                if (!firstName || !lastName || !email) {
+                    this.showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                if (!this.validateEmail(email)) {
+                    this.showToast('Please enter a valid email address', 'error');
+                    return;
+                }
+
+                // Update user data
+                this.currentUser.name = `${firstName} ${lastName}`;
+                this.currentUser.email = email;
+                this.currentUser.phone = phone;
+                this.currentUser.department = department;
+                this.currentUser.bio = bio;
+                this.currentUser.avatar = firstName.substring(0, 1) + lastName.substring(0, 1);
+
+                // Save to appropriate storage
+                if (localStorage.getItem('crewUserData')) {
+                    localStorage.setItem('crewUserData', JSON.stringify(this.currentUser));
+                } else if (localStorage.getItem('editorUserData')) {
+                    localStorage.setItem('editorUserData', JSON.stringify(this.currentUser));
+                } else {
+                    // Update in users array
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const userIndex = users.findIndex(u => u.email === this.currentUser.email);
+                    if (userIndex !== -1) {
+                        users[userIndex] = this.currentUser;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+                }
+
+                // Update avatar preview
+                document.getElementById('avatarPreview').textContent = this.currentUser.avatar;
+
+                this.showToast('Profile updated successfully!', 'success');
+            }
+
+            uploadAvatar(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.type.match('image.*')) {
+                    this.showToast('Please select an image file', 'error');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    this.showToast('Image size should be less than 5MB', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // In a real app, you would upload to server
+                    // For demo, we'll just show a success message
+                    const avatarPreview = document.getElementById('avatarPreview');
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                    
+                    this.currentUser.avatarUrl = e.target.result;
+                    this.saveSettings();
+                    
+                    this.showToast('Avatar uploaded successfully!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            checkPasswordStrength() {
+                const password = document.getElementById('newPassword').value;
+                const strengthBar = document.getElementById('passwordStrengthBar');
+                
+                let strength = 0;
+                let className = 'weak';
+                
+                if (password.length >= 8) strength += 25;
+                if (/[a-z]/.test(password)) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 25;
+                
+                if (strength >= 75) {
+                    className = 'strong';
+                } else if (strength >= 50) {
+                    className = 'good';
+                } else if (strength >= 25) {
+                    className = 'fair';
+                }
+                
+                strengthBar.className = `password-strength-bar ${className}`;
+                strengthBar.style.width = `${strength}%`;
+            }
+
+            changePassword() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    this.showToast('Please fill in all password fields', 'error');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    this.showToast('New passwords do not match', 'error');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    this.showToast('Password must be at least 8 characters', 'error');
+                    return;
+                }
+
+                // In a real app, verify current password with server
+                // For demo, we'll just check if it's not empty
+                if (currentPassword === '') {
+                    this.showToast('Current password is incorrect', 'error');
+                    return;
+                }
+
+                // Update password in user data
+                this.currentUser.password = newPassword;
+                
+                // Save to appropriate storage
+                if (localStorage.getItem('crewUserData')) {
+                    localStorage.setItem('crewUserData', JSON.stringify(this.currentUser));
+                } else if (localStorage.getItem('editorUserData')) {
+                    localStorage.setItem('editorUserData', JSON.stringify(this.currentUser));
+                } else {
+                    // Update in users array
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const userIndex = users.findIndex(u => u.email === this.currentUser.email);
+                    if (userIndex !== -1) {
+                        users[userIndex].password = newPassword;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+                }
+
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                document.getElementById('passwordStrengthBar').style.width = '0%';
+
+                this.showToast('Password changed successfully!', 'success');
+            }
+
+            saveSettings() {
+                // Save theme and appearance settings
+                this.settings.reduceAnimations = document.getElementById('reduceAnimations').checked;
+                this.settings.highContrast = document.getElementById('highContrast').checked;
+
+                // Save notification settings
+                this.settings.notifications = {
+                    email: document.getElementById('emailNotifications').checked,
+                    push: document.getElementById('pushNotifications').checked,
+                    assignments: document.getElementById('assignmentAlerts').checked,
+                    deadlines: document.getElementById('deadlineReminders').checked,
+                    weekly: document.getElementById('weeklyReports').checked,
+                    sound: document.getElementById('notificationSound').value
+                };
+
+                // Save privacy settings
+                this.settings.privacy = {
+                    onlineStatus: document.getElementById('showOnlineStatus').checked,
+                    activityFeed: document.getElementById('shareActivity').checked,
+                    profilePublic: document.getElementById('profilePublic').checked,
+                    dataRetention: document.getElementById('dataRetention').value
+                };
+
+                // Save 2FA setting
+                this.currentUser.twoFactorEnabled = document.getElementById('enable2FA').checked;
+
+                // Save to localStorage
+                localStorage.setItem('dashboardSettings', JSON.stringify(this.settings));
+                
+                // Save user data with 2FA setting
+                if (localStorage.getItem('crewUserData')) {
+                    localStorage.setItem('crewUserData', JSON.stringify(this.currentUser));
+                } else if (localStorage.getItem('editorUserData')) {
+                    localStorage.setItem('editorUserData', JSON.stringify(this.currentUser));
+                }
+
+                // Apply settings immediately
+                this.applySettings();
+            }
+
+            applySettings() {
+                // Apply animation settings
+                if (this.settings.reduceAnimations) {
+                    document.body.style.setProperty('--transition-speed', '0s');
+                } else {
+                    document.body.style.setProperty('--transition-speed', '0.3s');
+                }
+
+                // Apply high contrast
+                if (this.settings.highContrast) {
+                    document.body.classList.add('high-contrast');
+                } else {
+                    document.body.classList.remove('high-contrast');
+                }
+            }
+
+            createBackup() {
+                const backupData = {
+                    user: this.currentUser,
+                    settings: this.settings,
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dashboard-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showToast('Backup created successfully!', 'success');
+            }
+
+            restoreBackup() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = (e) => {
+                        try {
+                            const backupData = JSON.parse(e.target.result);
+                            
+                            // Validate backup structure
+                            if (!backupData.user || !backupData.settings) {
+                                throw new Error('Invalid backup file');
+                            }
+
+                            // Restore data
+                            localStorage.setItem('dashboardSettings', JSON.stringify(backupData.settings));
+                            
+                            // Update current user
+                            if (backupData.user.email === this.currentUser.email) {
+                                if (localStorage.getItem('crewUserData')) {
+                                    localStorage.setItem('crewUserData', JSON.stringify(backupData.user));
+                                } else if (localStorage.getItem('editorUserData')) {
+                                    localStorage.setItem('editorUserData', JSON.stringify(backupData.user));
+                                }
+                                
+                                this.currentUser = backupData.user;
+                                this.settings = backupData.settings;
+                                
+                                // Reload UI
+                                this.loadUserData();
+                                this.loadPreferences();
+                                this.loadTheme();
+                                
+                                this.showToast('Backup restored successfully!', 'success');
+                            } else {
+                                this.showToast('Backup belongs to a different user', 'error');
+                            }
+                        } catch (error) {
+                            this.showToast('Failed to restore backup: ' + error.message, 'error');
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            }
+
+            resetToDefault() {
+                if (confirm('Are you sure you want to reset all settings to default? This will reset your theme, notifications, and preferences.')) {
+                    localStorage.removeItem('dashboardSettings');
+                    this.settings = this.loadSettings();
+                    this.loadTheme();
+                    this.loadPreferences();
+                    this.showToast('Settings reset to default', 'success');
+                }
+            }
+
+            exportData() {
+                const userData = {
+                    profile: this.currentUser,
+                    settings: this.settings,
+                    exportDate: new Date().toISOString()
+                };
+
+                const blob = new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `user-data-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showToast('Data exported successfully!', 'success');
+            }
+
+            deactivateAccount() {
+                if (confirm('Are you sure you want to deactivate your account? You can reactivate by logging in again.')) {
+                    // In a real app, send deactivation request to server
+                    // For demo, we'll just show a message
+                    this.showToast('Account deactivation request sent. You will be logged out in 24 hours.', 'warning');
+                }
+            }
+
+            deleteAccount() {
+                if (confirm('WARNING: This will permanently delete your account and all associated data. This action cannot be undone. Are you absolutely sure?')) {
+                    const confirmation = prompt('Type "DELETE" to confirm permanent account deletion:');
+                    if (confirmation === 'DELETE') {
+                        // In a real app, send deletion request to server
+                        // For demo, we'll just clear local data and redirect
+                        localStorage.removeItem('crewUserData');
+                        localStorage.removeItem('editorUserData');
+                        localStorage.removeItem('dashboardSettings');
+                        
+                        // Remove user from users array
+                        const users = JSON.parse(localStorage.getItem('users')) || [];
+                        const filteredUsers = users.filter(u => u.email !== this.currentUser.email);
+                        localStorage.setItem('users', JSON.stringify(filteredUsers));
+                        
+                        this.showToast('Account deleted successfully. Redirecting to login...', 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else {
+                        this.showToast('Account deletion cancelled', 'info');
+                    }
+                }
+            }
+
+            validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            showToast(message, type = 'info') {
+                let toastContainer = document.getElementById('toastContainer');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.className = 'toast-container';
+                    toastContainer.id = 'toastContainer';
+                    document.body.appendChild(toastContainer);
+                }
+
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}-toast`;
+                toast.innerHTML = `
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-x-circle' : 'bi-info-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button class="btn btn-sm btn-link ms-auto close-toast">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+
+                toastContainer.appendChild(toast);
+
+                toast.querySelector('.close-toast').addEventListener('click', () => {
+                    toast.remove();
+                });
+
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize Settings Manager
+        let Settings;
+        document.addEventListener('DOMContentLoaded', function() {
+            Settings = new SettingsManager();
+            
+            // Make Settings available globally
+            window.Settings = Settings;
+        });
+    </script>
+</body>
+</html>

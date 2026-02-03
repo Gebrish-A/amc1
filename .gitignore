@@ -1,16 +1,20 @@
+# Node / JS
 node_modules/
-.env
-*.log
+Backend/node_modules/
 dist/
 build/
+
+# Env files
+.env
+
+# Logs
+*.log
+
+# OS & installers
 *.exe
 *.msi
 *.dmg
 *.zip
+
+# Mongo tools
 mongosh*/
-mongosh*/
-*.exe
-node_modules/
-mongosh*/
-*.exe
-node_modules/

@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Analytics - Amhara Media</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        /* Sidebar - Same as dashboard */
+        .sidebar {
+            background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background: white;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h4 {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #adb5bd;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Get Started Card */
+        .get-started-card {
+            border: 2px dashed #dee2e6;
+            background: #f8f9fa;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem 1rem;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            background: #e9ecef;
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+        }
+
+        /* Chart containers */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            padding: 1rem;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .kpi-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .kpi-trend {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up { color: #28a745; }
+        .trend-down { color: #dc3545; }
+        .trend-neutral { color: #6c757d; }
+
+        /* Time period selector */
+        .period-selector .btn-group .btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .period-selector .btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>AMC</h3>
+            <span class="badge" id="userRoleBadge">Requester</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="requester-dashboard.html" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="new-request.html" id="newRequestLink">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>New Request</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="requesters-requests.html" id="myRequestsLink">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>My Requests</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="requester-analytics.html" id="analyticsLink">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>My Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-info d-flex align-items-center gap-3">
+                <div class="avatar-initials" id="userAvatar">
+                    RQ
+                </div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">Content Requester</h6>
+                    <small class="text-white-50" id="userEmail">requester@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="navbar-top">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <h4 class="mb-0 fw-bold" id="pageTitle">My Request Analytics</h4>
+                        <small class="text-muted" id="currentDate"></small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3" id="existingUserControls" style="display: none;">
+                    <div class="btn-group period-selector" role="group">
+                        <button type="button" class="btn btn-outline-secondary active" data-period="7d">7 Days</button>
+                        <button type="button" class="btn btn-outline-secondary" data-period="30d">30 Days</button>
+                        <button type="button" class="btn btn-outline-secondary" data-period="90d">90 Days</button>
+                        <button type="button" class="btn btn-outline-secondary" data-period="1y">1 Year</button>
+                    </div>
+                    <button class="btn btn-primary" id="refreshAnalyticsBtn">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="content-wrapper">
+            <!-- New User View (No Analytics) -->
+            <div id="newUserView" style="display: none;">
+                <!-- Welcome Banner for New User -->
+                <div class="welcome-banner">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 id="welcomeMessageNew">Welcome to Analytics!</h1>
+                            <p>Create your first content request to start tracking performance analytics and insights.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <span id="currentTime"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Started Section -->
+                <div class="dashboard-card get-started-card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-bar-chart" style="font-size: 4rem; color: #dee2e6; margin-bottom: 1.5rem;"></i>
+                        <h3 class="text-muted mb-3">No Analytics Data Yet</h3>
+                        <p class="text-muted mb-4">Analytics will show here once you create and track your content requests.</p>
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <a href="new-request.html" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create Your First Request
+                            </a>
+                            <a href="requester-requests.html" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-eye me-2"></i>
+                                Learn About Tracking
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What You'll See -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">What You'll See in Analytics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4">
+                                    <div class="col-md-3">
+                                        <div class="feature-card">
+                                            <i class="bi bi-speedometer"></i>
+                                            <h5>Performance KPIs</h5>
+                                            <p class="text-muted">Track approval rates, processing times, and success metrics.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="feature-card">
+                                            <i class="bi bi-pie-chart"></i>
+                                            <h5>Visual Charts</h5>
+                                            <p class="text-muted">See request distribution by type, status, and priority.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="feature-card">
+                                            <i class="bi bi-graph-up"></i>
+                                            <h5>Trend Analysis</h5>
+                                            <p class="text-muted">Monitor your request patterns over time.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="feature-card">
+                                            <i class="bi bi-lightbulb"></i>
+                                            <h5>Insights</h5>
+                                            <p class="text-muted">Get recommendations to improve your request success.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing User View (With Analytics) -->
+            <div id="existingUserView" style="display: none;">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 id="welcomeMessage">My Request Analytics</h1>
+                            <p>Tracking performance for <strong id="totalRequestsText">0 requests</strong> with <strong id="approvalRateText">0% approval rate</strong>.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <span id="currentTime2"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Overview -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="kpi-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="kpi-label">Total Requests</div>
+                                    <div class="kpi-value" id="kpiTotalRequests">0</div>
+                                    <div class="kpi-trend trend-up" id="kpiTotalTrend">
+                                        <i class="bi bi-arrow-up"></i> 0% from last period
+                                    </div>
+                                </div>
+                                <div class="text-primary">
+                                    <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="kpi-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="kpi-label">Approval Rate</div>
+                                    <div class="kpi-value" id="kpiApprovalRate">0%</div>
+                                    <div class="kpi-trend trend-up" id="kpiApprovalTrend">
+                                        <i class="bi bi-arrow-up"></i> 0% from last period
+                                    </div>
+                                </div>
+                                <div class="text-success">
+                                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="kpi-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="kpi-label">Avg. Processing Time</div>
+                                    <div class="kpi-value" id="kpiAvgTime">0 days</div>
+                                    <div class="kpi-trend trend-down" id="kpiTimeTrend">
+                                        <i class="bi bi-arrow-down"></i> 0% from last period
+                                    </div>
+                                </div>
+                                <div class="text-info">
+                                    <i class="bi bi-clock" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="kpi-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="kpi-label">Total Budget Used</div>
+                                    <div class="kpi-value" id="kpiTotalBudget">$0</div>
+                                    <div class="kpi-trend trend-up" id="kpiBudgetTrend">
+                                        <i class="bi bi-arrow-up"></i> 0% from last period
+                                    </div>
+                                </div>
+                                <div class="text-warning">
+                                    <i class="bi bi-cash-coin" style="font-size: 2rem;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1 -->
+                <div class="row mb-4">
+                    <div class="col-lg-8 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Request Status Distribution</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="showPercentages" checked>
+                                    <label class="form-check-label" for="showPercentages">Show %</label>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="statusDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Request Types</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="typeDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2 -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Monthly Request Trend</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="monthlyTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Priority Distribution</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="priorityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Statistics -->
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Performance Metrics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Value</th>
+                                                <th>Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="performanceTable">
+                                            <!-- Loaded dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Category Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Requests</th>
+                                                <th>Approval Rate</th>
+                                                <th>Avg. Budget</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="categoryTable">
+                                            <!-- Loaded dynamically -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <div class="card-body text-center">
+                                <h5>Export Your Analytics</h5>
+                                <p class="text-muted">Download detailed reports of your request performance</p>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                    <button class="btn btn-outline-primary" id="exportPDFBtn">
+                                        <i class="bi bi-file-pdf me-2"></i> Export as PDF
+                                    </button>
+                                    <button class="btn btn-outline-success" id="exportCSVBtn">
+                                        <i class="bi bi-file-spreadsheet me-2"></i> Export as CSV
+                                    </button>
+                                    <button class="btn btn-outline-info" id="exportReportBtn">
+                                        <i class="bi bi-file-text me-2"></i> Generate Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class RequesterAnalytics {
+            constructor() {
+                this.currentUser = null;
+                this.requests = [];
+                this.charts = {};
+                this.currentPeriod = '30d';
+                this.isNewUser = true;
+                
+                this.loadUserData();
+                this.determineUserView();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.updateDateTime();
+                this.updateUserUI();
+                
+                console.log('Requester Analytics initialized');
+            }
+            
+            determineUserView() {
+                // Check if user has any saved requests
+                const savedRequests = localStorage.getItem(`user_requests_${this.currentUser.email}`);
+                
+                if (savedRequests) {
+                    const requests = JSON.parse(savedRequests);
+                    if (requests.length > 0) {
+                        this.isNewUser = false;
+                        this.requests = requests.map(req => ({
+                            ...req,
+                            createdAt: new Date(req.createdAt),
+                            dueDate: new Date(req.dueDate),
+                            lastUpdated: req.lastUpdated ? new Date(req.lastUpdated) : null,
+                            completedAt: req.completedAt ? new Date(req.completedAt) : null
+                        }));
+                    }
+                }
+                
+                // Show appropriate view
+                if (this.isNewUser) {
+                    this.showNewUserView();
+                } else {
+                    this.showExistingUserView();
+                    this.initCharts();
+                    this.updateAnalytics();
+                }
+            }
+            
+            showNewUserView() {
+                document.getElementById('newUserView').style.display = 'block';
+                document.getElementById('existingUserView').style.display = 'none';
+                document.getElementById('existingUserControls').style.display = 'none';
+                
+                // Update welcome message
+                document.getElementById('welcomeMessageNew').textContent = 
+                    `Welcome to Analytics, ${this.currentUser.name.split(' ')[0]}!`;
+            }
+            
+            showExistingUserView() {
+                document.getElementById('newUserView').style.display = 'none';
+                document.getElementById('existingUserView').style.display = 'block';
+                document.getElementById('existingUserControls').style.display = 'flex';
+                
+                // Update welcome message
+                document.getElementById('welcomeMessage').textContent = 
+                    `${this.currentUser.name.split(' ')[0]}'s Analytics`;
+                
+                // Update summary text
+                this.updateSummaryText();
+            }
+            
+            updateSummaryText() {
+                const filteredRequests = this.getFilteredRequests();
+                const total = filteredRequests.length;
+                const approvalRate = total > 0 ? 
+                    Math.round((filteredRequests.filter(r => r.status === 'approved' || r.status === 'completed').length / total) * 100) : 0;
+                
+                document.getElementById('totalRequestsText').textContent = `${total} request${total !== 1 ? 's' : ''}`;
+                document.getElementById('approvalRateText').textContent = `${approvalRate}% approval rate`;
+            }
+            
+            loadUserData() {
+                const storedUser = localStorage.getItem('user');
+                
+                if (storedUser) {
+                    this.currentUser = JSON.parse(storedUser);
+                } else {
+                    this.currentUser = {
+                        name: 'Content Requester',
+                        email: 'requester@ameco.et',
+                        role: 'requester',
+                        avatar: 'RQ'
+                    };
+                    localStorage.setItem('user', JSON.stringify(this.currentUser));
+                }
+            }
+            
+            updateUserUI() {
+                const user = this.currentUser;
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.avatar;
+                document.getElementById('userRoleBadge').textContent = user.role.replace('_', ' ').toUpperCase();
+                document.getElementById('pageTitle').textContent = `${user.name}'s Analytics`;
+            }
+            
+            updateAnalytics() {
+                const filteredRequests = this.getFilteredRequests();
+                this.updateKPIs(filteredRequests);
+                this.updatePerformanceTable(filteredRequests);
+                this.updateCategoryTable(filteredRequests);
+                this.updateCharts(filteredRequests);
+                this.updateSummaryText();
+            }
+            
+            getFilteredRequests() {
+                const now = new Date();
+                let startDate = new Date();
+                
+                switch(this.currentPeriod) {
+                    case '7d':
+                        startDate.setDate(now.getDate() - 7);
+                        break;
+                    case '30d':
+                        startDate.setDate(now.getDate() - 30);
+                        break;
+                    case '90d':
+                        startDate.setDate(now.getDate() - 90);
+                        break;
+                    case '1y':
+                        startDate.setFullYear(now.getFullYear() - 1);
+                        break;
+                    default:
+                        startDate.setDate(now.getDate() - 30);
+                }
+                
+                return this.requests.filter(request => 
+                    request.createdAt >= startDate
+                );
+            }
+            
+            updateKPIs(requests) {
+                const totalRequests = requests.length;
+                const approvedRequests = requests.filter(r => r.status === 'approved' || r.status === 'completed').length;
+                const approvalRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
+                
+                // Calculate average processing time for completed requests
+                const completedRequests = requests.filter(r => r.status === 'completed' && r.completedAt);
+                let avgProcessingTime = 0;
+                if (completedRequests.length > 0) {
+                    const totalDays = completedRequests.reduce((sum, req) => {
+                        const days = (req.completedAt - req.createdAt) / (1000 * 60 * 60 * 24);
+                        return sum + days;
+                    }, 0);
+                    avgProcessingTime = Math.round(totalDays / completedRequests.length);
+                }
+                
+                // Calculate total budget
+                const totalBudget = requests.reduce((sum, req) => sum + req.budget, 0);
+                
+                // Update KPI displays
+                document.getElementById('kpiTotalRequests').textContent = totalRequests;
+                document.getElementById('kpiApprovalRate').textContent = `${approvalRate}%`;
+                document.getElementById('kpiAvgTime').textContent = avgProcessingTime > 0 ? `${avgProcessingTime} days` : 'N/A';
+                document.getElementById('kpiTotalBudget').textContent = `$${totalBudget.toLocaleString()}`;
+                
+                // Update trends (based on actual data)
+                this.updateTrends(requests);
+            }
+            
+            updateTrends(requests) {
+                // For simplicity, we'll show basic trends
+                const total = requests.length;
+                
+                document.getElementById('kpiTotalTrend').innerHTML = 
+                    `<i class="bi bi-arrow-up"></i> ${total > 0 ? 'Positive' : 'No'} growth`;
+                document.getElementById('kpiApprovalTrend').innerHTML = 
+                    `<i class="bi bi-arrow-up"></i> Based on current data`;
+                document.getElementById('kpiTimeTrend').innerHTML = 
+                    `<i class="bi bi-dash-circle"></i> ${requests.filter(r => r.status === 'completed').length > 0 ? 'Measured' : 'No data'}`;
+                document.getElementById('kpiBudgetTrend').innerHTML = 
+                    `<i class="bi bi-arrow-up"></i> Total budget usage`;
+            }
+            
+            updatePerformanceTable(requests) {
+                const container = document.getElementById('performanceTable');
+                container.innerHTML = '';
+                
+                const total = requests.length;
+                const approved = requests.filter(r => r.status === 'approved' || r.status === 'completed').length;
+                const completed = requests.filter(r => r.status === 'completed').length;
+                const rejected = requests.filter(r => r.status === 'rejected').length;
+                const avgBudget = total > 0 ? Math.round(requests.reduce((s, r) => s + r.budget, 0) / total) : 0;
+                
+                const metrics = [
+                    { 
+                        label: 'Total Requests', 
+                        value: total, 
+                        trend: total > 0 ? '+ Active' : 'No data' 
+                    },
+                    { 
+                        label: 'Approval Rate', 
+                        value: total > 0 ? `${Math.round((approved / total) * 100)}%` : '0%', 
+                        trend: approved > 0 ? `${Math.round((approved / total) * 100)}% success` : 'No approvals' 
+                    },
+                    { 
+                        label: 'Completion Rate', 
+                        value: total > 0 ? `${Math.round((completed / total) * 100)}%` : '0%', 
+                        trend: completed > 0 ? `${completed} completed` : 'None completed' 
+                    },
+                    { 
+                        label: 'Rejection Rate', 
+                        value: total > 0 ? `${Math.round((rejected / total) * 100)}%` : '0%', 
+                        trend: rejected > 0 ? `${rejected} rejected` : 'None rejected' 
+                    },
+                    { 
+                        label: 'Avg. Budget per Request', 
+                        value: `$${avgBudget}`, 
+                        trend: avgBudget > 0 ? 'Average spending' : 'No budget data' 
+                    },
+                    { 
+                        label: 'Success Score', 
+                        value: total > 0 ? `${Math.round((approved / total) * 10)}/10` : 'N/A', 
+                        trend: total > 0 ? 'Based on approvals' : 'No data' 
+                    }
+                ];
+                
+                metrics.forEach(metric => {
+                    const row = document.createElement('tr');
+                    const trendClass = metric.trend.includes('No') ? 'trend-neutral' : 
+                                      metric.trend.includes('success') || metric.trend.includes('Active') ? 'trend-up' : 'trend-down';
+                    
+                    row.innerHTML = `
+                        <td>${metric.label}</td>
+                        <td><strong>${metric.value}</strong></td>
+                        <td><span class="${trendClass}">${metric.trend}</span></td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+            }
+            
+            updateCategoryTable(requests) {
+                const container = document.getElementById('categoryTable');
+                container.innerHTML = '';
+                
+                if (requests.length === 0) {
+                    container.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No category data available
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Group by category
+                const categories = {};
+                requests.forEach(request => {
+                    if (!categories[request.category]) {
+                        categories[request.category] = {
+                            count: 0,
+                            approved: 0,
+                            totalBudget: 0
+                        };
+                    }
+                    categories[request.category].count++;
+                    if (request.status === 'approved' || request.status === 'completed') {
+                        categories[request.category].approved++;
+                    }
+                    categories[request.category].totalBudget += request.budget;
+                });
+                
+                Object.entries(categories).forEach(([category, data]) => {
+                    const approvalRate = Math.round((data.approved / data.count) * 100);
+                    const avgBudget = Math.round(data.totalBudget / data.count);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${category}</td>
+                        <td><strong>${data.count}</strong></td>
+                        <td><span class="badge ${approvalRate >= 70 ? 'bg-success' : approvalRate >= 40 ? 'bg-warning' : 'bg-danger'}">${approvalRate}%</span></td>
+                        <td><strong>$${avgBudget}</strong></td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+            }
+            
+            initCharts() {
+                // Status Distribution Chart
+                const statusCtx = document.getElementById('statusDistributionChart');
+                this.charts.status = new Chart(statusCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Draft', 'Pending', 'Approved', 'In Progress', 'Completed', 'Rejected'],
+                        datasets: [{
+                            label: 'Number of Requests',
+                            data: [0, 0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#e9ecef', '#fff3cd', '#d4edda', '#d1ecf1', '#28a745', '#f8d7da'
+                            ],
+                            borderColor: [
+                                '#6c757d', '#856404', '#155724', '#0c5460', '#1e7e34', '#721c24'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels]
+                });
+                
+                // Type Distribution Chart
+                const typeCtx = document.getElementById('typeDistributionChart');
+                this.charts.type = new Chart(typeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Article', 'Press Release', 'Interview', 'Photography', 'Video'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: [
+                                '#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            datalabels: {
+                                color: 'white',
+                                font: {
+                                    weight: 'bold',
+                                    size: 14
+                                },
+                                formatter: (value, context) => {
+                                    const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return total > 0 ? `${percentage}%` : '';
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    },
+                    plugins: [ChartDataLabels]
+                });
+                
+                // Monthly Trend Chart
+                const trendCtx = document.getElementById('monthlyTrendChart');
+                this.charts.trend = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Requests',
+                            data: new Array(12).fill(0),
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // Priority Chart
+                const priorityCtx = document.getElementById('priorityChart');
+                this.charts.priority = new Chart(priorityCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Low', 'Medium', 'High', 'Urgent'],
+                        datasets: [{
+                            label: 'Priority Distribution',
+                            data: [0, 0, 0, 0],
+                            backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                            borderColor: '#3498db',
+                            pointBackgroundColor: '#3498db',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: '#3498db'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            updateCharts(requests) {
+                // Update status distribution
+                const statusCounts = {
+                    draft: requests.filter(r => r.status === 'draft').length,
+                    pending: requests.filter(r => r.status === 'pending').length,
+                    approved: requests.filter(r => r.status === 'approved').length,
+                    'in-progress': requests.filter(r => r.status === 'in-progress').length,
+                    completed: requests.filter(r => r.status === 'completed').length,
+                    rejected: requests.filter(r => r.status === 'rejected').length
+                };
+                
+                this.charts.status.data.datasets[0].data = [
+                    statusCounts.draft,
+                    statusCounts.pending,
+                    statusCounts.approved,
+                    statusCounts['in-progress'],
+                    statusCounts.completed,
+                    statusCounts.rejected
+                ];
+                this.charts.status.update();
+                
+                // Update type distribution
+                const types = ['Article', 'Press Release', 'Interview', 'Photography', 'Video'];
+                const typeCounts = types.map(type => 
+                    requests.filter(r => r.type === type).length
+                );
+                this.charts.type.data.datasets[0].data = typeCounts;
+                this.charts.type.update();
+                
+                // Update monthly trend
+                const monthlyData = new Array(12).fill(0);
+                requests.forEach(request => {
+                    const month = request.createdAt.getMonth();
+                    monthlyData[month]++;
+                });
+                this.charts.trend.data.datasets[0].data = monthlyData;
+                this.charts.trend.update();
+                
+                // Update priority distribution
+                const priorities = ['low', 'medium', 'high', 'urgent'];
+                const priorityCounts = priorities.map(priority =>
+                    requests.filter(r => r.priority === priority).length
+                );
+                this.charts.priority.data.datasets[0].data = priorityCounts;
+                this.charts.priority.update();
+            }
+            
+            setupEventListeners() {
+                // Mobile menu toggle
+                document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    const sidebar = document.getElementById('sidebar');
+                    const menuToggle = document.getElementById('mobileMenuToggle');
+                    
+                    if (window.innerWidth <= 768 && 
+                        sidebar.classList.contains('active') && 
+                        !sidebar.contains(e.target) && 
+                        e.target !== menuToggle && 
+                        !menuToggle.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+                
+                // Time period selector (only in existing user view)
+                document.querySelectorAll('[data-period]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const period = e.target.getAttribute('data-period');
+                        this.setPeriod(period);
+                    });
+                });
+                
+                // Refresh button (only in existing user view)
+                document.getElementById('refreshAnalyticsBtn')?.addEventListener('click', () => {
+                    this.loadRequestsFromStorage();
+                    this.updateAnalytics();
+                    
+                    const btn = document.getElementById('refreshAnalyticsBtn');
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i class="bi bi-check2"></i>';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-success');
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-primary');
+                    }, 1500);
+                });
+                
+                // Show percentages toggle (only in existing user view)
+                document.getElementById('showPercentages')?.addEventListener('change', (e) => {
+                    if (this.charts.type) {
+                        this.charts.type.options.plugins.datalabels.display = e.target.checked;
+                        this.charts.type.update();
+                    }
+                });
+                
+                // Export buttons (only in existing user view)
+                document.getElementById('exportPDFBtn')?.addEventListener('click', () => {
+                    this.exportPDF();
+                });
+                
+                document.getElementById('exportCSVBtn')?.addEventListener('click', () => {
+                    this.exportCSV();
+                });
+                
+                document.getElementById('exportReportBtn')?.addEventListener('click', () => {
+                    this.generateReport();
+                });
+                
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        localStorage.removeItem('user');
+                        localStorage.removeItem('token');
+                        alert('Logged out successfully');
+                        window.location.href = 'login.html';
+                    }
+                });
+                
+                // Highlight current page
+                this.highlightCurrentPage();
+                
+                // Listen for storage changes (when new request is added)
+                window.addEventListener('storage', (e) => {
+                    if (e.key === `new_request_${this.currentUser.email}`) {
+                        this.handleNewRequest(JSON.parse(e.newValue));
+                    }
+                });
+            }
+            
+            loadRequestsFromStorage() {
+                const savedRequests = localStorage.getItem(`user_requests_${this.currentUser.email}`);
+                if (savedRequests) {
+                    const requests = JSON.parse(savedRequests);
+                    if (requests.length > 0) {
+                        this.requests = requests.map(req => ({
+                            ...req,
+                            createdAt: new Date(req.createdAt),
+                            dueDate: new Date(req.dueDate),
+                            lastUpdated: req.lastUpdated ? new Date(req.lastUpdated) : null,
+                            completedAt: req.completedAt ? new Date(req.completedAt) : null
+                        }));
+                        this.isNewUser = false;
+                    }
+                }
+            }
+            
+            handleNewRequest(newRequest) {
+                // Add new request to data
+                this.requests.push({
+                    ...newRequest,
+                    createdAt: new Date(newRequest.createdAt),
+                    dueDate: new Date(newRequest.dueDate)
+                });
+                
+                // If user was new, switch to existing user view
+                if (this.isNewUser) {
+                    this.isNewUser = false;
+                    this.showExistingUserView();
+                    this.initCharts();
+                    this.updateAnalytics();
+                } else {
+                    // Just refresh the existing view
+                    this.updateAnalytics();
+                }
+                
+                // Show notification
+                console.log(`New request "${newRequest.title}" added to analytics`);
+            }
+            
+            setPeriod(period) {
+                this.currentPeriod = period;
+                
+                // Update active button
+                document.querySelectorAll('[data-period]').forEach(btn => {
+                    if (btn.getAttribute('data-period') === period) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                this.updateAnalytics();
+            }
+            
+            exportPDF() {
+                const filteredRequests = this.getFilteredRequests();
+                const total = filteredRequests.length;
+                
+                alert(`PDF Export Preview:\n\nThis would generate a ${total > 0 ? 'detailed' : 'basic'} analytics report including:\n• KPI Overview\n• Charts and Graphs\n• Performance Metrics\n• Recommendations\n\nPDF would be downloaded automatically.`);
+            }
+            
+            exportCSV() {
+                const filteredRequests = this.getFilteredRequests();
+                const csvContent = this.convertToCSV(filteredRequests);
+                
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `my_analytics_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                alert(`Exported analytics data for ${filteredRequests.length} requests`);
+            }
+            
+            convertToCSV(requests) {
+                const headers = ['ID', 'Title', 'Type', 'Category', 'Status', 'Priority', 'Created', 'Due Date', 'Budget', 'Completion Date'];
+                const rows = requests.map(request => [
+                    request.id,
+                    `"${request.title}"`,
+                    request.type,
+                    request.category,
+                    request.status,
+                    request.priority,
+                    request.createdAt.toLocaleDateString(),
+                    request.dueDate.toLocaleDateString(),
+                    `$${request.budget}`,
+                    request.completedAt ? request.completedAt.toLocaleDateString() : 'Not completed'
+                ]);
+                
+                return [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+            }
+            
+            generateReport() {
+                const filteredRequests = this.getFilteredRequests();
+                const totalRequests = filteredRequests.length;
+                const approvalRate = totalRequests > 0 ? 
+                    Math.round((filteredRequests.filter(r => r.status === 'approved' || r.status === 'completed').length / totalRequests) * 100) : 0;
+                const totalBudget = filteredRequests.reduce((sum, req) => sum + req.budget, 0);
+                
+                const report = `
+                    MY REQUEST ANALYTICS REPORT
+                    ============================
+                    
+                    Period: ${this.currentPeriod}
+                    Generated: ${new Date().toLocaleDateString()}
+                    
+                    SUMMARY
+                    -------
+                    • Total Requests: ${totalRequests}
+                    • Approval Rate: ${approvalRate}%
+                    • Total Budget Used: $${totalBudget}
+                    • Average Processing Time: Based on completed requests
+                    
+                    RECOMMENDATIONS
+                    ---------------
+                    ${this.generateRecommendations(filteredRequests)}
+                    
+                    DETAILED ANALYSIS
+                    -----------------
+                    See attached charts and tables for detailed breakdown.
+                    
+                    --- END OF REPORT ---
+                `;
+                
+                alert('Analytics Report Generated:\n\n' + report);
+            }
+            
+            generateRecommendations(requests) {
+                const recommendations = [];
+                
+                if (requests.length === 0) {
+                    recommendations.push('• Create your first request to start tracking analytics');
+                    return recommendations.join('\n');
+                }
+                
+                const rejectedCount = requests.filter(r => r.status === 'rejected').length;
+                if (rejectedCount > 0) {
+                    recommendations.push(`• Review ${rejectedCount} rejected request${rejectedCount > 1 ? 's' : ''} to understand common reasons for rejection`);
+                }
+                
+                const highPriorityCount = requests.filter(r => r.priority === 'high' || r.priority === 'urgent').length;
+                if (highPriorityCount / requests.length > 0.3) {
+                    recommendations.push('• Consider reducing number of high-priority requests for better resource allocation');
+                }
+                
+                const avgBudget = requests.length > 0 ? 
+                    requests.reduce((s, r) => s + r.budget, 0) / requests.length : 0;
+                if (avgBudget > 1000) {
+                    recommendations.push('• Explore cost-saving alternatives for high-budget requests');
+                }
+                
+                if (recommendations.length === 0) {
+                    recommendations.push('• Your request patterns are optimal. Continue current practices.');
+                }
+                
+                return recommendations.join('\n');
+            }
+            
+            highlightCurrentPage() {
+                const currentPage = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.sidebar-menu .nav-link');
+                
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href === currentPage) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                const dateOptions = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const timeOptions = { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                };
+                
+                const dateStr = now.toLocaleDateString('en-US', dateOptions);
+                const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+                
+                document.getElementById('currentDate').textContent = dateStr;
+                document.getElementById('currentTime').textContent = timeStr;
+                document.getElementById('currentTime2').textContent = timeStr;
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const analytics = new RequesterAnalytics();
+            analytics.init();
+            
+            window.analytics = analytics;
+            
+            console.log('My Analytics page loaded successfully');
+        });
+    </script>
+</body>
+</html>
