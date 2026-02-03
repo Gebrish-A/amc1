@@ -1,16 +1,18 @@
-# Node / JS
+# Node
 node_modules/
 Backend/node_modules/
-dist/
-build/
 
-# Env files
+# Env
 .env
 
 # Logs
 *.log
 
-# OS & installers
+# Build
+dist/
+build/
+
+# OS / binaries
 *.exe
 *.msi
 *.dmg
