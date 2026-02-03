@@ -2,7 +2,7 @@
 node_modules/
 Backend/node_modules/
 
-# Env
+# Env secrets
 .env
 
 # Logs
