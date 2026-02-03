@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Management - Media Coverage System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --dark: #212529;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            margin-left: -260px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .resource-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            margin-bottom: 1rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+            border-color: var(--primary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-available { background-color: #d1e7dd; color: #0f5132; }
+        .badge-in-use { background-color: #cff4fc; color: #055160; }
+        .badge-maintenance { background-color: #f8d7da; color: #842029; }
+        .badge-reserved { background-color: #fff3cd; color: #856404; }
+        .badge-offline { background-color: #e9ecef; color: #495057; }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background-color: white;
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .stats-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .stats-card h3 {
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .equipment-item {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .equipment-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .table th {
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .calendar-day {
+            border: 1px solid #e9ecef;
+            padding: 0.5rem;
+            min-height: 100px;
+            position: relative;
+        }
+
+        .calendar-day.today {
+            background-color: rgba(13, 110, 253, 0.05);
+            border-color: var(--primary);
+        }
+
+        .calendar-event {
+            padding: 2px 5px;
+            margin-bottom: 2px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-available { background-color: #d1e7dd; }
+        .event-booked { background-color: #fff3cd; }
+        .event-in-use { background-color: #f8d7da; }
+        .event-maintenance { background-color: #e9ecef; }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -260px;
+            }
+            
+            .sidebar:not(.collapsed) {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-card .card-body {
+                padding: 1rem;
+            }
+            
+            .equipment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        .toast.warning { border-color: var(--warning); }
+        .toast.info { border-color: var(--info); }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="navbar-brand text-white d-block">
+                <i class="bi bi-camera-reels me-2"></i>
+                <span>MediaCoverage</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="requests.html">
+                        <i class="bi bi-send"></i> Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calendar.html">
+                        <i class="bi bi-calendar-week"></i> Calendar
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="assignments.html">
+                        <i class="bi bi-person-lines-fill"></i> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="resources.html">
+                        <i class="bi bi-tools"></i> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="content.html">
+                        <i class="bi bi-collection"></i> Content Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="login-editor.html">
+                        <i class="bi bi-pencil-square"></i> Editorial
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="analytics.html">
+                        <i class="bi bi-graph-up"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html">
+                        <i class="bi bi-people"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reports.html">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="settings.html">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile d-flex align-items-center mb-3">
+                <img src="https://ui-avatars.com/api/?name=Editor&background=random" 
+                     class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                <div>
+                    <div class="fw-bold" id="userName">Editor</div>
+                    <small class="text-white-50" id="userRole">Resource Manager</small>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <a href="profile.html" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-person-circle"></i> Profile
+                </a>
+                <button id="logoutBtn" class="btn btn-danger btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-light" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <div class="navbar-nav ms-auto">
+                    <div class="dropdown ms-3">
+                        <button class="btn btn-light position-relative" type="button" 
+                                data-bs-toggle="dropdown" id="notificationDropdown">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  id="notificationCount">3</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-0" style="width: 350px;">
+                            <div class="p-3 border-bottom">
+                                <h6 class="mb-0">Notifications</h6>
+                            </div>
+                            <div class="notification-list" style="max-height: 300px; overflow-y: auto;" id="notificationList">
+                                <div class="notification-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-warning">Maintenance Due</small>
+                                        <small class="text-muted">2 min ago</small>
+                                    </div>
+                                    <div class="fw-medium">Camera kit #CK-012 requires calibration</div>
+                                </div>
+                                <div class="notification-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-success">Resource Available</small>
+                                        <small class="text-muted">1 hour ago</small>
+                                    </div>
+                                    <div class="fw-medium">Satellite truck #ST-004 is now available</div>
+                                </div>
+                                <div class="notification-item p-3">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-danger">Low Stock</small>
+                                        <small class="text-muted">3 hours ago</small>
+                                    </div>
+                                    <div class="fw-medium">Batteries running low - reorder needed</div>
+                                </div>
+                            </div>
+                            <div class="p-2 border-top">
+                                <a href="#" class="btn btn-sm btn-link w-100 text-center">
+                                    View All Notifications
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container-fluid py-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">Resource Management</h2>
+                            <p class="text-muted mb-0">Manage personnel, equipment, and vehicles</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <i class="bi bi-funnel me-1"></i>Filter
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newResourceModal">
+                                <i class="bi bi-plus-circle me-1"></i>Add Resource
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Stats -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Total Resources</h6>
+                                    <h3 class="mb-0" id="totalResources">42</h3>
+                                </div>
+                                <div class="avatar-lg bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-box-seam text-primary fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Available</h6>
+                                    <h3 class="mb-0 text-success" id="availableResources">24</h3>
+                                </div>
+                                <div class="avatar-lg bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-check-circle text-success fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">In Use</h6>
+                                    <h3 class="mb-0 text-warning" id="inUseResources">12</h3>
+                                </div>
+                                <div class="avatar-lg bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-clock text-warning fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Maintenance</h6>
+                                    <h3 class="mb-0 text-danger" id="maintenanceResources">6</h3>
+                                </div>
+                                <div class="avatar-lg bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-tools text-danger fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Tabs -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <ul class="nav nav-tabs" id="resourceTabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personnel">
+                                <i class="bi bi-people me-1"></i>Personnel
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#equipment">
+                                <i class="bi bi-camera-video me-1"></i>Equipment
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#vehicles">
+                                <i class="bi bi-truck me-1"></i>Vehicles
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#availability">
+                                <i class="bi bi-calendar-check me-1"></i>Availability
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Personnel Tab -->
+                <div class="tab-pane fade show active" id="personnel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Role</th>
+                                            <th>Department</th>
+                                            <th>Specialization</th>
+                                            <th>Status</th>
+                                            <th>Current Assignment</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="personnelTable">
+                                        <!-- Personnel data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Tab -->
+                <div class="tab-pane fade" id="equipment">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="equipment-grid" id="equipmentGrid">
+                                <!-- Equipment cards will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicles Tab -->
+                <div class="tab-pane fade" id="vehicles">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehicle</th>
+                                            <th>Type</th>
+                                            <th>Registration</th>
+                                            <th>Status</th>
+                                            <th>Location</th>
+                                            <th>Driver</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vehiclesTable">
+                                        <!-- Vehicles data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Tab -->
+                <div class="tab-pane fade" id="availability">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Resource Calendar</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="availabilityCalendar">
+                                                <!-- Calendar will be loaded here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Legend</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-2">
+                                                <span class="badge bg-success me-2">Available</span>
+                                                <small>Resource is free</small>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="badge bg-warning me-2">Booked</span>
+                                                <small>Scheduled for use</small>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="badge bg-danger me-2">In Use</span>
+                                                <small>Currently active</small>
+                                            </div>
+                                            <div class="mb-2">
+                                                <span class="badge bg-secondary me-2">Maintenance</span>
+                                                <small>Under maintenance</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Quick Actions</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-outline-primary" onclick="checkMaintenance()">
+                                                    <i class="bi bi-tools me-2"></i> Check Maintenance
+                                                </button>
+                                                <button class="btn btn-outline-primary" onclick="generateReport()">
+                                                    <i class="bi bi-file-earmark-text me-2"></i> Generate Report
+                                                </button>
+                                                <button class="btn btn-outline-primary" onclick="exportResources()">
+                                                    <i class="bi bi-download me-2"></i> Export Resources
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Resource Modal -->
+    <div class="modal fade" id="newResourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Resource</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resourceForm" onsubmit="saveResource(event)">
+                        <div class="mb-3">
+                            <label class="form-label">Resource Type *</label>
+                            <select class="form-select" id="resourceType" required onchange="loadResourceForm()">
+                                <option value="">Select Type</option>
+                                <option value="personnel">Personnel</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="vehicle">Vehicle</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Dynamic form based on type -->
+                        <div id="resourceFormContent">
+                            <p class="text-muted text-center">Select a resource type to continue</p>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="resourceForm" class="btn btn-primary">Save Resource</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resource Details Modal -->
+    <div class="modal fade" id="resourceDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Resource Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resourceDetailsContent">
+                    <!-- Details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Filter Resources</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm">
+                        <div class="mb-3">
+                            <label class="form-label">Resource Type</label>
+                            <select class="form-select" id="filterResourceType">
+                                <option value="">All Types</option>
+                                <option value="personnel">Personnel</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="vehicle">Vehicle</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus" multiple>
+                                <option value="available">Available</option>
+                                <option value="in-use">In Use</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="reserved">Reserved</option>
+                                <option value="offline">Offline</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Department (Personnel)</label>
+                            <select class="form-select" id="filterDepartment">
+                                <option value="">All Departments</option>
+                                <option value="production">Production</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="technical">Technical</option>
+                                <option value="operations">Operations</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Equipment Category</label>
+                            <select class="form-select" id="filterCategory">
+                                <option value="">All Categories</option>
+                                <option value="camera">Cameras</option>
+                                <option value="audio">Audio Equipment</option>
+                                <option value="lighting">Lighting</option>
+                                <option value="accessories">Accessories</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="clearFilters()">Clear</button>
+                    <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Resource Management System
+        class ResourceManager {
+            constructor() {
+                this.resources = [];
+                this.currentResource = null;
+                this.filters = {};
+                this.currentUser = { id: 1, name: 'Resource Manager', role: 'manager' };
+                this.init();
+            }
+
+            init() {
+                this.loadMockData();
+                this.renderPersonnel();
+                this.renderEquipment();
+                this.renderVehicles();
+                this.renderCalendar();
+                this.setupEventListeners();
+            }
+
+            loadMockData() {
+                // Personnel
+                this.personnel = [
+                    {
+                        id: 1,
+                        name: 'John Doe',
+                        role: 'Camera Operator',
+                        department: 'Production',
+                        specialization: 'Broadcast Camera',
+                        status: 'available',
+                        currentAssignment: null,
+                        email: 'john.doe@mediacoverage.com',
+                        phone: '+1 (555) 123-4567',
+                        skills: ['Camera Operation', 'Lighting', 'Field Production']
+                    },
+                    {
+                        id: 2,
+                        name: 'Sarah Wilson',
+                        role: 'Audio Engineer',
+                        department: 'Technical',
+                        specialization: 'Sound Recording',
+                        status: 'in-use',
+                        currentAssignment: 'Press Conference - City Hall',
+                        email: 'sarah.wilson@mediacoverage.com',
+                        phone: '+1 (555) 234-5678',
+                        skills: ['Audio Mixing', 'Field Recording', 'Sound Design']
+                    },
+                    {
+                        id: 3,
+                        name: 'Mike Johnson',
+                        role: 'Editor',
+                        department: 'Editorial',
+                        specialization: 'Video Editing',
+                        status: 'available',
+                        currentAssignment: null,
+                        email: 'mike.johnson@mediacoverage.com',
+                        phone: '+1 (555) 345-6789',
+                        skills: ['Premiere Pro', 'After Effects', 'Color Grading']
+                    },
+                    {
+                        id: 4,
+                        name: 'Lisa Brown',
+                        role: 'Field Producer',
+                        department: 'Production',
+                        specialization: 'Live Production',
+                        status: 'in-use',
+                        currentAssignment: 'Sports Championship',
+                        email: 'lisa.brown@mediacoverage.com',
+                        phone: '+1 (555) 456-7890',
+                        skills: ['Production Planning', 'Live Broadcasting', 'Team Management']
+                    }
+                ];
+
+                // Equipment
+                this.equipment = [
+                    {
+                        id: 1,
+                        name: '4K Broadcast Camera',
+                        type: 'camera',
+                        category: 'Cameras',
+                        model: 'Sony PXW-Z90',
+                        serial: 'SN-2024-001',
+                        status: 'available',
+                        location: 'Equipment Room A',
+                        lastMaintenance: '2024-02-15',
+                        nextMaintenance: '2024-05-15',
+                        notes: 'Primary broadcast camera'
+                    },
+                    {
+                        id: 2,
+                        name: 'Wireless Microphone Kit',
+                        type: 'audio',
+                        category: 'Audio Equipment',
+                        model: 'Sennheiser EW-DX',
+                        serial: 'SN-2024-002',
+                        status: 'in-use',
+                        location: 'Field - City Hall',
+                        lastMaintenance: '2024-01-20',
+                        nextMaintenance: '2024-04-20',
+                        notes: 'For press conferences'
+                    },
+                    {
+                        id: 3,
+                        name: 'LED Lighting Kit',
+                        type: 'lighting',
+                        category: 'Lighting',
+                        model: 'Aputure 120D',
+                        serial: 'SN-2024-003',
+                        status: 'maintenance',
+                        location: 'Maintenance Room',
+                        lastMaintenance: '2024-02-01',
+                        nextMaintenance: '2024-03-01',
+                        notes: 'Requires power cable replacement'
+                    },
+                    {
+                        id: 4,
+                        name: 'Field Camera Kit',
+                        type: 'camera',
+                        category: 'Cameras',
+                        model: 'Canon XF705',
+                        serial: 'SN-2024-004',
+                        status: 'available',
+                        location: 'Equipment Room B',
+                        lastMaintenance: '2024-02-28',
+                        nextMaintenance: '2024-05-28',
+                        notes: 'For field reporting'
+                    }
+                ];
+
+                // Vehicles
+                this.vehicles = [
+                    {
+                        id: 1,
+                        name: 'Satellite News Truck',
+                        type: 'Satellite Truck',
+                        registration: 'ST-001',
+                        status: 'available',
+                        location: 'Headquarters Garage',
+                        driver: 'Robert Taylor',
+                        capacity: '8 persons',
+                        features: ['Live broadcast', 'Generator', 'Satellite uplink']
+                    },
+                    {
+                        id: 2,
+                        name: 'Field Production Van',
+                        type: 'Van',
+                        registration: 'FPV-002',
+                        status: 'in-use',
+                        location: 'Sports Stadium',
+                        driver: 'David Chen',
+                        capacity: '6 persons',
+                        features: ['Equipment storage', 'Power supply', 'Mobile editing']
+                    },
+                    {
+                        id: 3,
+                        name: 'News SUV',
+                        type: 'SUV',
+                        registration: 'NSUV-003',
+                        status: 'maintenance',
+                        location: 'Service Center',
+                        driver: null,
+                        capacity: '5 persons',
+                        features: ['4WD', 'GPS tracking', 'Emergency equipment']
+                    }
+                ];
+
+                // Combine all resources
+                this.resources = [...this.personnel, ...this.equipment, ...this.vehicles];
+            }
+
+            setupEventListeners() {
+                // Sidebar toggle
+                document.getElementById('sidebarToggle').addEventListener('click', () => {
+                    document.querySelector('.sidebar').classList.toggle('collapsed');
+                });
+
+                // Tab switching
+                document.querySelectorAll('#resourceTabs .nav-link').forEach(button => {
+                    button.addEventListener('click', event => {
+                        const tabId = event.target.getAttribute('data-bs-target').substring(1);
+                        this.switchTab(tabId);
+                    });
+                });
+
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        window.location.href = 'login.html';
+                    }
+                });
+
+                // Resource type change in form
+                document.getElementById('resourceType').addEventListener('change', () => {
+                    this.loadResourceForm();
+                });
+            }
+
+            renderPersonnel() {
+                const tbody = document.getElementById('personnelTable');
+                tbody.innerHTML = this.personnel.map(person => `
+                    <tr onclick="resourceManager.viewPersonnel(${person.id})" style="cursor: pointer;">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=random" 
+                                     class="rounded-circle me-2" width="32" height="32" alt="${person.name}">
+                                <div>
+                                    <div class="fw-semibold">${person.name}</div>
+                                    <small class="text-muted">${person.email}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${person.role}</td>
+                        <td>${person.department}</td>
+                        <td>${person.specialization}</td>
+                        <td>
+                            <span class="status-badge badge-${person.status}">
+                                ${person.status.replace('-', ' ')}
+                            </span>
+                        </td>
+                        <td>
+                            ${person.currentAssignment ? 
+                                `<span class="text-warning">${person.currentAssignment}</span>` : 
+                                '<span class="text-muted">Available</span>'}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="resourceManager.viewPersonnel(${person.id}); event.stopPropagation();">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="resourceManager.assignPersonnel(${person.id}); event.stopPropagation();">
+                                <i class="bi bi-calendar-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            renderEquipment() {
+                const container = document.getElementById('equipmentGrid');
+                container.innerHTML = this.equipment.map(item => `
+                    <div class="equipment-item">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="mb-1">${item.name}</h5>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-light text-dark me-2">${item.category}</span>
+                                    <span class="status-badge badge-${item.status}">
+                                        ${item.status.replace('-', ' ')}
+                                    </span>
+                                </div>
+                            </div>
+                            <i class="bi ${this.getEquipmentIcon(item.type)} fs-4 text-primary"></i>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Model:</small>
+                            <div>${item.model}</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <small class="text-muted">Serial:</small>
+                                <div><code>${item.serial}</code></div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Location:</small>
+                                <div>${item.location}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <small class="text-muted">Last Maintenance:</small>
+                            <div>${item.lastMaintenance}</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-sm btn-outline-primary" onclick="resourceManager.viewEquipment(${item.id})">
+                                <i class="bi bi-eye"></i> Details
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" onclick="resourceManager.bookEquipment(${item.id})" ${item.status !== 'available' ? 'disabled' : ''}>
+                                <i class="bi bi-calendar-check"></i> Book
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderVehicles() {
+                const tbody = document.getElementById('vehiclesTable');
+                tbody.innerHTML = this.vehicles.map(vehicle => `
+                    <tr onclick="resourceManager.viewVehicle(${vehicle.id})" style="cursor: pointer;">
+                        <td>
+                            <div class="fw-semibold">${vehicle.name}</div>
+                            <small class="text-muted">${vehicle.features[0]}</small>
+                        </td>
+                        <td>${vehicle.type}</td>
+                        <td><code>${vehicle.registration}</code></td>
+                        <td>
+                            <span class="status-badge badge-${vehicle.status}">
+                                ${vehicle.status.replace('-', ' ')}
+                            </span>
+                        </td>
+                        <td>${vehicle.location}</td>
+                        <td>${vehicle.driver || '<span class="text-muted">Not assigned</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="resourceManager.viewVehicle(${vehicle.id}); event.stopPropagation();">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="resourceManager.assignDriver(${vehicle.id}); event.stopPropagation();">
+                                <i class="bi bi-person-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            renderCalendar() {
+                const container = document.getElementById('availabilityCalendar');
+                
+                // Generate calendar for current month
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = today.getMonth();
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const daysInMonth = lastDay.getDate();
+                
+                let calendarHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">${today.toLocaleString('default', { month: 'long' })} ${year}</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-2" onclick="resourceManager.prevMonth()">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="resourceManager.nextMonth()">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                `;
+                
+                // Day headers
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                days.forEach(day => {
+                    calendarHTML += `<div class="col text-center fw-semibold py-2">${day}</div>`;
+                });
+                
+                calendarHTML += '</div><div class="row">';
+                
+                // Empty cells for days before first day
+                for (let i = 0; i < firstDay.getDay(); i++) {
+                    calendarHTML += `<div class="col calendar-day"></div>`;
+                }
+                
+                // Days of month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const currentDate = new Date(year, month, day);
+                    const isToday = currentDate.toDateString() === today.toDateString();
+                    const dayClass = isToday ? 'calendar-day today' : 'calendar-day';
+                    
+                    let dayHTML = `<div class="col ${dayClass}">`;
+                    dayHTML += `<div class="fw-semibold">${day}</div>`;
+                    
+                    // Add sample events (in real app, these would come from data)
+                    if (day === 15) {
+                        dayHTML += `<div class="calendar-event event-in-use">Press Conference</div>`;
+                        dayHTML += `<div class="calendar-event event-booked">Sports Event</div>`;
+                    } else if (day === 20) {
+                        dayHTML += `<div class="calendar-event event-maintenance">Camera Service</div>`;
+                    } else if (day === 25) {
+                        dayHTML += `<div class="calendar-event event-available">Available</div>`;
+                    }
+                    
+                    dayHTML += `</div>`;
+                    
+                    // New row after Saturday
+                    if ((firstDay.getDay() + day) % 7 === 0) {
+                        calendarHTML += dayHTML + '</div><div class="row">';
+                    } else {
+                        calendarHTML += dayHTML;
+                    }
+                }
+                
+                calendarHTML += '</div>';
+                container.innerHTML = calendarHTML;
+            }
+
+            getEquipmentIcon(type) {
+                const icons = {
+                    'camera': 'bi-camera-video',
+                    'audio': 'bi-mic',
+                    'lighting': 'bi-lightbulb',
+                    'accessories': 'bi-tools'
+                };
+                return icons[type] || 'bi-box';
+            }
+
+            loadResourceForm() {
+                const type = document.getElementById('resourceType').value;
+                const formContent = document.getElementById('resourceFormContent');
+                
+                if (!type) {
+                    formContent.innerHTML = '<p class="text-muted text-center">Select a resource type to continue</p>';
+                    return;
+                }
+                
+                let formHTML = '';
+                
+                switch(type) {
+                    case 'personnel':
+                        formHTML = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" class="form-control" id="firstName" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" class="form-control" id="lastName" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Role *</label>
+                                        <select class="form-select" id="role" required>
+                                            <option value="">Select Role</option>
+                                            <option value="camera-operator">Camera Operator</option>
+                                            <option value="audio-engineer">Audio Engineer</option>
+                                            <option value="editor">Editor</option>
+                                            <option value="producer">Producer</option>
+                                            <option value="reporter">Reporter</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Department *</label>
+                                        <select class="form-select" id="department" required>
+                                            <option value="">Select Department</option>
+                                            <option value="production">Production</option>
+                                            <option value="editorial">Editorial</option>
+                                            <option value="technical">Technical</option>
+                                            <option value="operations">Operations</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Specialization</label>
+                                <input type="text" class="form-control" id="specialization">
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'equipment':
+                        formHTML = `
+                            <div class="mb-3">
+                                <label class="form-label">Equipment Name *</label>
+                                <input type="text" class="form-control" id="equipmentName" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Category *</label>
+                                        <select class="form-select" id="equipmentCategory" required>
+                                            <option value="">Select Category</option>
+                                            <option value="camera">Camera</option>
+                                            <option value="audio">Audio Equipment</option>
+                                            <option value="lighting">Lighting</option>
+                                            <option value="accessories">Accessories</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Model</label>
+                                        <input type="text" class="form-control" id="model">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" id="serialNumber">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Purchase Date</label>
+                                        <input type="date" class="form-control" id="purchaseDate">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Initial Status</label>
+                                        <select class="form-select" id="equipmentStatus">
+                                            <option value="available">Available</option>
+                                            <option value="maintenance">Maintenance</option>
+                                            <option value="reserved">Reserved</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-control" id="equipmentNotes" rows="2"></textarea>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'vehicle':
+                        formHTML = `
+                            <div class="mb-3">
+                                <label class="form-label">Vehicle Name *</label>
+                                <input type="text" class="form-control" id="vehicleName" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Type *</label>
+                                        <select class="form-select" id="vehicleType" required>
+                                            <option value="">Select Type</option>
+                                            <option value="satellite-truck">Satellite Truck</option>
+                                            <option value="van">Van</option>
+                                            <option value="suv">SUV</option>
+                                            <option value="car">Car</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Registration *</label>
+                                        <input type="text" class="form-control" id="registration" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Capacity</label>
+                                        <input type="text" class="form-control" id="capacity">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Initial Status</label>
+                                        <select class="form-select" id="vehicleStatus">
+                                            <option value="available">Available</option>
+                                            <option value="maintenance">Maintenance</option>
+                                            <option value="in-use">In Use</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Features</label>
+                                <textarea class="form-control" id="features" rows="2" placeholder="Separate features with commas"></textarea>
+                            </div>
+                        `;
+                        break;
+                }
+                
+                formContent.innerHTML = formHTML;
+            }
+
+            saveResource(event) {
+                event.preventDefault();
+                
+                const type = document.getElementById('resourceType').value;
+                
+                switch(type) {
+                    case 'personnel':
+                        this.savePersonnel();
+                        break;
+                    case 'equipment':
+                        this.saveEquipment();
+                        break;
+                    case 'vehicle':
+                        this.saveVehicle();
+                        break;
+                }
+            }
+
+            savePersonnel() {
+                const newPerson = {
+                    id: this.personnel.length + 1,
+                    name: `${document.getElementById('firstName').value} ${document.getElementById('lastName').value}`,
+                    role: document.getElementById('role').value.replace('-', ' '),
+                    department: document.getElementById('department').value,
+                    specialization: document.getElementById('specialization').value || 'General',
+                    status: 'available',
+                    currentAssignment: null,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value || 'N/A',
+                    skills: []
+                };
+                
+                this.personnel.push(newPerson);
+                this.renderPersonnel();
+                this.showToast('Personnel added successfully', 'success');
+                
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('newResourceModal'));
+                modal.hide();
+                document.getElementById('resourceForm').reset();
+            }
+
+            saveEquipment() {
+                const newEquipment = {
+                    id: this.equipment.length + 1,
+                    name: document.getElementById('equipmentName').value,
+                    type: document.getElementById('equipmentCategory').value,
+                    category: document.getElementById('equipmentCategory').value.charAt(0).toUpperCase() + 
+                              document.getElementById('equipmentCategory').value.slice(1) + ' Equipment',
+                    model: document.getElementById('model').value || 'N/A',
+                    serial: document.getElementById('serialNumber').value || `SN-${new Date().getFullYear()}-${this.equipment.length + 1}`,
+                    status: document.getElementById('equipmentStatus').value,
+                    location: 'Equipment Room A',
+                    lastMaintenance: new Date().toISOString().split('T')[0],
+                    nextMaintenance: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0],
+                    notes: document.getElementById('equipmentNotes').value || ''
+                };
+                
+                this.equipment.push(newEquipment);
+                this.renderEquipment();
+                this.showToast('Equipment added successfully', 'success');
+                
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('newResourceModal'));
+                modal.hide();
+                document.getElementById('resourceForm').reset();
+            }
+
+            saveVehicle() {
+                const newVehicle = {
+                    id: this.vehicles.length + 1,
+                    name: document.getElementById('vehicleName').value,
+                    type: document.getElementById('vehicleType').value.replace('-', ' '),
+                    registration: document.getElementById('registration').value,
+                    status: document.getElementById('vehicleStatus').value,
+                    location: 'Headquarters Garage',
+                    driver: null,
+                    capacity: document.getElementById('capacity').value || 'N/A',
+                    features: document.getElementById('features').value.split(',').map(f => f.trim())
+                };
+                
+                this.vehicles.push(newVehicle);
+                this.renderVehicles();
+                this.showToast('Vehicle added successfully', 'success');
+                
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('newResourceModal'));
+                modal.hide();
+                document.getElementById('resourceForm').reset();
+            }
+
+            viewPersonnel(id) {
+                const person = this.personnel.find(p => p.id === id);
+                if (!person) return;
+                
+                this.currentResource = person;
+                this.showResourceDetails('personnel', person);
+            }
+
+            viewEquipment(id) {
+                const equipment = this.equipment.find(e => e.id === id);
+                if (!equipment) return;
+                
+                this.currentResource = equipment;
+                this.showResourceDetails('equipment', equipment);
+            }
+
+            viewVehicle(id) {
+                const vehicle = this.vehicles.find(v => v.id === id);
+                if (!vehicle) return;
+                
+                this.currentResource = vehicle;
+                this.showResourceDetails('vehicle', vehicle);
+            }
+
+            showResourceDetails(type, resource) {
+                let detailsHTML = '';
+                
+                switch(type) {
+                    case 'personnel':
+                        detailsHTML = `
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <h4 class="mb-0">${resource.name}</h4>
+                                            <span class="status-badge badge-${resource.status}">
+                                                ${resource.status.replace('-', ' ')}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Role:</small>
+                                                    <div>${resource.role}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Department:</small>
+                                                    <div>${resource.department}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Specialization:</small>
+                                                    <div>${resource.specialization}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Email:</small>
+                                                    <div>${resource.email}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Phone:</small>
+                                                    <div>${resource.phone}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Skills:</small>
+                                                    <div>${resource.skills.join(', ')}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        ${resource.currentAssignment ? `
+                                            <div class="alert alert-info">
+                                                <div class="fw-semibold">Current Assignment</div>
+                                                ${resource.currentAssignment}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Quick Actions</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                <button class="btn btn-primary" onclick="resourceManager.assignPersonnel(${resource.id})">
+                                                    <i class="bi bi-calendar-plus me-2"></i> Assign to Task
+                                                </button>
+                                                <button class="btn btn-warning" onclick="resourceManager.updateStatus(${resource.id}, 'personnel')">
+                                                    <i class="bi bi-pencil me-2"></i> Update Status
+                                                </button>
+                                                <button class="btn btn-outline-primary" onclick="resourceManager.viewSchedule(${resource.id})">
+                                                    <i class="bi bi-calendar-week me-2"></i> View Schedule
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'equipment':
+                        detailsHTML = `
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <h4 class="mb-0">${resource.name}</h4>
+                                            <span class="badge bg-light text-dark me-2">${resource.category}</span>
+                                            <span class="status-badge badge-${resource.status}">
+                                                ${resource.status.replace('-', ' ')}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Model:</small>
+                                                    <div>${resource.model}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Serial Number:</small>
+                                                    <div><code>${resource.serial}</code></div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Current Location:</small>
+                                                    <div>${resource.location}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Last Maintenance:</small>
+                                                    <div>${resource.lastMaintenance}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Next Maintenance:</small>
+                                                    <div>${resource.nextMaintenance}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Status:</small>
+                                                    <div>${resource.status.replace('-', ' ')}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        ${resource.notes ? `
+                                            <div class="card bg-light">
+                                                <div class="card-body">
+                                                    <h6>Notes</h6>
+                                                    <p class="mb-0">${resource.notes}</p>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Quick Actions</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                ${resource.status === 'available' ? `
+                                                    <button class="btn btn-primary" onclick="resourceManager.bookEquipment(${resource.id})">
+                                                        <i class="bi bi-calendar-check me-2"></i> Book Equipment
+                                                    </button>
+                                                ` : ''}
+                                                <button class="btn btn-warning" onclick="resourceManager.scheduleMaintenance(${resource.id})">
+                                                    <i class="bi bi-tools me-2"></i> Schedule Maintenance
+                                                </button>
+                                                <button class="btn btn-outline-primary" onclick="resourceManager.trackLocation(${resource.id})">
+                                                    <i class="bi bi-geo-alt me-2"></i> Track Location
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'vehicle':
+                        detailsHTML = `
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <h4 class="mb-0">${resource.name}</h4>
+                                            <span class="badge bg-light text-dark me-2">${resource.type}</span>
+                                            <span class="status-badge badge-${resource.status}">
+                                                ${resource.status.replace('-', ' ')}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Registration:</small>
+                                                    <div><code>${resource.registration}</code></div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Current Location:</small>
+                                                    <div>${resource.location}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Assigned Driver:</small>
+                                                    <div>${resource.driver || 'Not assigned'}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Capacity:</small>
+                                                    <div>${resource.capacity}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Status:</small>
+                                                    <div>${resource.status.replace('-', ' ')}</div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <small class="text-muted">Features:</small>
+                                                    <div>${resource.features.join(', ')}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Quick Actions</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-grid gap-2">
+                                                ${resource.status === 'available' ? `
+                                                    <button class="btn btn-primary" onclick="resourceManager.bookVehicle(${resource.id})">
+                                                        <i class="bi bi-calendar-check me-2"></i> Book Vehicle
+                                                    </button>
+                                                ` : ''}
+                                                <button class="btn btn-warning" onclick="resourceManager.assignDriver(${resource.id})">
+                                                    <i class="bi bi-person-plus me-2"></i> Assign Driver
+                                                </button>
+                                                <button class="btn btn-outline-primary" onclick="resourceManager.trackVehicle(${resource.id})">
+                                                    <i class="bi bi-geo-alt me-2"></i> Track Vehicle
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+                
+                document.getElementById('resourceDetailsContent').innerHTML = detailsHTML;
+                const modal = new bootstrap.Modal(document.getElementById('resourceDetailsModal'));
+                modal.show();
+            }
+
+            // Action methods
+            assignPersonnel(id) {
+                const person = this.personnel.find(p => p.id === id);
+                if (person) {
+                    this.showToast(`Assigning ${person.name} to task...`, 'info');
+                }
+            }
+
+            bookEquipment(id) {
+                const equipment = this.equipment.find(e => e.id === id);
+                if (equipment) {
+                    equipment.status = 'reserved';
+                    this.renderEquipment();
+                    this.showToast(`${equipment.name} has been booked`, 'success');
+                }
+            }
+
+            assignDriver(id) {
+                const vehicle = this.vehicles.find(v => v.id === id);
+                if (vehicle) {
+                    vehicle.driver = 'John Driver';
+                    this.renderVehicles();
+                    this.showToast(`Driver assigned to ${vehicle.name}`, 'success');
+                }
+            }
+
+            bookVehicle(id) {
+                const vehicle = this.vehicles.find(v => v.id === id);
+                if (vehicle) {
+                    vehicle.status = 'reserved';
+                    this.renderVehicles();
+                    this.showToast(`${vehicle.name} has been booked`, 'success');
+                }
+            }
+
+            checkMaintenance() {
+                this.showToast('Checking maintenance schedule...', 'info');
+            }
+
+            generateReport() {
+                this.showToast('Generating resource report...', 'info');
+            }
+
+            exportResources() {
+                this.showToast('Exporting resources data...', 'info');
+            }
+
+            applyFilters() {
+                const type = document.getElementById('filterResourceType').value;
+                const status = Array.from(document.getElementById('filterStatus').selectedOptions).map(o => o.value);
+                const department = document.getElementById('filterDepartment').value;
+                const category = document.getElementById('filterCategory').value;
+                
+                this.filters = { type, status, department, category };
+                this.showToast('Filters applied', 'success');
+                
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('filterModal')).hide();
+            }
+
+            clearFilters() {
+                document.getElementById('filterForm').reset();
+                this.filters = {};
+                this.showToast('Filters cleared', 'success');
+            }
+
+            switchTab(tabId) {
+                switch(tabId) {
+                    case 'personnel':
+                        // Already rendered
+                        break;
+                    case 'equipment':
+                        // Already rendered
+                        break;
+                    case 'vehicles':
+                        // Already rendered
+                        break;
+                    case 'availability':
+                        // Already rendered
+                        break;
+                }
+            }
+
+            prevMonth() {
+                this.showToast('Previous month', 'info');
+            }
+
+            nextMonth() {
+                this.showToast('Next month', 'info');
+            }
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.style.cssText = `
+                    padding: 1rem;
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                toast.innerHTML = `
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : 'bi-info-circle'}"></i>
+                    <span>${message}</span>
+                    <button class="btn btn-sm btn-link ms-auto" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container';
+                    document.body.appendChild(container);
+                }
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 5000);
+            }
+        }
+
+        // Initialize Resource Manager
+        const resourceManager = new ResourceManager();
+        window.resourceManager = resourceManager;
+    </script>
+</body>
+</html>

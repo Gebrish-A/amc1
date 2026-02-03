@@ -1,0 +1,16 @@
+node_modules/
+.env
+*.log
+dist/
+build/
+*.exe
+*.msi
+*.dmg
+*.zip
+mongosh*/
+mongosh*/
+*.exe
+node_modules/
+mongosh*/
+*.exe
+node_modules/

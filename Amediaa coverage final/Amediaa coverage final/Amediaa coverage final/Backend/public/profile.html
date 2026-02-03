@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Amhara Media CMS</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+     <link rel="stylesheet" href="css/dashboard.html">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary-color: #7209b7;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
+            --gradient-secondary: linear-gradient(135deg, #7209b7 0%, #560bad 100%);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --border-radius: 12px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .profile-header {
+            background: var(--gradient-primary);
+            padding: 2.5rem 0;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(103, 78, 167, 0.15) 0%, transparent 50%);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat-card {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .activity-item {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+        
+        .settings-section {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--primary-color);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary-color);
+            background: none;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .notification-item {
+            border-left: 3px solid transparent;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-item.unread {
+            border-left-color: var(--primary-color);
+            background: rgba(67, 97, 238, 0.08);
+        }
+        
+        .notification-item:hover {
+            background: rgba(67, 97, 238, 0.12);
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                padding: 1.5rem 0;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--gradient-primary);">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-camera-reels me-2"></i>Amhara Media CMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="assignments.html">
+                            <i class="bi bi-clipboard-check me-1"></i>Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html">
+                            <i class="bi bi-person me-1"></i>Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay d-none" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading profile...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <main class="main-content">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="d-flex align-items-center">
+                            <div class="position-relative me-4">
+                                <div class="profile-avatar rounded-circle bg-white d-flex align-items-center justify-content-center overflow-hidden">
+                                    <i class="bi bi-person display-3 text-primary" id="profileAvatarIcon"></i>
+                                    <img src="" alt="Profile" class="d-none" id="profileAvatarImg" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle p-0" 
+                                        style="width: 32px; height: 32px;"
+                                        onclick="triggerImageUpload()"
+                                        title="Change photo">
+                                    <i class="bi bi-camera"></i>
+                                </button>
+                                <input type="file" id="imageUpload" class="d-none" accept="image/*" onchange="handleImageUpload(event)">
+                            </div>
+                            <div>
+                                <h2 class="fw-bold mb-1" id="profileName">Loading...</h2>
+                                <p class="mb-2" id="profileRole">
+                                    <span class="badge bg-light text-dark" id="roleBadge">Loading...</span>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="bi bi-envelope me-1"></i>
+                                    <span id="profileEmail">loading...</span>
+                                    <span class="mx-2 text-white-50">•</span>
+                                    <i class="bi bi-telephone me-1"></i>
+                                    <span id="profilePhone">loading...</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <button class="btn btn-light me-2 mb-2" onclick="openEditProfileModal()">
+                            <i class="bi bi-pencil me-1"></i>Edit Profile
+                        </button>
+                        <button class="btn btn-outline-light mb-2" onclick="openChangePasswordModal()">
+                            <i class="bi bi-shield-lock me-1"></i>Change Password
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <!-- Left Column - Personal Info & Stats -->
+                <div class="col-lg-4 mb-4">
+                    <!-- Personal Information -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-semibold">
+                                <i class="bi bi-info-circle me-2 text-primary"></i>Personal Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Full Name</small>
+                                <strong id="infoFullName">Loading...</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Employee ID</small>
+                                <strong id="infoEmployeeId">N/A</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Department</small>
+                                <strong id="infoDepartment">Loading...</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Joined Date</small>
+                                <strong id="infoJoinDate">Loading...</strong>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block">Last Login</small>
+                                <strong id="infoLastLogin">Loading...</strong>
+                            </div>
+                            <div class="mb-0">
+                                <small class="text-muted d-block">Account Status</small>
+                                <span class="badge bg-success" id="accountStatus">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h6 class="mb-0 fw-semibold">
+                                <i class="bi bi-bar-chart me-2 text-primary"></i>My Statistics
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="stat-card bg-primary bg-opacity-10 text-center p-3 rounded">
+                                        <h4 class="mb-1 text-primary" id="statRequests">0</h4>
+                                        <small class="text-muted">Requests</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-card bg-success bg-opacity-10 text-center p-3 rounded">
+                                        <h4 class="mb-1 text-success" id="statAssignments">0</h4>
+                                        <small class="text-muted">Assignments</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-card bg-warning bg-opacity-10 text-center p-3 rounded">
+                                        <h4 class="mb-1 text-warning" id="statPending">0</h4>
+                                        <small class="text-muted">Pending</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-card bg-info bg-opacity-10 text-center p-3 rounded">
+                                        <h4 class="mb-1 text-info" id="statCompleted">0</h4>
+                                        <small class="text-muted">Completed</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Tabs Content -->
+                <div class="col-lg-8">
+                    <!-- Tabs Navigation -->
+                    <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">
+                                <i class="bi bi-clock-history me-1"></i>Recent Activity
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="assignments-tab" data-bs-toggle="tab" data-bs-target="#assignments" type="button" role="tab">
+                                <i class="bi bi-clipboard-check me-1"></i>My Assignments
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                                <i class="bi bi-gear me-1"></i>Settings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">
+                                <i class="bi bi-bell me-1"></i>Notifications
+                                <span class="badge bg-danger ms-1" id="notificationCount">0</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tabs Content -->
+                    <div class="tab-content" id="profileTabContent">
+                        <!-- Activity Tab -->
+                        <div class="tab-pane fade show active" id="activity" role="tabpanel">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div id="activityTimeline">
+                                        <!-- Activity will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assignments Tab -->
+                        <div class="tab-pane fade" id="assignments" role="tabpanel">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Assignment</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Deadline</th>
+                                                    <th scope="col">Progress</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="myAssignmentsTable">
+                                                <!-- Assignments will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Settings Tab -->
+                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                            <div class="settings-section">
+                                <h6 class="mb-3 fw-semibold">
+                                    <i class="bi bi-bell me-2 text-primary"></i>Notification Preferences
+                                </h6>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyEmail" checked>
+                                    <label class="form-check-label" for="notifyEmail">Email notifications</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifySMS">
+                                    <label class="form-check-label" for="notifySMS">SMS notifications</label>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="notifyInApp" checked>
+                                    <label class="form-check-label" for="notifyInApp">In-app notifications</label>
+                                </div>
+                                <button class="btn btn-sm btn-primary mt-2" onclick="saveNotificationSettings()">
+                                    <i class="bi bi-check-circle me-1"></i>Save Preferences
+                                </button>
+                            </div>
+
+                            <div class="settings-section">
+                                <h6 class="mb-3 fw-semibold">
+                                    <i class="bi bi-display me-2 text-primary"></i>Display Preferences
+                                </h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Theme</label>
+                                    <select class="form-select" id="themeSelect">
+                                        <option value="light">Light Mode</option>
+                                        <option value="dark">Dark Mode</option>
+                                        <option value="auto">Auto (System)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Language</label>
+                                    <select class="form-select" id="languageSelect">
+                                        <option value="en">English</option>
+                                        <option value="am">Amharic</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Time Zone</label>
+                                    <select class="form-select" id="timezoneSelect">
+                                        <option value="Africa/Addis_Ababa">Africa/Addis_Ababa</option>
+                                        <option value="UTC">UTC</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-sm btn-primary mt-2" onclick="saveDisplaySettings()">
+                                    <i class="bi bi-check-circle me-1"></i>Save Settings
+                                </button>
+                            </div>
+
+                            <div class="settings-section">
+                                <h6 class="mb-3 fw-semibold">
+                                    <i class="bi bi-shield me-2 text-primary"></i>Security Settings
+                                </h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="openChangePasswordModal()">
+                                        <i class="bi bi-key me-2"></i>Change Password
+                                    </button>
+                                    <button class="btn btn-outline-warning" onclick="toggle2FA()" id="2faButton">
+                                        <i class="bi bi-shield-check me-2"></i>Enable Two-Factor Authentication
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="confirmDeactivateAccount()">
+                                        <i class="bi bi-person-x me-2"></i>Deactivate Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notifications Tab -->
+                        <div class="tab-pane fade" id="notifications" role="tabpanel">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0 fw-semibold">Recent Notifications</h6>
+                                        <div>
+                                            <button class="btn btn-sm btn-outline-primary me-2" onclick="markAllAsRead()">
+                                                <i class="bi bi-check-all me-1"></i>Mark All as Read
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="clearAllNotifications()">
+                                                <i class="bi bi-trash me-1"></i>Clear All
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="notificationsList">
+                                        <!-- Notifications will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="editFirstName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="editLastName" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="editEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="editPhone" placeholder="+251">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Department</label>
+                                    <select class="form-select" id="editDepartment">
+                                        <option value="news">News</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="entertainment">Entertainment</option>
+                                        <option value="politics">Politics</option>
+                                        <option value="culture">Culture</option>
+                                        <option value="business">Business</option>
+                                        <option value="technical">Technical</option>
+                                        <option value="editorial">Editorial</option>
+                                        <option value="production">Production</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Specialization</label>
+                                    <input type="text" class="form-control" id="editSpecialization" 
+                                           placeholder="e.g., Photography, Reporting, Editing">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bio/Description</label>
+                            <textarea class="form-control" id="editBio" rows="3" maxlength="500" 
+                                      placeholder="Tell us about yourself..."></textarea>
+                            <small class="text-muted"><span id="bioCounter">0</span>/500 characters</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveProfile()">
+                        <i class="bi bi-check-circle me-1"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordForm">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password *</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password *</label>
+                            <input type="password" class="form-control" id="newPassword" required minlength="8">
+                            <div class="form-text">Minimum 8 characters with letters and numbers</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password *</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePassword()">
+                        <i class="bi bi-shield-lock me-1"></i>Update Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deactivate Account Confirmation Modal -->
+    <div class="modal fade" id="deactivateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deactivation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to deactivate your account?</p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> Your account will be deactivated but not deleted. You can reactivate it by contacting support.
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="confirmDeactivate">
+                        <label class="form-check-label" for="confirmDeactivate">
+                            I understand the consequences of deactivating my account
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="deactivateBtn" disabled onclick="deactivateAccount()">
+                        <i class="bi bi-person-x me-1"></i>Deactivate Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Profile JavaScript -->
+    <script>
+        // Current user profile data
+        let currentUser = null;
+        let userSettings = {};
+        let userNotifications = [];
+        let userActivities = [];
+        let userAssignments = [];
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            checkAuth();
+            
+            // Initialize character counter for bio
+            const bioTextarea = document.getElementById('editBio');
+            const bioCounter = document.getElementById('bioCounter');
+            if (bioTextarea && bioCounter) {
+                bioTextarea.addEventListener('input', function() {
+                    bioCounter.textContent = this.value.length;
+                });
+            }
+            
+            // Initialize deactivation confirmation
+            const confirmCheckbox = document.getElementById('confirmDeactivate');
+            const deactivateBtn = document.getElementById('deactivateBtn');
+            if (confirmCheckbox && deactivateBtn) {
+                confirmCheckbox.addEventListener('change', function() {
+                    deactivateBtn.disabled = !this.checked;
+                });
+            }
+            
+            // Load user data
+            loadUserProfile();
+        });
+
+        // Check authentication
+        function checkAuth() {
+            // Try to get user from localStorage
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                currentUser = JSON.parse(userData);
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Load user profile data
+        function loadUserProfile() {
+            if (!currentUser) return;
+            
+            showLoading(true);
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Get user data from localStorage or use defaults
+                const savedProfile = localStorage.getItem(`userProfile_${currentUser.id}`) || '{}';
+                const profile = JSON.parse(savedProfile);
+                
+                // Load user settings
+                const savedSettings = localStorage.getItem(`userSettings_${currentUser.id}`) || '{}';
+                userSettings = JSON.parse(savedSettings);
+                
+                // Load notifications
+                const savedNotifications = localStorage.getItem(`userNotifications_${currentUser.id}`) || '[]';
+                userNotifications = JSON.parse(savedNotifications);
+                
+                // Load activities
+                const savedActivities = localStorage.getItem(`userActivities_${currentUser.id}`) || '[]';
+                userActivities = JSON.parse(savedActivities);
+                
+                // Load assignments
+                const savedAssignments = localStorage.getItem(`userAssignments_${currentUser.id}`) || '[]';
+                userAssignments = JSON.parse(savedAssignments);
+                
+                // Update profile with merged data (defaults + saved)
+                const userProfile = {
+                    id: currentUser.id,
+                    firstName: profile.firstName || currentUser.firstName || 'John',
+                    lastName: profile.lastName || currentUser.lastName || 'Doe',
+                    email: profile.email || currentUser.email || 'john.doe@amharamedia.gov.et',
+                    phone: profile.phone || currentUser.phone || '+251 911 234 567',
+                    role: currentUser.role || 'Reporter',
+                    employeeId: profile.employeeId || 'AMC-' + (currentUser.id || '001').toString().padStart(3, '0'),
+                    department: profile.department || 'News',
+                    specialization: profile.specialization || 'Reporting, Photography',
+                    bio: profile.bio || 'Experienced media professional with a passion for storytelling.',
+                    joinDate: profile.joinDate || '2023-01-15',
+                    lastLogin: profile.lastLogin || new Date().toLocaleString(),
+                    stats: {
+                        requests: profile.stats?.requests || 12,
+                        assignments: profile.stats?.assignments || 8,
+                        pending: profile.stats?.pending || 3,
+                        completed: profile.stats?.completed || 5
+                    }
+                };
+                
+                // Update UI with profile data
+                updateProfileUI(userProfile);
+                updateStatsUI(userProfile.stats);
+                updateActivitiesUI();
+                updateAssignmentsUI();
+                updateNotificationsUI();
+                updateSettingsUI();
+                
+                showLoading(false);
+            }, 800);
+        }
+
+        // Update profile UI
+        function updateProfileUI(profile) {
+            // Header
+            document.getElementById('profileName').textContent = `${profile.firstName} ${profile.lastName}`;
+            document.getElementById('profileRole').innerHTML = `<span class="badge bg-light text-dark">${profile.role}</span>`;
+            document.getElementById('profileEmail').textContent = profile.email;
+            document.getElementById('profilePhone').textContent = profile.phone;
+            
+            // Personal Info
+            document.getElementById('infoFullName').textContent = `${profile.firstName} ${profile.lastName}`;
+            document.getElementById('infoEmployeeId').textContent = profile.employeeId;
+            document.getElementById('infoDepartment').textContent = profile.department;
+            document.getElementById('infoJoinDate').textContent = profile.joinDate;
+            document.getElementById('infoLastLogin').textContent = profile.lastLogin;
+            
+            // Check for profile image
+            const savedImage = localStorage.getItem(`profileImage_${profile.id}`);
+            if (savedImage) {
+                document.getElementById('profileAvatarImg').src = savedImage;
+                document.getElementById('profileAvatarImg').classList.remove('d-none');
+                document.getElementById('profileAvatarIcon').classList.add('d-none');
+            }
+        }
+
+        // Update statistics UI
+        function updateStatsUI(stats) {
+            document.getElementById('statRequests').textContent = stats.requests;
+            document.getElementById('statAssignments').textContent = stats.assignments;
+            document.getElementById('statPending').textContent = stats.pending;
+            document.getElementById('statCompleted').textContent = stats.completed;
+        }
+
+        // Update activities UI
+        function updateActivitiesUI() {
+            const container = document.getElementById('activityTimeline');
+            if (!container) return;
+            
+            if (userActivities.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-clock display-4 text-muted mb-3"></i>
+                        <h5 class="text-muted">No recent activity</h5>
+                        <p class="text-muted">Your recent activities will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            userActivities.forEach(activity => {
+                html += `
+                    <div class="activity-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${activity.title}</strong>
+                                <p class="mb-1">${activity.description}</p>
+                            </div>
+                            <small class="text-muted">${activity.time}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Update assignments UI
+        function updateAssignmentsUI() {
+            const container = document.getElementById('myAssignmentsTable');
+            if (!container) return;
+            
+            if (userAssignments.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="bi bi-clipboard display-4 text-muted mb-3"></i>
+                            <h5 class="text-muted">No assignments yet</h5>
+                            <p class="text-muted">Your assignments will appear here</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            let html = '';
+            userAssignments.forEach(assignment => {
+                const statusClass = getStatusClass(assignment.status);
+                const progress = assignment.progress || 0;
+                
+                html += `
+                    <tr>
+                        <td>
+                            <strong>${assignment.title}</strong>
+                            <br>
+                            <small class="text-muted">${assignment.description}</small>
+                        </td>
+                        <td>
+                            <span class="badge ${statusClass}">${assignment.status}</span>
+                        </td>
+                        <td>${assignment.deadline}</td>
+                        <td>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar" role="progressbar" style="width: ${progress}%"></div>
+                            </div>
+                            <small class="text-muted">${progress}%</small>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewAssignment('${assignment.id}')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Update notifications UI
+        function updateNotificationsUI() {
+            const container = document.getElementById('notificationsList');
+            const countBadge = document.getElementById('notificationCount');
+            if (!container) return;
+            
+            // Update badge count
+            const unreadCount = userNotifications.filter(n => !n.read).length;
+            if (countBadge) {
+                countBadge.textContent = unreadCount;
+                countBadge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+            }
+            
+            if (userNotifications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-bell display-4 text-muted mb-3"></i>
+                        <h5 class="text-muted">No notifications</h5>
+                        <p class="text-muted">You're all caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            userNotifications.forEach(notification => {
+                const timeAgo = getTimeAgo(notification.timestamp);
+                const readClass = notification.read ? '' : 'unread';
+                
+                html += `
+                    <div class="notification-item ${readClass}" onclick="markNotificationAsRead('${notification.id}')">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${notification.title}</strong>
+                                <p class="mb-1">${notification.message}</p>
+                            </div>
+                            <small class="text-muted">${timeAgo}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Update settings UI
+        function updateSettingsUI() {
+            // Notification settings
+            document.getElementById('notifyEmail').checked = userSettings.notifyEmail !== false;
+            document.getElementById('notifySMS').checked = userSettings.notifySMS || false;
+            document.getElementById('notifyInApp').checked = userSettings.notifyInApp !== false;
+            
+            // Display settings
+            document.getElementById('themeSelect').value = userSettings.theme || 'light';
+            document.getElementById('languageSelect').value = userSettings.language || 'en';
+            document.getElementById('timezoneSelect').value = userSettings.timezone || 'Africa/Addis_Ababa';
+            
+            // 2FA status
+            const twoFactorEnabled = userSettings.twoFactorEnabled || false;
+            const btn = document.getElementById('2faButton');
+            if (btn) {
+                if (twoFactorEnabled) {
+                    btn.innerHTML = '<i class="bi bi-shield-x me-2"></i>Disable Two-Factor Authentication';
+                    btn.classList.remove('btn-outline-warning');
+                    btn.classList.add('btn-warning');
+                } else {
+                    btn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Enable Two-Factor Authentication';
+                    btn.classList.remove('btn-warning');
+                    btn.classList.add('btn-outline-warning');
+                }
+            }
+        }
+
+        // Open edit profile modal
+        function openEditProfileModal() {
+            if (!currentUser) return;
+            
+            // Get current profile data
+            const savedProfile = localStorage.getItem(`userProfile_${currentUser.id}`) || '{}';
+            const profile = JSON.parse(savedProfile);
+            
+            // Populate form
+            document.getElementById('editFirstName').value = profile.firstName || currentUser.firstName || 'John';
+            document.getElementById('editLastName').value = profile.lastName || currentUser.lastName || 'Doe';
+            document.getElementById('editEmail').value = profile.email || currentUser.email || '';
+            document.getElementById('editPhone').value = profile.phone || currentUser.phone || '';
+            document.getElementById('editDepartment').value = profile.department || 'news';
+            document.getElementById('editSpecialization').value = profile.specialization || '';
+            document.getElementById('editBio').value = profile.bio || '';
+            
+            // Update bio counter
+            document.getElementById('bioCounter').textContent = (profile.bio || '').length;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            modal.show();
+        }
+
+        // Save profile changes
+        function saveProfile() {
+            if (!currentUser) return;
+            
+            // Get form data
+            const profileData = {
+                firstName: document.getElementById('editFirstName').value.trim(),
+                lastName: document.getElementById('editLastName').value.trim(),
+                email: document.getElementById('editEmail').value.trim(),
+                phone: document.getElementById('editPhone').value.trim(),
+                department: document.getElementById('editDepartment').value,
+                specialization: document.getElementById('editSpecialization').value.trim(),
+                bio: document.getElementById('editBio').value.trim()
+            };
+            
+            // Validate
+            if (!profileData.firstName || !profileData.lastName || !profileData.email) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem(`userProfile_${currentUser.id}`, JSON.stringify(profileData));
+            
+            // Add activity
+            addActivity('Profile Updated', 'You updated your profile information');
+            
+            // Update UI
+            loadUserProfile();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+            modal.hide();
+            
+            showToast('Profile updated successfully!', 'success');
+        }
+
+        // Open change password modal
+        function openChangePasswordModal() {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        }
+
+        // Update password
+        function updatePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Please fill in all password fields', 'warning');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showToast('Password must be at least 8 characters long', 'warning');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'danger');
+                return;
+            }
+            
+            // Simulate password update
+            setTimeout(() => {
+                // Clear form
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                modal.hide();
+                
+                // Add activity
+                addActivity('Password Changed', 'You changed your account password');
+                
+                showToast('Password updated successfully!', 'success');
+            }, 1000);
+        }
+
+        // Save notification settings
+        function saveNotificationSettings() {
+            if (!currentUser) return;
+            
+            userSettings.notifyEmail = document.getElementById('notifyEmail').checked;
+            userSettings.notifySMS = document.getElementById('notifySMS').checked;
+            userSettings.notifyInApp = document.getElementById('notifyInApp').checked;
+            
+            localStorage.setItem(`userSettings_${currentUser.id}`, JSON.stringify(userSettings));
+            
+            addActivity('Settings Updated', 'You updated your notification preferences');
+            showToast('Notification preferences saved!', 'success');
+        }
+
+        // Save display settings
+        function saveDisplaySettings() {
+            if (!currentUser) return;
+            
+            userSettings.theme = document.getElementById('themeSelect').value;
+            userSettings.language = document.getElementById('languageSelect').value;
+            userSettings.timezone = document.getElementById('timezoneSelect').value;
+            
+            localStorage.setItem(`userSettings_${currentUser.id}`, JSON.stringify(userSettings));
+            
+            addActivity('Settings Updated', 'You updated your display preferences');
+            showToast('Display preferences saved!', 'success');
+            
+            // Apply theme if changed
+            if (userSettings.theme === 'dark') {
+                document.body.classList.add('bg-dark', 'text-light');
+            } else {
+                document.body.classList.remove('bg-dark', 'text-light');
+            }
+        }
+
+        // Toggle 2FA
+        function toggle2FA() {
+            if (!currentUser) return;
+            
+            userSettings.twoFactorEnabled = !userSettings.twoFactorEnabled;
+            localStorage.setItem(`userSettings_${currentUser.id}`, JSON.stringify(userSettings));
+            
+            const action = userSettings.twoFactorEnabled ? 'enabled' : 'disabled';
+            addActivity('Security Updated', `You ${action} two-factor authentication`);
+            
+            updateSettingsUI();
+            showToast(`Two-factor authentication ${action}!`, 'success');
+        }
+
+        // Confirm account deactivation
+        function confirmDeactivateAccount() {
+            const modal = new bootstrap.Modal(document.getElementById('deactivateModal'));
+            modal.show();
+        }
+
+        // Deactivate account
+        function deactivateAccount() {
+            if (!currentUser) return;
+            
+            // Simulate deactivation
+            setTimeout(() => {
+                // Update user status
+                currentUser.active = false;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deactivateModal'));
+                modal.hide();
+                
+                // Add notification
+                addNotification('Account Deactivated', 'Your account has been deactivated');
+                
+                showToast('Account deactivated successfully', 'info');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }, 1000);
+        }
+
+        // Mark all notifications as read
+        function markAllAsRead() {
+            userNotifications.forEach(notification => {
+                notification.read = true;
+            });
+            
+            localStorage.setItem(`userNotifications_${currentUser.id}`, JSON.stringify(userNotifications));
+            updateNotificationsUI();
+            
+            showToast('All notifications marked as read', 'info');
+        }
+
+        // Clear all notifications
+        function clearAllNotifications() {
+            userNotifications = [];
+            localStorage.setItem(`userNotifications_${currentUser.id}`, JSON.stringify(userNotifications));
+            updateNotificationsUI();
+            
+            showToast('All notifications cleared', 'info');
+        }
+
+        // Mark single notification as read
+        function markNotificationAsRead(id) {
+            const notification = userNotifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                localStorage.setItem(`userNotifications_${currentUser.id}`, JSON.stringify(userNotifications));
+                updateNotificationsUI();
+            }
+        }
+
+        // View assignment
+        function viewAssignment(id) {
+            showToast('Opening assignment details...', 'info');
+            // In a real app, this would navigate to assignment details
+        }
+
+        // Trigger image upload
+        function triggerImageUpload() {
+            document.getElementById('imageUpload').click();
+        }
+
+        // Handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Validate file
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'warning');
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                showToast('Image must be less than 5MB', 'warning');
+                return;
+            }
+            
+            // Read file and save as data URL
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // Save to localStorage
+                localStorage.setItem(`profileImage_${currentUser.id}`, imageData);
+                
+                // Update UI
+                document.getElementById('profileAvatarImg').src = imageData;
+                document.getElementById('profileAvatarImg').classList.remove('d-none');
+                document.getElementById('profileAvatarIcon').classList.add('d-none');
+                
+                // Add activity
+                addActivity('Profile Picture Updated', 'You changed your profile picture');
+                
+                showToast('Profile picture updated!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Logout function
+        function logout() {
+            // Clear user session
+            localStorage.removeItem('currentUser');
+            
+            // Redirect to login
+            window.location.href = 'login.html';
+        }
+
+        // Helper functions
+        function getStatusClass(status) {
+            switch(status.toLowerCase()) {
+                case 'completed': return 'bg-success';
+                case 'in progress': return 'bg-primary';
+                case 'pending': return 'bg-warning';
+                case 'overdue': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const date = new Date(timestamp);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function addActivity(title, description) {
+            const activity = {
+                id: Date.now().toString(),
+                title,
+                description,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            
+            userActivities.unshift(activity);
+            if (userActivities.length > 10) userActivities.pop();
+            
+            localStorage.setItem(`userActivities_${currentUser.id}`, JSON.stringify(userActivities));
+            updateActivitiesUI();
+        }
+
+        function addNotification(title, message) {
+            const notification = {
+                id: Date.now().toString(),
+                title,
+                message,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            userNotifications.unshift(notification);
+            localStorage.setItem(`userNotifications_${currentUser.id}`, JSON.stringify(userNotifications));
+            updateNotificationsUI();
+        }
+
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.classList.toggle('d-none', !show);
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toastId = 'toast-' + Date.now();
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-bg-${type} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            document.querySelector('.toast-container').insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+            
+            // Remove toast after it's hidden
+            toastElement.addEventListener('hidden.bs.toast', function () {
+                toastElement.remove();
+            });
+        }
+    </script>
+</body>
+</html>
