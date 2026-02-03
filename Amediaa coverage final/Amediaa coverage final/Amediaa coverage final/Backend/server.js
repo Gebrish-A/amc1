@@ -117,7 +117,7 @@ const authMiddleware = {
 
 // ==================== DATABASE CONNECTION ====================
 console.log("🔗 Connecting to MongoDB...");
-mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/coverage", {
+mongoose.connect("mongodb+srv://admin:nunDUEzwTqKcSP1R@cluster0.yiz1p7x.mongodb.net/coverage", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
