@@ -1,0 +1,35 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Node.js Backend with MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node seeders/completeSeed.js",
+    "db:index:list": "node scripts/initDatabase.js list",
+    "db:index:create": "node scripts/initDatabase.js create",
+    "db:index:rebuild": "npm run db:index:create && npm run seed"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^6.10.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "moment": "^2.29.4",
+    "mongoose": "^7.8.8",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.7",
+    "socket.io": "^4.7.2",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.11"
+  }
+}

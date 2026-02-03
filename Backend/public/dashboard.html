@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Media Coverage System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <style>
+        /* ===== DASHBOARD STYLES ===== */
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --sidebar-width: 280px;
+            --header-height: 56px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            overflow-x: hidden;
+        }
+        
+        /* Header & Navigation */
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: var(--header-height);
+            z-index: 1030;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: var(--header-height);
+            padding: 20px;
+            transition: all 0.3s;
+            min-height: calc(100vh - var(--header-height));
+        }
+        
+        .offcanvas-start {
+            width: var(--sidebar-width);
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .offcanvas-body {
+            padding: 0;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stat-card:nth-child(2) { border-left-color: var(--warning-color); }
+        .stat-card:nth-child(3) { border-left-color: var(--info-color); }
+        .stat-card:nth-child(4) { border-left-color: var(--success-color); }
+        
+        .avatar-sm, .avatar-lg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .avatar-sm {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+        }
+        
+        /* Sidebar Navigation */
+        .nav-link {
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+        }
+        
+        .nav-link i {
+            width: 24px;
+            font-size: 1.1rem;
+        }
+        
+        /* Activity Timeline */
+        .activity-item {
+            border-left: 2px solid #dee2e6;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+        
+        .activity-item:nth-child(2)::before { background: var(--success-color); }
+        .activity-item:nth-child(3)::before { background: var(--warning-color); }
+        .activity-item:nth-child(4)::before { background: var(--info-color); }
+        .activity-item:nth-child(5)::before { background: var(--secondary); }
+        
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+        
+        /* Footer */
+        .footer {
+            background: white;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .card-body {
+                padding: 1.25rem;
+            }
+            
+            .d-none {
+                display: none !important;
+            }
+        }
+        
+        /* Notification Badge Animation */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .badge-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        /* Chart Styles */
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Toast Container */
+        .toast-container {
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <!-- Sidebar Toggle -->
+            <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Brand -->
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="bi bi-camera-reels me-2"></i>
+                <span class="d-none d-md-inline">Media Coverage Dashboard</span>
+            </a>
+            
+            <!-- Top Right Navigation -->
+            <div class="navbar-nav ms-auto align-items-center">
+                <!-- Quick Stats -->
+                <div class="d-none d-md-flex me-3 text-white">
+                    <div>
+                        <small class="d-block">Active</small>
+                        <strong id="activeRequests">12</strong>
+                    </div>
+                    <div class="vr mx-3 text-white-50"></div>
+                    <div>
+                        <small class="d-block">Today</small>
+                        <strong id="todaysEvents">5</strong>
+                    </div>
+                </div>
+                
+                <!-- Notifications -->
+                <div class="nav-item dropdown me-3">
+                    <a href="#" class="nav-link text-white position-relative" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle badge-pulse" id="notificationCount">3</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-0" style="min-width: 350px; max-width: 400px;">
+                        <div class="p-3 border-bottom">
+                            <h6 class="mb-0">Notifications</h6>
+                            <small class="text-muted">You have <span id="notificationTotal">3</span> unread</small>
+                        </div>
+                        <div class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto;" id="notificationList">
+                            <!-- Notifications will be loaded here -->
+                        </div>
+                        <div class="p-2 border-top">
+                            <a href="#" class="btn btn-sm btn-outline-primary w-100" onclick="clearNotifications()">Mark All as Read</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link text-white d-flex align-items-center" data-bs-toggle="dropdown">
+                        <div class="me-2">
+                            <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person text-dark"></i>
+                            </div>
+                        </div>
+                        <div class="d-none d-md-block">
+                            <span id="userName">Loading...</span>
+                            <small class="d-block text-white-50" id="userRole">Loading...</small>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <h6 class="dropdown-header">Signed in as</h6>
+                        <h6 class="dropdown-header fw-bold" id="userEmail">Loading...</h6>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" onclick="viewProfile()">
+                            <i class="bi bi-person me-2"></i>My Profile
+                        </a>
+                        <a class="dropdown-item" href="#" onclick="openSettings()">
+                            <i class="bi bi-gear me-2"></i>Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="#" id="logoutBtn">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebar">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title">
+                <i class="bi bi-camera-reels me-2"></i>
+                Navigation
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <!-- User Info -->
+            <div class="p-3 bg-primary bg-opacity-25">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-lg bg-light rounded-circle d-flex align-items-center justify-content-center me-3">
+                        <i class="bi bi-person text-dark fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0" id="sidebarUserName">Loading...</h6>
+                        <small class="text-white-50" id="sidebarUserRole">Loading...</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="nav flex-column p-3">
+                <div class="mb-3">
+                    <small class="text-uppercase text-white-50">Main</small>
+                </div>
+                
+                <a class="nav-link text-white active" href="dashboard.html">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    Dashboard
+                </a>
+                
+                <a class="nav-link text-white" href="requests.html">
+                    <i class="bi bi-send-check me-2"></i>
+                    Coverage Requests
+                    <span class="badge bg-danger float-end" id="pendingRequestsBadge">5</span>
+                </a>
+                
+                <a class="nav-link text-white" href="calendar.html">
+                    <i class="bi bi-calendar-week me-2"></i>
+                    Event Calendar
+                </a>
+                
+                <a class="nav-link text-white" href="resources.html">
+                    <i class="bi bi-people me-2"></i>
+                    Resource Management
+                </a>
+                
+                <a class="nav-link text-white" href="assignments.html">
+                    <i class="bi bi-clipboard-check me-2"></i>
+                    Assignments
+                    <span class="badge bg-warning float-end" id="myAssignmentsBadge">3</span>
+                </a>
+                
+                <a class="nav-link text-white" href="content-library.html">
+                    <i class="bi bi-cloud-upload me-2"></i>
+                    Content Library
+                </a>
+                
+                <a class="nav-link text-white" href="reports.html">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    Reports & Analytics
+                </a>
+                
+                <div class="mb-3 mt-4">
+                    <small class="text-uppercase text-white-50">Quick Actions</small>
+                </div>
+                
+                <div class="d-grid gap-2 mb-4">
+                    <button class="btn btn-outline-light btn-sm" onclick="newRequest()">
+                        <i class="bi bi-plus-circle me-1"></i>New Request
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" onclick="quickReport()">
+                        <i class="bi bi-file-earmark-text me-1"></i>Generate Report
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container-fluid pt-4 px-4">
+            <!-- Welcome Banner -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="bg-primary bg-opacity-10 p-4 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="mb-1" id="greetingTitle">Welcome to Dashboard!</h4>
+                                <p class="text-muted mb-0" id="greetingSubtitle">Loading dashboard data...</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" onclick="newRequest()">
+                                    <i class="bi bi-plus-circle me-1"></i>New Request
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="exportData()">
+                                    <i class="bi bi-download me-1"></i>Export Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="row g-4 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-muted mb-2">Total Requests</h6>
+                                    <h3 class="mb-0" id="totalRequests">0</h3>
+                                    <small class="text-success" id="totalRequestsChange">
+                                        <i class="bi bi-arrow-up me-1"></i>Loading...
+                                    </small>
+                                </div>
+                                <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-send-check text-primary fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="requests.html" class="text-primary text-decoration-none">
+                                View Details <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-muted mb-2">Pending Approvals</h6>
+                                    <h3 class="mb-0" id="pendingApprovals">0</h3>
+                                    <small class="text-warning" id="pendingApprovalsChange">
+                                        <i class="bi bi-clock me-1"></i>Loading...
+                                    </small>
+                                </div>
+                                <div class="avatar-sm bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-clock-history text-warning fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="requests.html?filter=pending" class="text-primary text-decoration-none">
+                                Review Now <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-muted mb-2">Active Assignments</h6>
+                                    <h3 class="mb-0" id="activeAssignments">0</h3>
+                                    <small class="text-info" id="activeAssignmentsChange">
+                                        <i class="bi bi-people me-1"></i>Loading...
+                                    </small>
+                                </div>
+                                <div class="avatar-sm bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-clipboard-check text-info fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="assignments.html" class="text-primary text-decoration-none">
+                                Manage Assignments <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-sm h-100 stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="text-muted mb-2">Resource Utilization</h6>
+                                    <h3 class="mb-0" id="resourceUtilization">0%</h3>
+                                    <small class="text-success" id="resourceUtilizationChange">
+                                        <i class="bi bi-check-circle me-1"></i>Loading...
+                                    </small>
+                                </div>
+                                <div class="avatar-sm bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-pie-chart text-success fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="resources.html" class="text-primary text-decoration-none">
+                                View Resources <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Calendar Row -->
+            <div class="row g-4 mb-4">
+                <!-- Activity Chart -->
+                <div class="col-xl-8">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Coverage Activity This Week</h6>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    This Week
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="updateChart('week')">This Week</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateChart('month')">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateChart('quarter')">This Quarter</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="activityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mini Calendar -->
+                <div class="col-xl-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Upcoming Events</h6>
+                            <a href="calendar.html" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="miniCalendar"></div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div id="upcomingEventsList">
+                                <!-- Events will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Requests and Activity -->
+            <div class="row g-4">
+                <!-- Recent Requests -->
+                <div class="col-xl-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Recent Coverage Requests</h6>
+                            <a href="requests.html" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentRequestsTable">
+                                        <!-- Recent requests will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Activity -->
+                <div class="col-xl-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Recent Activity</h6>
+                            <button class="btn btn-sm btn-outline-primary" onclick="refreshActivity()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-timeline" id="activityTimeline">
+                                <!-- Activity items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="row g-4 mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0">
+                            <h6 class="mb-0">Quick Access</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-3 col-6">
+                                    <a href="new-request.html" class="card card-hover border text-center p-3 text-decoration-none">
+                                        <div class="avatar-lg bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                            <i class="bi bi-plus-lg text-primary fs-4"></i>
+                                        </div>
+                                        <h6 class="mb-0">New Request</h6>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <a href="assignments.html" class="card card-hover border text-center p-3 text-decoration-none">
+                                        <div class="avatar-lg bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                            <i class="bi bi-clipboard-check text-info fs-4"></i>
+                                        </div>
+                                        <h6 class="mb-0">My Assignments</h6>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <a href="calendar.html" class="card card-hover border text-center p-3 text-decoration-none">
+                                        <div class="avatar-lg bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                            <i class="bi bi-calendar-week text-warning fs-4"></i>
+                                        </div>
+                                        <h6 class="mb-0">Calendar</h6>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <a href="reports.html" class="card card-hover border text-center p-3 text-decoration-none">
+                                        <div class="avatar-lg bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                            <i class="bi bi-bar-chart text-success fs-4"></i>
+                                        </div>
+                                        <h6 class="mb-0">Reports</h6>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-light border-top">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span class="text-muted">© 2025 Amhara Media Corporation</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="text-muted">
+                        <i class="bi bi-cpu me-1"></i>
+                        System Status: <span class="text-success" id="systemStatus">All Systems Operational</span>
+                        • <span id="currentTime">Loading...</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // ===== GLOBAL VARIABLES =====
+        let activityChart = null;
+        let miniCalendar = null;
+        let realTimeInterval = null;
+        let dashboardData = null;
+
+        // ===== DASHBOARD INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Check authentication
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // 2. Load user data
+            loadUserData();
+            
+            // 3. Initialize dashboard components
+            initializeDashboard();
+            
+            // 4. Start real-time updates
+            startRealTimeUpdates();
+            
+            // 5. Update current time
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 60000); // Update every minute
+        });
+
+        // ===== AUTHENTICATION =====
+        function checkAuth() {
+            const session = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || 'null');
+            return session && session.isLoggedIn;
+        }
+
+        // ===== USER DATA =====
+        function loadUserData() {
+            const session = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            
+            if (session.name) {
+                document.getElementById('userName').textContent = session.name;
+                document.getElementById('sidebarUserName').textContent = session.name;
+                const firstName = session.name.split(' ')[0];
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+                document.getElementById('greetingTitle').textContent = `${greeting}, ${firstName}!`;
+            }
+            
+            if (session.role) {
+                document.getElementById('userRole').textContent = session.role;
+                document.getElementById('sidebarUserRole').textContent = session.role;
+                document.getElementById('greetingSubtitle').textContent = `Here's what's happening with your media coverage today as ${session.role}.`;
+            }
+            
+            if (session.email) {
+                document.getElementById('userEmail').textContent = session.email;
+            }
+        }
+
+        // ===== DASHBOARD FUNCTIONS =====
+        async function initializeDashboard() {
+            try {
+                // Load dashboard data
+                dashboardData = await loadDashboardData();
+                
+                // Update stats
+                updateDashboardStats(dashboardData);
+                
+                // Initialize chart
+                initializeActivityChart(dashboardData.chartData);
+                
+                // Initialize calendar
+                initializeMiniCalendar(dashboardData.events);
+                
+                // Load recent requests
+                loadRecentRequests(dashboardData.recentRequests);
+                
+                // Load activity timeline
+                loadActivityTimeline(dashboardData.activities);
+                
+                // Load notifications
+                loadNotifications(dashboardData.notifications);
+                
+                // Load upcoming events
+                loadUpcomingEvents(dashboardData.upcomingEvents);
+                
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showToast('Error', 'Failed to load dashboard data', 'danger');
+            }
+        }
+
+        async function loadDashboardData() {
+            // Simulated API call - replace with actual API
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        stats: {
+                            totalRequests: 42,
+                            totalRequestsChange: '+12%',
+                            pendingApprovals: 8,
+                            pendingApprovalsChange: '+3',
+                            activeAssignments: 15,
+                            activeAssignmentsChange: '-2',
+                            resourceUtilization: 78,
+                            resourceUtilizationChange: '+5%',
+                            activeRequests: 12,
+                            todaysEvents: 5
+                        },
+                        chartData: {
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            requests: [12, 19, 8, 15, 10, 5, 7],
+                            completions: [8, 12, 6, 9, 7, 3, 4]
+                        },
+                        events: [
+                            {
+                                title: 'Press Conference - City Hall',
+                                start: new Date(),
+                                end: new Date(new Date().setHours(new Date().getHours() + 2)),
+                                color: '#4361ee',
+                                description: 'Mayor\'s monthly press briefing'
+                            },
+                            {
+                                title: 'Sports: Football Finals',
+                                start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                                end: new Date(new Date().setDate(new Date().getDate() + 1)),
+                                color: '#2ecc71'
+                            },
+                            {
+                                title: 'Cultural Festival Opening',
+                                start: new Date(new Date().setDate(new Date().getDate() + 2)),
+                                end: new Date(new Date().setDate(new Date().getDate() + 2)),
+                                color: '#f39c12'
+                            },
+                            {
+                                title: 'Business Conference',
+                                start: new Date(new Date().setDate(new Date().getDate() + 3)),
+                                end: new Date(new Date().setDate(new Date().getDate() + 3)),
+                                color: '#3498db'
+                            }
+                        ],
+                        recentRequests: [
+                            { id: 'REQ-001', title: 'City Council Meeting', category: 'Politics', priority: 'High', status: 'Approved' },
+                            { id: 'REQ-002', title: 'Football Championship', category: 'Sports', priority: 'High', status: 'Assigned' },
+                            { id: 'REQ-003', title: 'Music Festival', category: 'Entertainment', priority: 'Medium', status: 'Pending' },
+                            { id: 'REQ-004', title: 'Cultural Exhibition', category: 'Culture', priority: 'Low', status: 'Draft' },
+                            { id: 'REQ-005', title: 'Economic Forum', category: 'Business', priority: 'Medium', status: 'In Progress' }
+                        ],
+                        activities: [
+                            { user: 'Sarah Reporter', action: 'uploaded interview footage', time: '10 min ago', icon: 'cloud-upload', color: 'primary' },
+                            { user: 'Mike Editor', action: 'approved urgent coverage request', time: '25 min ago', icon: 'check-circle', color: 'success' },
+                            { user: 'System', action: 'automatically assigned breaking news team', time: '1 hour ago', icon: 'lightning', color: 'warning' },
+                            { user: 'David Cameraman', action: 'checked in at stadium location', time: '2 hours ago', icon: 'geo-alt', color: 'info' },
+                            { user: 'Admin', action: 'added new camera equipment to inventory', time: '4 hours ago', icon: 'plus-circle', color: 'secondary' }
+                        ],
+                        notifications: [
+                            { id: 1, title: 'Assignment Due', message: 'Sports coverage due in 2 hours', time: '5 min ago', read: false, type: 'warning' },
+                            { id: 2, title: 'New Request', message: 'New cultural event coverage request submitted', time: '15 min ago', read: false, type: 'info' },
+                            { id: 3, title: 'Resource Alert', message: 'Camera equipment #C-123 needs maintenance', time: '1 hour ago', read: true, type: 'danger' }
+                        ],
+                        upcomingEvents: [
+                            { title: 'Press Conference', time: 'Today, 10:00 AM', location: 'City Hall' },
+                            { title: 'Sports Finals', time: 'Tomorrow, 2:00 PM', location: 'National Stadium' },
+                            { title: 'Cultural Festival', time: 'Dec 15, 6:00 PM', location: 'Cultural Center' }
+                        ]
+                    });
+                }, 500);
+            });
+        }
+
+        function updateDashboardStats(data) {
+            const stats = data.stats;
+            
+            // Update stats cards
+            document.getElementById('totalRequests').textContent = stats.totalRequests;
+            document.getElementById('totalRequestsChange').innerHTML = `<i class="bi bi-arrow-up me-1"></i>${stats.totalRequestsChange}`;
+            
+            document.getElementById('pendingApprovals').textContent = stats.pendingApprovals;
+            document.getElementById('pendingApprovalsChange').innerHTML = `<i class="bi bi-clock me-1"></i>${stats.pendingApprovalsChange}`;
+            
+            document.getElementById('activeAssignments').textContent = stats.activeAssignments;
+            document.getElementById('activeAssignmentsChange').innerHTML = `<i class="bi bi-people me-1"></i>${stats.activeAssignmentsChange}`;
+            
+            document.getElementById('resourceUtilization').textContent = stats.resourceUtilization + '%';
+            document.getElementById('resourceUtilizationChange').innerHTML = `<i class="bi bi-check-circle me-1"></i>${stats.resourceUtilizationChange}`;
+            
+            document.getElementById('activeRequests').textContent = stats.activeRequests;
+            document.getElementById('todaysEvents').textContent = stats.todaysEvents;
+            
+            // Update badges
+            document.getElementById('pendingRequestsBadge').textContent = stats.pendingApprovals;
+            document.getElementById('myAssignmentsBadge').textContent = stats.activeAssignments;
+        }
+
+        function initializeActivityChart(chartData) {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            
+            if (activityChart) {
+                activityChart.destroy();
+            }
+            
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Requests',
+                            data: chartData.requests,
+                            borderColor: '#4361ee',
+                            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#4361ee',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Completions',
+                            data: chartData.completions,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#2ecc71',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            padding: 10,
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 12
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                padding: 10
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                padding: 10
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'nearest'
+                    }
+                }
+            });
+        }
+
+        function initializeMiniCalendar(events) {
+            const calendarEl = document.getElementById('miniCalendar');
+            
+            if (miniCalendar) {
+                miniCalendar.destroy();
+            }
+            
+            miniCalendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                height: 300,
+                events: events,
+                eventClick: function(info) {
+                    showEventDetails(info.event);
+                },
+                eventMouseEnter: function(info) {
+                    info.el.style.cursor = 'pointer';
+                }
+            });
+            
+            miniCalendar.render();
+        }
+
+        function loadRecentRequests(requests) {
+            const tableBody = document.getElementById('recentRequestsTable');
+            tableBody.innerHTML = '';
+            
+            if (requests.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No recent requests found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            requests.forEach(request => {
+                const statusClass = {
+                    'Approved': 'success',
+                    'Pending': 'warning',
+                    'Draft': 'secondary',
+                    'In Progress': 'primary',
+                    'Assigned': 'info',
+                    'Rejected': 'danger'
+                }[request.status] || 'secondary';
+                
+                const priorityClass = {
+                    'High': 'danger',
+                    'Medium': 'warning',
+                    'Low': 'secondary'
+                }[request.priority] || 'secondary';
+                
+                const row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                row.onclick = () => viewRequest(request.id);
+                row.innerHTML = `
+                    <td><span class="badge bg-dark">${request.id}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-text me-2"></i>
+                            <span class="text-truncate" style="max-width: 150px;">${request.title}</span>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-info">${request.category}</span></td>
+                    <td><span class="badge bg-${priorityClass}">${request.priority}</span></td>
+                    <td><span class="badge bg-${statusClass}">${request.status}</span></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function loadActivityTimeline(activities) {
+            const timeline = document.getElementById('activityTimeline');
+            timeline.innerHTML = '';
+            
+            if (activities.length === 0) {
+                timeline.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-activity fs-1 d-block mb-2"></i>
+                        No recent activity
+                    </div>
+                `;
+                return;
+            }
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'activity-item mb-3';
+                item.innerHTML = `
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar-sm bg-${activity.color} bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-${activity.icon} text-${activity.color}"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">
+                                <strong>${activity.user}</strong> ${activity.action}
+                            </p>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>${activity.time}
+                            </small>
+                        </div>
+                    </div>
+                `;
+                timeline.appendChild(item);
+            });
+        }
+
+        function loadNotifications(notifications) {
+            const notificationList = document.getElementById('notificationList');
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            document.getElementById('notificationCount').textContent = unreadCount;
+            document.getElementById('notificationTotal').textContent = unreadCount;
+            
+            notificationList.innerHTML = '';
+            
+            if (notifications.length === 0) {
+                notificationList.innerHTML = `
+                    <div class="text-center p-4 text-muted">
+                        <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+                        No notifications
+                    </div>
+                `;
+                return;
+            }
+            
+            notifications.forEach(notification => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = `list-group-item list-group-item-action ${notification.read ? '' : 'bg-light'}`;
+                item.onclick = (e) => {
+                    e.preventDefault();
+                    markNotificationRead(notification.id);
+                };
+                item.innerHTML = `
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-exclamation-triangle text-${notification.type} fs-5"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>${notification.title}</strong>
+                                <small class="text-muted">${notification.time}</small>
+                            </div>
+                            <p class="mb-1">${notification.message}</p>
+                            ${!notification.read ? '<span class="badge bg-primary">New</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                notificationList.appendChild(item);
+            });
+        }
+
+        function loadUpcomingEvents(events) {
+            const eventsList = document.getElementById('upcomingEventsList');
+            eventsList.innerHTML = '';
+            
+            events.forEach(event => {
+                const eventItem = document.createElement('div');
+                eventItem.className = 'mb-2';
+                eventItem.innerHTML = `
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <i class="bi bi-calendar-event text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <h6 class="mb-1">${event.title}</h6>
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>${event.time}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>${event.location}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                eventsList.appendChild(eventItem);
+            });
+        }
+
+        // ===== ACTION FUNCTIONS =====
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function newRequest() {
+            window.location.href = 'new-request.html';
+        }
+
+        async function exportData() {
+            try {
+                showToast('Export Started', 'Preparing your dashboard data for export...', 'info');
+                
+                // Simulate export process
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Create export data
+                const exportData = {
+                    timestamp: new Date().toISOString(),
+                    dashboardStats: {
+                        totalRequests: document.getElementById('totalRequests').textContent,
+                        pendingApprovals: document.getElementById('pendingApprovals').textContent,
+                        activeAssignments: document.getElementById('activeAssignments').textContent,
+                        resourceUtilization: document.getElementById('resourceUtilization').textContent
+                    },
+                    user: document.getElementById('userName').textContent,
+                    role: document.getElementById('userRole').textContent
+                };
+                
+                // Create and download file
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = `dashboard-export-${new Date().getTime()}.json`;
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                
+                showToast('Export Complete', 'Dashboard data has been exported successfully', 'success');
+                
+            } catch (error) {
+                console.error('Export failed:', error);
+                showToast('Export Failed', 'There was an error exporting your data', 'danger');
+            }
+        }
+
+        function quickReport() {
+            showToast('Report Generated', 'Quick report has been generated and saved to your reports', 'success');
+            // Navigate to reports page
+            setTimeout(() => {
+                window.location.href = 'reports.html';
+            }, 1500);
+        }
+
+        function viewProfile() {
+            // In a real application, this would navigate to the profile page
+            // For now, show a modal or navigate to profile.html
+            window.location.href = 'profile.html';
+        }
+
+        function openSettings() {
+            // In a real application, this would navigate to the settings page
+            // For now, show a modal or navigate to settings.html
+            window.location.href = 'settings.html';
+        }
+
+        function viewRequest(requestId) {
+            // Navigate to request details page
+            window.location.href = `request-details.html?id=${requestId}`;
+        }
+
+        function markNotificationRead(id) {
+            // In a real application, make an API call to mark notification as read
+            const notificationCount = document.getElementById('notificationCount');
+            const currentCount = parseInt(notificationCount.textContent);
+            
+            if (currentCount > 0) {
+                notificationCount.textContent = currentCount - 1;
+                document.getElementById('notificationTotal').textContent = currentCount - 1;
+                
+                // Update the notification list
+                const notificationItem = document.querySelector(`[data-notification-id="${id}"]`);
+                if (notificationItem) {
+                    notificationItem.classList.remove('bg-light');
+                    notificationItem.querySelector('.badge').remove();
+                }
+                
+                showToast('Notification', `Notification marked as read`, 'success');
+            }
+        }
+
+        function clearNotifications() {
+            if (confirm('Are you sure you want to mark all notifications as read?')) {
+                document.getElementById('notificationCount').textContent = '0';
+                document.getElementById('notificationTotal').textContent = '0';
+                document.getElementById('notificationList').innerHTML = 
+                    '<div class="text-center p-4 text-muted">No unread notifications</div>';
+                showToast('Notifications', 'All notifications cleared', 'success');
+            }
+        }
+
+        function refreshActivity() {
+            showToast('Refreshing', 'Updating activity timeline...', 'info');
+            // Reload activity timeline
+            setTimeout(() => {
+                loadActivityTimeline(dashboardData.activities);
+                showToast('Updated', 'Activity timeline refreshed', 'success');
+            }, 1000);
+        }
+
+        function updateChart(timeRange) {
+            showToast('Updating Chart', `Loading ${timeRange} data...`, 'info');
+            
+            // Simulate loading different time range data
+            setTimeout(() => {
+                const newData = {
+                    labels: timeRange === 'week' 
+                        ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        : timeRange === 'month'
+                        ? ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+                        : ['Q1', 'Q2', 'Q3', 'Q4'],
+                    requests: timeRange === 'week'
+                        ? [12, 19, 8, 15, 10, 5, 7]
+                        : timeRange === 'month'
+                        ? [45, 52, 48, 60]
+                        : [180, 210, 190, 220],
+                    completions: timeRange === 'week'
+                        ? [8, 12, 6, 9, 7, 3, 4]
+                        : timeRange === 'month'
+                        ? [38, 45, 40, 52]
+                        : [150, 180, 170, 195]
+                };
+                
+                activityChart.data.labels = newData.labels;
+                activityChart.data.datasets[0].data = newData.requests;
+                activityChart.data.datasets[1].data = newData.completions;
+                activityChart.update();
+                
+                showToast('Chart Updated', `Now showing ${timeRange} data`, 'success');
+            }, 1000);
+        }
+
+        function showEventDetails(event) {
+            const modalHtml = `
+                <div class="modal fade" id="eventModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${event.title}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Start:</strong> ${event.start.toLocaleString()}</p>
+                                ${event.end ? `<p><strong>End:</strong> ${event.end.toLocaleString()}</p>` : ''}
+                                ${event.extendedProps?.description ? `<p><strong>Description:</strong> ${event.extendedProps.description}</p>` : ''}
+                                <div style="width: 100%; height: 10px; background-color: ${event.backgroundColor || event.borderColor}; margin: 10px 0;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="window.location.href='calendar.html'">View in Calendar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('eventModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add new modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function showToast(title, message, type) {
+            // Create toast container if it doesn't exist
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                document.body.appendChild(container);
+            }
+            
+            // Create toast
+            const toastId = 'toast-' + Date.now();
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast align-items-center text-bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <strong>${title}:</strong> ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function () {
+                toast.remove();
+            });
+        }
+
+        function startRealTimeUpdates() {
+            if (realTimeInterval) {
+                clearInterval(realTimeInterval);
+            }
+            
+            realTimeInterval = setInterval(() => {
+                // Randomly update stats slightly
+                const stats = ['activeRequests', 'todaysEvents', 'pendingApprovals', 'activeAssignments'];
+                const randomStat = stats[Math.floor(Math.random() * stats.length)];
+                const element = document.getElementById(randomStat);
+                if (element) {
+                    const currentValue = parseInt(element.textContent);
+                    const change = Math.random() > 0.5 ? 1 : -1;
+                    const newValue = Math.max(0, currentValue + change);
+                    element.textContent = newValue;
+                    
+                    // Update corresponding badge if exists
+                    if (randomStat === 'pendingApprovals') {
+                        document.getElementById('pendingRequestsBadge').textContent = newValue;
+                    } else if (randomStat === 'activeAssignments') {
+                        document.getElementById('myAssignmentsBadge').textContent = newValue;
+                    }
+                }
+                
+                // Add random activity
+                const users = ['Sarah', 'Mike', 'David', 'Anna', 'Robert'];
+                const actions = [
+                    'submitted a request',
+                    'uploaded content',
+                    'approved assignment',
+                    'checked in at location',
+                    'updated request status',
+                    'assigned team to event',
+                    'uploaded footage'
+                ];
+                const icons = ['send', 'cloud-upload', 'check-circle', 'geo-alt', 'arrow-repeat', 'people', 'camera-reels'];
+                const colors = ['primary', 'success', 'warning', 'info', 'secondary'];
+                
+                const newActivity = {
+                    user: users[Math.floor(Math.random() * users.length)],
+                    action: actions[Math.floor(Math.random() * actions.length)],
+                    time: 'Just now',
+                    icon: icons[Math.floor(Math.random() * icons.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                };
+                
+                const timeline = document.getElementById('activityTimeline');
+                if (timeline.children.length > 0) {
+                    const newItem = document.createElement('div');
+                    newItem.className = 'activity-item mb-3';
+                    newItem.innerHTML = `
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <div class="avatar-sm bg-${newActivity.color} bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-${newActivity.icon} text-${newActivity.color}"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-1"><strong>${newActivity.user}</strong> ${newActivity.action}</p>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>${newActivity.time}</small>
+                            </div>
+                        </div>
+                    `;
+                    timeline.insertBefore(newItem, timeline.firstChild);
+                    
+                    // Keep only 5 items
+                    if (timeline.children.length > 5) {
+                        timeline.removeChild(timeline.lastChild);
+                    }
+                }
+                
+            }, 45000); // Update every 45 seconds
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString();
+            document.getElementById('currentTime').textContent = `${dateString} ${timeString}`;
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        
+        // Close sidebar when clicking on mobile
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 768) {
+                    const sidebar = bootstrap.Offcanvas.getInstance(document.getElementById('sidebar'));
+                    if (sidebar) sidebar.hide();
+                }
+            });
+        });
+
+        // Make cards clickable with hover effect
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (activityChart) {
+                activityChart.resize();
+            }
+            if (miniCalendar) {
+                miniCalendar.render();
+            }
+        });
+
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page is visible again, refresh data
+                refreshActivity();
+                updateCurrentTime();
+            }
+        });
+    </script>
+</body>
+</html>

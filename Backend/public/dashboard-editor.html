@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Dashboard - Amhara Media</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        :root {
+            --editor-primary: #2c3e50;
+            --editor-secondary: #3498db;
+            --editor-accent: #e74c3c;
+            --editor-success: #27ae60;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .logo h3,
+        .sidebar.collapsed .logo .badge,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-link .badge,
+        .sidebar.collapsed .user-details {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.85rem;
+        }
+
+        .sidebar.collapsed .toggle-btn i {
+            transform: rotate(180deg);
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .sidebar .logo h3 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .sidebar-menu .nav-link .badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card.primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .stats-card.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .stats-card.success {
+            background: linear-gradient(135deg, #27ae60, #219653);
+        }
+
+        .stats-card.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .stats-card.info {
+            background: linear-gradient(135deg, #2c3e50, #1a2530);
+        }
+
+        .stats-card i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.25rem 0;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background: white;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .welcome-banner h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .welcome-banner h1 {
+                font-size: 1.8rem;
+            }
+            
+            .navbar-top {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* Table Styling */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table td {
+            vertical-align: middle;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+            border-left: 4px solid #3498db;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast-success { border-left-color: #27ae60; }
+        .toast-info { border-left-color: #3498db; }
+        .toast-warning { border-left-color: #f39c12; }
+        .toast-error { border-left-color: #e74c3c; }
+
+        /* Quick Actions */
+        .quick-action-btn {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.15);
+        }
+
+        .quick-action-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+
+        /* Content Cards */
+        .content-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .content-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+        }
+
+        .content-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-draft { background: #f8f9fa; color: #6c757d; }
+        .status-review { background: #fff3cd; color: #856404; }
+        .status-published { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        /* Editor Styles */
+        .editor-toolbar {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 0.5rem;
+        }
+
+        .editor-content {
+            min-height: 300px;
+            border: 1px solid #e9ecef;
+            border-radius: 0 0 8px 8px;
+            padding: 1rem;
+            background: white;
+        }
+
+        /* Calendar */
+        .calendar-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .fc {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .fc-toolbar {
+            padding: 1rem;
+        }
+
+        .fc-event {
+            cursor: pointer;
+        }
+
+        /* Quality Control */
+        .quality-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .quality-meter {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .quality-meter-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Search */
+        .search-container {
+            position: relative;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .search-results.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Professional Enhancements */
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .data-table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .badge-pill {
+            border-radius: 10rem;
+            padding: 0.25em 0.8em;
+        }
+
+        .action-buttons .btn {
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .metric-card .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .metric-card .metric-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .progress-thin {
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        /* New user badge */
+        .new-user-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        
+        /* Onboarding highlight */
+        .onboarding-highlight {
+            animation: pulse 2s infinite;
+            position: relative;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+        }
+        
+        /* First time user empty state */
+        .first-time-empty-state {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+        }
+        
+        .first-time-empty-state:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            border-color: #3498db;
+        }
+        
+        /* Approval Workflow Styles */
+        .approval-workflow-container {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .workflow-step {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid #dee2e6;
+            position: relative;
+        }
+
+        .workflow-step.completed {
+            border-left-color: #27ae60;
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .workflow-step.current {
+            border-left-color: #3498db;
+            background: rgba(52, 152, 219, 0.05);
+            animation: pulse 2s infinite;
+        }
+
+        .workflow-step.pending {
+            border-left-color: #f39c12;
+            background: rgba(243, 156, 18, 0.05);
+        }
+
+        .workflow-step.rejected {
+            border-left-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .workflow-step.escalated {
+            border-left-color: #9b59b6;
+            background: rgba(155, 89, 182, 0.05);
+        }
+
+        .workflow-step-number {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .workflow-step.completed .workflow-step-number {
+            background: #27ae60;
+        }
+
+        .workflow-step.current .workflow-step-number {
+            background: #3498db;
+            animation: pulse 2s infinite;
+        }
+
+        .workflow-step.pending .workflow-step-number {
+            background: #f39c12;
+        }
+
+        .workflow-step.rejected .workflow-step-number {
+            background: #e74c3c;
+        }
+
+        .workflow-step.escalated .workflow-step-number {
+            background: #9b59b6;
+        }
+
+        .workflow-step-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .workflow-step-actions .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .approval-history {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            background: white;
+        }
+
+        .approval-history-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .approval-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .approval-history-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .approval-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        .approval-badge.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .approval-badge.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .approval-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .approval-badge.revision {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .approval-badge.escalated {
+            background: #e2d9f3;
+            color: #4a3f69;
+        }
+
+        .workflow-timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+
+        .workflow-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -17px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #6c757d;
+            border: 2px solid white;
+            box-shadow: 0 0 0 3px #e9ecef;
+        }
+
+        .timeline-item.completed::before {
+            background: #27ae60;
+        }
+
+        .timeline-item.current::before {
+            background: #3498db;
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-item.pending::before {
+            background: #f39c12;
+        }
+
+        .timeline-item.rejected::before {
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Dashboard - Amhara Media</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <!-- Quill Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        /* Keep all your existing CSS here */
+        :root {
+            --editor-primary: #2c3e50;
+            --editor-secondary: #3498db;
+            --editor-accent: #e74c3c;
+            --editor-success: #27ae60;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* ... [Keep ALL your existing CSS styles] ... */
+        
+        /* Add any new styles if needed, but keep existing ones */
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Keep your existing sidebar HTML -->
+        <div class="logo">
+            <div class="d-flex align-items-center gap-2">
+                <button class="toggle-btn" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h3>AMC Editor</h3>
+            </div>
+            <span class="badge bg-light text-dark" id="userRoleBadge">Editor</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="contentLink">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Content Review</span>
+                        <span class="badge bg-warning" id="reviewBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="articlesLink">
+                        <i class="bi bi-newspaper"></i>
+                        <span>Articles</span>
+                        <span class="badge bg-info" id="articlesBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="writersLink">
+                        <i class="bi bi-pencil"></i>
+                        <span>Writers</span>
+                        <span class="badge bg-success" id="writersBadge">0</span>
+                    </a>
+                </li>
+                <!-- Media Requests Menu Item -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="requestsLink">
+                        <i class="bi bi-inbox"></i>
+                        <span>Media Requests</span>
+                        <span class="badge bg-warning" id="requestsBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="approvalLink">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Approval Workflow</span>
+                        <span class="badge bg-warning" id="approvalBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="calendarLink">
+                        <i class="bi bi-calendar"></i>
+                        <span>Editorial Calendar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="categoriesLink">
+                        <i class="bi bi-tags"></i>
+                        <span>Categories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="qualityLink">
+                        <i class="bi bi-check-circle"></i>
+                        <span>Quality Control</span>
+                        <span class="badge bg-danger" id="qualityBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="analyticsLink">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Content Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="reportsLink">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="settingsLink">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="helpLink">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Help & Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-info d-flex align-items-center">
+                <div class="avatar-initials" id="userAvatar">EU</div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">Editor User</h6>
+                    <small class="text-white-50" id="userEmail">editor@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="navbar-top">
+            <div class="d-flex align-items-center gap-3">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h4 class="mb-0 fw-bold" id="pageTitle">Editor Dashboard</h4>
+                    <small class="text-muted" id="currentDate">Loading date...</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="search-container">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" class="form-control" placeholder="Search articles, writers..." id="searchInput">
+                        <button class="btn btn-primary" type="button" id="searchBtn">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+                <div class="position-relative">
+                    <button class="btn btn-light position-relative" id="notificationsBtn">
+                        <i class="bi bi-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+                            0
+                        </span>
+                    </button>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown">
+                        <i class="bi bi-lightning"></i> Quick Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="quickNewArticle"><i class="bi bi-plus-circle"></i> New Article</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickAssignWriter"><i class="bi bi-person-plus"></i> Assign Writer</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickSchedulePost"><i class="bi bi-calendar-plus"></i> Schedule Post</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickStartApproval"><i class="bi bi-clipboard-check"></i> Start Approval</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickReviewPending"><i class="bi bi-clock-history"></i> Review Pending</a></li>
+                        <!-- Review Media Requests Quick Action -->
+                        <li><a class="dropdown-item" href="#" id="quickReviewMediaRequests"><i class="bi bi-inbox"></i> Review Media Requests</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="quickGenerateReport"><i class="bi bi-file-earmark-text"></i> Generate Report</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="content-wrapper" id="dashboardSection">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 id="welcomeMessage">Welcome, Editor User</h1>
+                        <p id="welcomeSubtitle">Today's Priority: <strong id="pendingReviews">0 articles for review</strong>, <strong id="deadlines">0 deadlines approaching</strong>, <strong id="mediaRequests">0 media requests pending</strong>.</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block shadow-sm">
+                            <i class="bi bi-clock me-2"></i>
+                            <span id="currentTime">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card primary" onclick="dashboard.showSection('content')">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <h3 class="count" id="reviewCount">0</h3>
+                        <p class="label">For Review</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card success" onclick="dashboard.showSection('articles')">
+                        <i class="bi bi-check-circle"></i>
+                        <h3 class="count" id="publishedCount">0</h3>
+                        <p class="label">Published</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card warning" onclick="dashboard.showSection('writers')">
+                        <i class="bi bi-people"></i>
+                        <h3 class="count" id="writersCount">0</h3>
+                        <p class="label">Writers</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card danger" onclick="dashboard.showSection('requests')">
+                        <i class="bi bi-inbox"></i>
+                        <h3 class="count" id="requestsCount">0</h3>
+                        <p class="label">Media Requests</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card info" onclick="dashboard.showSection('calendar')">
+                        <i class="bi bi-calendar"></i>
+                        <h3 class="count" id="deadlineCount">0</h3>
+                        <p class="label">Deadlines</p>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+                    <div class="stats-card" onclick="dashboard.showSection('analytics')">
+                        <i class="bi bi-bar-chart"></i>
+                        <h3 class="count" id="engagementRate">0%</h3>
+                        <p class="label">Engagement</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Content Review Queue -->
+                <div class="col-lg-6 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Review Queue</h5>
+                            <button class="btn btn-sm btn-primary" onclick="dashboard.showSection('content')">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="reviewQueue">
+                                <!-- Content will be loaded by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Performance -->
+                <div class="col-lg-6 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Content Performance</h5>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary active" data-period="week">Week</button>
+                                <button class="btn btn-outline-secondary" data-period="month">Month</button>
+                                <button class="btn btn-outline-secondary" data-period="quarter">Quarter</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="performanceChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities & Calendar -->
+            <div class="row">
+                <!-- Recent Activities -->
+                <div class="col-lg-4 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Activities</h5>
+                            <button class="btn btn-sm btn-link" onclick="dashboard.viewAllActivities()">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="activityList">
+                                <!-- Activities will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Deadlines -->
+                <div class="col-lg-4 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Upcoming Deadlines</h5>
+                            <button class="btn btn-sm btn-primary" onclick="dashboard.showSection('calendar')">View Calendar</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="deadlinesList">
+                                <!-- Deadlines will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Media Requests -->
+                <div class="col-lg-4 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Pending Media Requests</h5>
+                            <button class="btn btn-sm btn-primary" onclick="dashboard.showSection('requests')">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="pendingRequests">
+                                <!-- Media requests will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Editor Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.createArticle()">
+                                        <i class="bi bi-file-earmark-plus"></i>
+                                        <h6>Create Article</h6>
+                                        <small class="text-muted">Start new content</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('writers')">
+                                        <i class="bi bi-person-check"></i>
+                                        <h6>Assign Writer</h6>
+                                        <small class="text-muted">Delegate content</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('approval')">
+                                        <i class="bi bi-clipboard-check"></i>
+                                        <h6>Start Approval</h6>
+                                        <small class="text-muted">Multi-level workflow</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('content')">
+                                        <i class="bi bi-clock-history"></i>
+                                        <h6>Pending Reviews</h6>
+                                        <small class="text-muted">Check approvals</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('requests')">
+                                        <i class="bi bi-inbox"></i>
+                                        <h6>Media Requests</h6>
+                                        <small class="text-muted">Review coverage requests</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('calendar')">
+                                        <i class="bi bi-calendar-plus"></i>
+                                        <h6>Schedule</h6>
+                                        <small class="text-muted">Plan content</small>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Content -->
+        <div id="sectionContent" class="content-wrapper" style="display: none;"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Modal for Article Editor -->
+    <div class="modal fade" id="articleEditorModal" tabindex="-1" aria-hidden="true">
+        <!-- Keep your existing article editor modal -->
+    </div>
+
+    <!-- Modal for Review Content -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+        <!-- Keep your existing review modal -->
+    </div>
+
+    <!-- Modal for Approval Workflow -->
+    <div class="modal fade" id="approvalWorkflowModal" tabindex="-1" aria-hidden="true">
+        <!-- Keep your existing approval workflow modal -->
+    </div>
+
+    <!-- NEW: Modal for Reviewing Media Requests -->
+    <div class="modal fade" id="mediaRequestModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Media Coverage Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="mediaRequestDetails">
+                    <!-- Request details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="dashboard.approveMediaRequest()">
+                        <i class="bi bi-check-lg"></i> Approve
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="dashboard.requestMediaRequestRevision()">
+                        <i class="bi bi-arrow-counterclockwise"></i> Request Revision
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="dashboard.rejectMediaRequest()">
+                        <i class="bi bi-x-lg"></i> Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- Quill Editor -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Professional Editor Dashboard Class
+        class EditorDashboard {
+            constructor() {
+                this.config = {
+                    refreshInterval: 30000,
+                    toastDuration: 5000,
+                    chartColors: {
+                        primary: '#3498db',
+                        success: '#27ae60',
+                        warning: '#f39c12',
+                        danger: '#e74c3c',
+                        info: '#2c3e50'
+                    }
+                };
+                
+                this.data = {
+                    user: null,
+                    articles: [],
+                    writers: [],
+                    reviews: [],
+                    approvals: [],
+                    categories: [],
+                    activities: [],
+                    calendarEvents: [],
+                    notifications: [],
+                    isNewUser: true,
+                    userHistory: {},
+                    mediaRequests: []
+                };
+                
+                this.currentSection = 'dashboard';
+                this.quillEditor = null;
+                this.calendar = null;
+                this.charts = {};
+                this.currentMediaRequest = null;
+            }
+            
+            init() {
+                this.loadUserData();
+                this.setupEventListeners();
+                this.updateDateTime();
+                this.startAutoRefresh();
+                
+                if (this.data.isNewUser) {
+                    this.initNewUserDashboard();
+                } else {
+                    this.initReturningUserDashboard();
+                }
+                
+                // Load media requests on init
+                this.loadMediaRequests();
+            }
+            
+            // ============= MEDIA REQUESTS METHODS =============
+            
+            async loadMediaRequests() {
+                try {
+                    const response = await fetch('http://localhost:5001/api/requests');
+                    if (!response.ok) throw new Error('Failed to fetch requests');
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        this.data.mediaRequests = result.data;
+                        this.updateMediaRequestsBadge();
+                        this.updateMediaRequestsDashboard();
+                    }
+                } catch (error) {
+                    console.log('Using localStorage fallback for media requests');
+                    this.data.mediaRequests = JSON.parse(localStorage.getItem('editorPendingRequests') || '[]');
+                    this.updateMediaRequestsBadge();
+                    this.updateMediaRequestsDashboard();
+                }
+            }
+            
+            updateMediaRequestsBadge() {
+                const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
+                document.getElementById('requestsBadge').textContent = pendingCount;
+                document.getElementById('requestsCount').textContent = pendingCount;
+                document.getElementById('mediaRequests').textContent = `${pendingCount} media requests pending`;
+            }
+            
+            updateMediaRequestsDashboard() {
+                // Update dashboard widget
+                this.renderPendingMediaRequests();
+                
+                // Update stats if on dashboard
+                if (this.currentSection === 'dashboard') {
+                    const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
+                    document.getElementById('requestsCount').textContent = pendingCount;
+                }
+            }
+            
+            renderPendingMediaRequests() {
+                const pendingRequestsContainer = document.getElementById('pendingRequests');
+                if (!pendingRequestsContainer) return;
+                
+                const pendingRequests = this.data.mediaRequests
+                    .filter(r => r.status === 'pending')
+                    .slice(0, 3);
+                
+                if (pendingRequests.length === 0) {
+                    pendingRequestsContainer.innerHTML = `
+                        <div class="empty-state first-time-empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h5>No Pending Media Requests</h5>
+                            <p>Media coverage requests from staff will appear here for your review.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                pendingRequestsContainer.innerHTML = pendingRequests.map(request => `
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${request.title || 'Untitled Request'}</h6>
+                                <small class="text-muted">From ${request.submittedBy || 'Unknown'} • ${request.category || 'Uncategorized'}</small>
+                            </div>
+                            <span class="badge bg-${request.priority === 'high' || request.priority === 'urgent' ? 'danger' : 'warning'}">
+                                ${request.priority || 'medium'}
+                            </span>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                ${request.date ? new Date(request.date).toLocaleDateString() : 'Date not set'} • 
+                                ${request.startTime || ''} - ${request.endTime || ''}
+                            </small>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-primary" onclick="dashboard.viewMediaRequestDetails('${request._id || request.id}')">
+                                <i class="bi bi-eye"></i> Review
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // ============= REQUESTS SECTION =============
+            
+            getRequestsSection() {
+                // This will be replaced by loadRequestsSection after a short delay
+                setTimeout(() => this.loadRequestsSection(), 0);
+                return '<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading media requests...</p></div>';
+            }
+            
+            async loadRequestsSection() {
+    const sectionContent = document.getElementById('sectionContent');
+    if (!sectionContent) return;
+    
+    // Fetch fresh data
+    await this.loadMediaRequests();
+    
+    // Calculate counts
+    const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
+    const approvedCount = this.data.mediaRequests.filter(r => r.status === 'approved').length;
+    const revisionCount = this.data.mediaRequests.filter(r => r.status === 'revision').length;
+    const rejectedCount = this.data.mediaRequests.filter(r => r.status === 'rejected').length;
+    
+    // Build the section HTML
+    sectionContent.innerHTML = `
+        <div class="section-header">
+            <h1><i class="bi bi-inbox me-2"></i>Media Coverage Requests</h1>
+            <p class="mb-0">Review and manage media coverage requests</p>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card primary" onclick="dashboard.filterRequests('pending')">
+                    <i class="bi bi-clock"></i>
+                    <h3 class="count">${pendingCount}</h3>
+                    <p class="label">Pending</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card success" onclick="dashboard.filterRequests('approved')">
+                    <i class="bi bi-check-circle"></i>
+                    <h3 class="count">${approvedCount}</h3>
+                    <p class="label">Approved</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card warning" onclick="dashboard.filterRequests('revision')">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <h3 class="count">${revisionCount}</h3>
+                    <p class="label">Revision</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card danger" onclick="dashboard.filterRequests('rejected')">
+                    <i class="bi bi-x-circle"></i>
+                    <h3 class="count">${rejectedCount}</h3>
+                    <p class="label">Rejected</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">All Media Requests</h5>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary" onclick="dashboard.filterRequests('all')">
+                        All
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="dashboard.filterRequests('urgent')">
+                        Urgent Only
+                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="dashboard.refreshRequests()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                ${this.data.mediaRequests.length === 0 ? `
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <h5 class="mt-3">No Media Requests Found</h5>
+                        <p class="text-muted">When requestors submit coverage requests, they will appear here.</p>
+                    </div>
+                ` : `
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="requestsTable">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Requester</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+       <tbody id="requestsTableBody">
+    ${this.data.mediaRequests.map(request => {
+        // Get the correct request ID - try multiple possible fields
+        const requestId = request._id || request.id || request.requestId || '';
+        return `
+            <tr id="request-row-${requestId}">
+                <td>
+                    <strong>${request.title || 'Untitled Request'}</strong>
+                    <div class="small text-muted">${request.requestId || ''}</div>
+                </td>
+                <td>
+                    <div>${request.submittedBy || 'Unknown'}</div>
+                    <small class="text-muted">${request.submitterDepartment || ''}</small>
+                </td>
+                <td>
+                    <span class="badge" style="background-color: ${this.getCategoryColor(request.category)}">
+                        ${request.category || 'Uncategorized'}
+                    </span>
+                </td>
+                <td>
+                    ${request.date ? new Date(request.date).toLocaleDateString() : 'Not set'}<br>
+                    <small class="text-muted">${request.startTime || ''} - ${request.endTime || ''}</small>
+                </td>
+                <td>
+                    <span class="badge bg-${request.priority === 'urgent' ? 'danger' : request.priority === 'high' ? 'warning' : 'secondary'}">
+                        ${request.priority || 'medium'}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge bg-${request.status === 'approved' ? 'success' : request.status === 'rejected' ? 'danger' : request.status === 'revision' ? 'warning' : 'primary'}">
+                        ${request.status || 'pending'}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="dashboard.viewMediaRequestDetails('${requestId}')">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        ${request.status === 'pending' ? `
+                            <button class="btn btn-sm btn-outline-success" onclick="dashboard.handleApproveRequest('${requestId}')">
+                                <i class="bi bi-check"></i>
+                            </button>
+                            
+                            <button class="btn btn-sm btn-outline-warning" onclick="dashboard.handleRequestRevision('${requestId}')">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="dashboard.handleRejectRequest('${requestId}')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('')}
+</tbody>
+                        </table>
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners after the table is rendered
+    this.setupTableEventListeners();
+}
+setupTableEventListeners() {
+    // Use event delegation for better performance
+    const tableBody = document.getElementById('requestsTableBody');
+    if (!tableBody) return;
+    
+    tableBody.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (!button) return;
+        
+        const requestId = button.getAttribute('data-request-id');
+        if (!requestId) return;
+        
+        if (button.classList.contains('btn-outline-success')) {
+            this.handleApproveRequest(requestId);
+        } else if (button.classList.contains('btn-outline-warning')) {
+            this.handleRequestRevision(requestId);
+        } else if (button.classList.contains('btn-outline-danger')) {
+            this.handleRejectRequest(requestId);
+        } else if (button.classList.contains('btn-outline-primary')) {
+            this.viewMediaRequestDetails(requestId);
+        }
+    });
+}
+
+// Add these methods to the EditorDashboard class:
+
+async handleApproveRequest(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Add approval notes (optional):');
+    if (notes === null) return; // User cancelled
+    
+    await this.updateMediaRequestStatus(requestId, 'approved', notes || 'Approved by editor');
+}
+
+async handleRequestRevision(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('What needs to be revised?');
+    if (notes === null || notes.trim() === '') {
+        this.showToast('Revision notes are required', 'warning');
+        return;
+    }
+    
+    await this.updateMediaRequestStatus(requestId, 'revision', notes);
+}
+
+async handleRejectRequest(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Reason for rejection:');
+    if (notes === null || notes.trim() === '') {
+        this.showToast('Rejection reason is required', 'warning');
+        return;
+    }
+    
+    await this.updateMediaRequestStatus(requestId, 'rejected', notes);
+}
+
+// Also update the updateMediaRequestStatus method to properly update the UI:
+async updateMediaRequestStatus(requestId, status, editorNotes = '') {
+    try {
+        // Show loading
+        this.showToast(`Updating request to ${status}...`, 'info');
+        
+        // Find the request in local data first
+        const request = this.data.mediaRequests.find(r => 
+            r._id === requestId || 
+            r.id === requestId || 
+            r.requestId === requestId
+        );
+        
+        if (!request) {
+            this.showToast('Request not found in local data', 'danger');
+            return false;
+        }
+        
+        // Update in backend
+        const response = await fetch(`http://localhost:5001/api/requests/${requestId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status,
+                editorNotes,
+                assignedEditor: {
+                    name: this.data.user.name,
+                    email: this.data.user.email,
+                    assignedAt: new Date().toISOString()
+                },
+                reviewedAt: new Date().toISOString()
+            })
+        });
+        
+        // Always update local data regardless of backend response
+        request.status = status;
+        request.editorNotes = editorNotes;
+        request.assignedEditor = {
+            name: this.data.user.name,
+            email: this.data.user.email,
+            assignedAt: new Date().toISOString()
+        };
+        request.reviewedAt = new Date().toISOString();
+        
+        // Update UI immediately
+        this.updateRequestRow(requestId, status);
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                // Update with backend data
+                const updatedRequest = result.data;
+                Object.assign(request, updatedRequest);
+                this.showToast(`Request ${status} successfully!`, 'success');
+            }
+        } else {
+            // Backend failed, but we updated locally
+            this.showToast(`Request ${status} (saved locally)`, 'warning');
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('editorPendingRequests', JSON.stringify(this.data.mediaRequests));
+        }
+        
+        // Update badge counts
+        this.updateMediaRequestsBadge();
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error updating request status:', error);
+        this.showToast('Failed to update request', 'danger');
+        return false;
+    }
+}
+
+// Helper method to update a single table row
+updateRequestRow(requestId, newStatus) {
+    const row = document.getElementById(`request-row-${requestId}`);
+    if (!row) return;
+    
+    // Update status badge
+    const statusCell = row.querySelector('td:nth-child(6)');
+    if (statusCell) {
+        const statusClasses = {
+            'approved': 'success',
+            'rejected': 'danger', 
+            'revision': 'warning',
+            'pending': 'primary'
+        };
+        
+        const badgeClass = statusClasses[newStatus] || 'primary';
+        statusCell.innerHTML = `
+            <span class="badge bg-${badgeClass}">
+                ${newStatus}
+            </span>
+        `;
+    }
+    
+    // Update action buttons (remove them if not pending)
+    const actionsCell = row.querySelector('td:nth-child(7)');
+    if (actionsCell && newStatus !== 'pending') {
+        actionsCell.querySelector('.action-buttons').innerHTML = `
+            <button class="btn btn-sm btn-outline-primary" onclick="dashboard.viewMediaRequestDetails('${requestId}')">
+                <i class="bi bi-eye"></i>
+            </button>
+        `;
+    }
+}
+
+async handleApproveRequest(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Add approval notes (optional):');
+    if (notes === null) return; // User cancelled
+    
+    await this.updateMediaRequestStatus(requestId, 'approved', notes || 'Approved by editor');
+}
+
+async handleRequestRevision(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('What needs to be revised?');
+    if (notes === null || notes.trim() === '') {
+        this.showToast('Revision notes are required', 'warning');
+        return;
+    }
+    
+    await this.updateMediaRequestStatus(requestId, 'revision', notes);
+}
+
+async handleRejectRequest(requestId) {
+    if (!requestId) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Reason for rejection:');
+    if (notes === null || notes.trim() === '') {
+        this.showToast('Rejection reason is required', 'warning');
+        return;
+    }
+    
+    await this.updateMediaRequestStatus(requestId, 'rejected', notes);
+}
+            // ============= MEDIA REQUEST DETAILS & ACTIONS =============
+            
+        async viewMediaRequestDetails(requestId) {
+    try {
+        // Find request in local data first
+        let request = this.data.mediaRequests.find(r => 
+            r._id === requestId || 
+            r.id === requestId || 
+            r.requestId === requestId
+        );
+        
+        if (!request) {
+            // Try to fetch from backend
+            try {
+                const response = await fetch(`http://localhost:5001/api/requests/${requestId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        request = result.data;
+                        // Add to local data
+                        this.data.mediaRequests.push(request);
+                    }
+                }
+            } catch (error) {
+                this.showToast('Request not found', 'danger');
+                return;
+            }
+        }
+        
+        if (!request) {
+            this.showToast('Request not found', 'danger');
+            return;
+        }
+        
+        this.currentMediaRequest = request;
+        
+        // ... rest of your modal content building code ...
+        
+    } catch (error) {
+        console.error('Error viewing request details:', error);
+        this.showToast('Failed to load request details', 'danger');
+    }
+}
+            
+           async approveMediaRequest(requestId = null) {
+    const id = requestId || (this.currentMediaRequest ? this.currentMediaRequest._id || this.currentMediaRequest.id : null);
+    if (!id) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Add approval notes (optional):');
+    await this.updateMediaRequestStatus(id, 'approved', notes || 'Approved by editor');
+}
+
+async requestMediaRequestRevision(requestId = null) {
+    const id = requestId || (this.currentMediaRequest ? this.currentMediaRequest._id || this.currentMediaRequest.id : null);
+    if (!id) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('What needs to be revised?');
+    if (notes) {
+        await this.updateMediaRequestStatus(id, 'revision', notes);
+    }
+}
+
+async rejectMediaRequest(requestId = null) {
+    const id = requestId || (this.currentMediaRequest ? this.currentMediaRequest._id || this.currentMediaRequest.id : null);
+    if (!id) {
+        this.showToast('No request selected', 'warning');
+        return;
+    }
+    
+    const notes = prompt('Reason for rejection:');
+    if (notes) {
+        await this.updateMediaRequestStatus(id, 'rejected', notes);
+    }
+}
+            
+            async requestMediaRequestRevision(requestId = null) {
+                const id = requestId || (this.currentMediaRequest ? this.currentMediaRequest._id || this.currentMediaRequest.id : null);
+                if (!id) return;
+                
+                const notes = prompt('What needs to be revised?');
+                if (notes) {
+                    await this.updateMediaRequestStatus(id, 'revision', notes);
+                }
+            }
+            
+            async rejectMediaRequest(requestId = null) {
+                const id = requestId || (this.currentMediaRequest ? this.currentMediaRequest._id || this.currentMediaRequest.id : null);
+                if (!id) return;
+                
+                const notes = prompt('Reason for rejection:');
+                if (notes) {
+                    await this.updateMediaRequestStatus(id, 'rejected', notes);
+                }
+            }
+            
+          async updateMediaRequestStatus(requestId, status, editorNotes = '') {
+    try {
+        // Show loading
+        this.showToast(`Updating request to ${status}...`, 'info');
+        
+        // Find the request in local data first
+        const request = this.data.mediaRequests.find(r => 
+            r._id === requestId || 
+            r.id === requestId || 
+            r.requestId === requestId
+        );
+        
+        if (!request) {
+            this.showToast('Request not found in local data', 'danger');
+            return false;
+        }
+        
+        // Update in backend
+        const response = await fetch(`http://localhost:5001/api/requests/${requestId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status,
+                editorNotes,
+                assignedEditor: {
+                    name: this.data.user.name,
+                    email: this.data.user.email,
+                    assignedAt: new Date().toISOString()
+                },
+                reviewedAt: new Date().toISOString()
+            })
+        });
+        
+        // Always update local data regardless of backend response
+        request.status = status;
+        request.editorNotes = editorNotes;
+        request.assignedEditor = {
+            name: this.data.user.name,
+            email: this.data.user.email,
+            assignedAt: new Date().toISOString()
+        };
+        request.reviewedAt = new Date().toISOString();
+        
+        // Update UI immediately
+        this.updateRequestRow(requestId, status);
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+                // Update with backend data
+                const updatedRequest = result.data;
+                Object.assign(request, updatedRequest);
+                this.showToast(`Request ${status} successfully!`, 'success');
+            }
+        } else {
+            // Backend failed, but we updated locally
+            this.showToast(`Request ${status} (saved locally)`, 'warning');
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('editorPendingRequests', JSON.stringify(this.data.mediaRequests));
+        }
+        
+        // Update badge counts
+        this.updateMediaRequestsBadge();
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error updating request status:', error);
+        this.showToast('Failed to update request', 'danger');
+        return false;
+    }
+}
+
+// Helper method to update a single table row
+updateRequestRow(requestId, newStatus) {
+    const row = document.getElementById(`request-row-${requestId}`);
+    if (!row) return;
+    
+    // Update status badge
+    const statusCell = row.querySelector('td:nth-child(6)');
+    if (statusCell) {
+        const statusClasses = {
+            'approved': 'success',
+            'rejected': 'danger', 
+            'revision': 'warning',
+            'pending': 'primary'
+        };
+        
+        const badgeClass = statusClasses[newStatus] || 'primary';
+        statusCell.innerHTML = `
+            <span class="badge bg-${badgeClass}">
+                ${newStatus}
+            </span>
+        `;
+    }
+    
+    // Update action buttons (remove them if not pending)
+    const actionsCell = row.querySelector('td:nth-child(7)');
+    if (actionsCell && newStatus !== 'pending') {
+        actionsCell.querySelector('.action-buttons').innerHTML = `
+            <button class="btn btn-sm btn-outline-primary" onclick="dashboard.viewMediaRequestDetails('${requestId}')">
+                <i class="bi bi-eye"></i>
+            </button>
+        `;
+    }
+}
+            filterRequests(filter) {
+                this.showToast(`Filtering requests by: ${filter}`, 'info');
+                // Filter logic would be implemented here
+            }
+            
+            refreshRequests() {
+                this.showToast('Refreshing media requests...', 'info');
+                this.loadMediaRequests().then(() => {
+                    if (this.currentSection === 'requests') {
+                        this.loadRequestsSection();
+                    }
+                    this.showToast('Media requests refreshed', 'success');
+                });
+            }
+            
+            // ============= HELPER METHODS =============
+            
+            getCategoryColor(categoryName) {
+                const colors = {
+                    'breaking_news': '#e74c3c',
+                    'politics': '#3498db',
+                    'sports': '#2ecc71',
+                    'culture': '#9b59b6',
+                    'business': '#f39c12',
+                    'health': '#1abc9c',
+                    'education': '#e67e22',
+                    'entertainment': '#d35400'
+                };
+                return colors[categoryName] || '#6c757d';
+            }
+            
+            showToast(message, type = 'info') {
+                // Keep your existing toast implementation
+                const toastContainer = document.getElementById('toastContainer');
+                const toastId = 'toast-' + Date.now();
+                const toast = document.createElement('div');
+                toast.id = toastId;
+                toast.className = `toast toast-${type}`;
+                toast.setAttribute('role', 'alert');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${type.charAt(0).toUpperCase() + type.slice(1)}:</strong> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+                
+                toastContainer.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // Remove toast after it's hidden
+                toast.addEventListener('hidden.bs.toast', function () {
+                    toast.remove();
+                });
+            }
+            
+            // ============= EXISTING METHODS (KEEP THESE AS THEY ARE) =============
+            
+            loadUserData() {
+                // Keep your existing implementation
+                try {
+                    const userData = localStorage.getItem('editorUserData');
+                    const userHistory = localStorage.getItem('editorUserHistory');
+                    
+                    if (userData) {
+                        const parsedData = JSON.parse(userData);
+                        this.data.user = parsedData;
+                        this.data.isNewUser = parsedData.isNew !== false;
+                        
+                        if (userHistory) {
+                            this.data.userHistory = JSON.parse(userHistory);
+                        }
+                    } else {
+                        this.initializeNewUser();
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                    this.initializeNewUser();
+                }
+                
+                if (this.data.user) {
+                    document.getElementById('userName').textContent = this.data.user.name;
+                    document.getElementById('userEmail').textContent = this.data.user.email;
+                    document.getElementById('userAvatar').textContent = this.data.user.avatar;
+                    document.getElementById('userRoleBadge').textContent = this.data.user.role;
+                }
+            }
+            
+            initializeNewUser() {
+                // Keep your existing implementation
+                this.data.user = {
+                    id: 'edt' + Date.now(),
+                    name: 'Editor User',
+                    email: 'editor@ameco.et',
+                    role: 'Editor',
+                    avatar: 'EU',
+                    department: 'Editorial',
+                    permissions: ['create', 'edit', 'review', 'approve'],
+                    isNew: true,
+                    firstLogin: new Date().toISOString(),
+                    lastLogin: null
+                };
+                localStorage.setItem('editorUserData', JSON.stringify(this.data.user));
+                this.data.isNewUser = true;
+            }
+            
+            setupEventListeners() {
+                // Keep your existing implementation for all event listeners
+                // Make sure to add the new event listener for media requests
+                
+                // Add event listeners for filter buttons
+document.addEventListener('click', (e) => {
+    if (e.target.closest('[onclick*="filterRequests"]')) {
+        const filter = e.target.closest('[onclick*="filterRequests"]').getAttribute('onclick').match(/'([^']+)'/)[1];
+        this.filterRequests(filter);
+    }
+    
+    if (e.target.closest('[onclick*="refreshRequests"]')) {
+        this.refreshRequests();
+    }
+});
+                // Existing sidebar toggle
+                document.getElementById('sidebarToggle').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.toggleSidebar();
+                });
+                
+                // Existing mobile menu
+                document.getElementById('mobileMenuToggle').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                // Navigation links
+                const navLinks = [
+                    { id: 'dashboardLink', section: 'requests' },
+                    { id: 'contentLink', section: 'content' },
+                    { id: 'articlesLink', section: 'articles' },
+                    { id: 'writersLink', section: 'writers' },
+                    { id: 'requestsLink', section: 'requests' },
+                    { id: 'approvalLink', section: 'approval' },
+                    { id: 'calendarLink', section: 'calendar' },
+                    { id: 'categoriesLink', section: 'categories' },
+                    { id: 'qualityLink', section: 'quality' },
+                    { id: 'analyticsLink', section: 'analytics' },
+                    { id: 'reportsLink', section: 'reports' },
+                    { id: 'settingsLink', section: 'settings' },
+                    { id: 'helpLink', section: 'help' }
+                ];
+                
+                navLinks.forEach(link => {
+                    const element = document.getElementById(link.id);
+                    if (element) {
+                        element.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.showSection(link.section);
+                        });
+                    }
+                });
+                
+                // Quick actions
+                document.getElementById('quickReviewMediaRequests').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSection('requests');
+                });
+                
+                // Existing logout
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+            }
+            
+            showSection(section) {
+                // Keep your existing implementation
+                this.currentSection = section;
+                
+                // Update active nav
+                document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                const sectionMap = {
+                    'dashboard': 'dashboardLink',
+                    'content': 'contentLink',
+                    'articles': 'articlesLink',
+                    'writers': 'writersLink',
+                    'requests': 'requestsLink',
+                    'approval': 'approvalLink',
+                    'calendar': 'calendarLink',
+                    'categories': 'categoriesLink',
+                    'quality': 'qualityLink',
+                    'analytics': 'analyticsLink',
+                    'reports': 'reportsLink',
+                    'settings': 'settingsLink',
+                    'help': 'helpLink'
+                };
+                
+                const activeLink = document.getElementById(sectionMap[section]);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+                
+                // Update page title
+                const titles = {
+                    'dashboard': 'Editor Dashboard',
+                    'content': 'Content Review',
+                    'articles': 'Articles Management',
+                    'writers': 'Writers Management',
+                    'requests': 'Media Coverage Requests',
+                    'approval': 'Approval Workflow',
+                    'calendar': 'Editorial Calendar',
+                    'categories': 'Content Categories',
+                    'quality': 'Quality Control',
+                    'analytics': 'Content Analytics',
+                    'reports': 'Editorial Reports',
+                    'settings': 'Editor Settings',
+                    'help': 'Help & Support'
+                };
+                
+                document.getElementById('pageTitle').textContent = titles[section] || 'Editor Dashboard';
+                
+                // Close mobile menu
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('active');
+                
+                // Show section content
+                if (section === 'dashboard') {
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    document.getElementById('sectionContent').style.display = 'none';
+                } else {
+                    document.getElementById('dashboardSection').style.display = 'none';
+                    document.getElementById('sectionContent').style.display = 'block';
+                    this.loadSectionContent(section);
+                }
+            }
+            
+            loadSectionContent(section) {
+                const sectionContent = document.getElementById('sectionContent');
+                
+                switch(section) {
+                    case 'dashboard':
+                        // Already handled
+                        break;
+                    case 'content':
+                        sectionContent.innerHTML = this.getContentReviewSection();
+                        break;
+                    case 'articles':
+                        sectionContent.innerHTML = this.getArticlesSection();
+                        break;
+                    case 'writers':
+                        sectionContent.innerHTML = this.getWritersSection();
+                        break;
+                    case 'requests':
+                        sectionContent.innerHTML = this.getRequestsSection();
+                        break;
+                    case 'approval':
+                        sectionContent.innerHTML = this.getApprovalSection();
+                        break;
+                    case 'calendar':
+                        sectionContent.innerHTML = this.getCalendarSection();
+                        break;
+                    case 'categories':
+                        sectionContent.innerHTML = this.getCategoriesSection();
+                        break;
+                    case 'quality':
+                        sectionContent.innerHTML = this.getQualitySection();
+                        break;
+                    case 'analytics':
+                        sectionContent.innerHTML = this.getAnalyticsSection();
+                        break;
+                    case 'reports':
+                        sectionContent.innerHTML = this.getReportsSection();
+                        break;
+                    case 'settings':
+                        sectionContent.innerHTML = this.getSettingsSection();
+                        break;
+                    case 'help':
+                        sectionContent.innerHTML = this.getHelpSection();
+                        break;
+                    default:
+                        sectionContent.innerHTML = `
+                            <div class="section-header">
+                                <h1><i class="bi bi-exclamation-triangle me-2"></i>Section Not Found</h1>
+                                <p class="mb-0">The requested section could not be loaded.</p>
+                            </div>
+                        `;
+                }
+            }
+            
+            // ============= KEEP ALL YOUR EXISTING METHODS BELOW =============
+            // All your existing methods for other sections (articles, writers, calendar, etc.)
+            // should remain exactly as they are. Only the media requests functionality is new.
+            
+            initNewUserDashboard() {
+                // Your existing implementation
+            }
+            
+            initReturningUserDashboard() {
+                // Your existing implementation
+            }
+            
+            updateDateTime() {
+                // Your existing implementation
+            }
+            
+            toggleSidebar() {
+                // Your existing implementation
+            }
+            
+            logout() {
+                // Your existing implementation
+            }
+            
+            // Add all your other existing methods here...
+            // They should remain exactly as they are in your current code
+            
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+    window.dashboard = new EditorDashboard();
+    window.dashboard.init();
+});
+
+    </script>
+</body>
+</html>
+</html>

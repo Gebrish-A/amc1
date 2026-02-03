@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Requests - Media Coverage System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --secondary: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #0dcaf0;
+            --dark: #212529;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            margin-left: -260px;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .request-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            margin-bottom: 1rem;
+        }
+
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .request-card.draft { border-left-color: var(--secondary); }
+        .request-card.pending { border-left-color: var(--warning); }
+        .request-card.approved { border-left-color: var(--success); }
+        .request-card.rejected { border-left-color: var(--danger); }
+        .request-card.assigned { border-left-color: var(--info); }
+        .request-card.in-progress { border-left-color: var(--primary); }
+        .request-card.completed { border-left-color: #6f42c1; }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-draft { background-color: #e9ecef; color: #495057; }
+        .badge-pending { background-color: #fff3cd; color: #856404; }
+        .badge-approved { background-color: #d1e7dd; color: #0f5132; }
+        .badge-rejected { background-color: #f8d7da; color: #842029; }
+        .badge-assigned { background-color: #cfe2ff; color: #084298; }
+        .badge-in-progress { background-color: #cff4fc; color: #055160; }
+        .badge-completed { background-color: #e2d9f3; color: #4a3780; }
+
+        .priority-high { color: #dc3545; font-weight: 600; }
+        .priority-medium { color: #ffc107; font-weight: 600; }
+        .priority-low { color: #198754; font-weight: 600; }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background-color: white;
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .stats-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .stats-card h3 {
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -260px;
+            }
+            
+            .sidebar:not(.collapsed) {
+                margin-left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-card .card-body {
+                padding: 1rem;
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary);
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        .toast.warning { border-color: var(--warning); }
+        .toast.info { border-color: var(--info); }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="navbar-brand text-white d-block">
+                <i class="bi bi-camera-reels me-2"></i>
+                <span>MediaCoverage</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="requests.html">
+                        <i class="bi bi-send"></i> Requests
+                        <span class="badge bg-danger float-end" id="sidebarPendingRequests">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="calendar.html">
+                        <i class="bi bi-calendar-week"></i> Calendar
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="assignments.html">
+                        <i class="bi bi-person-lines-fill"></i> Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="resources.html">
+                        <i class="bi bi-tools"></i> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="content.html">
+                        <i class="bi bi-collection"></i> Content Library
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="editors.html">
+                        <i class="bi bi-pencil-square"></i> Editorial
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="analytics.html">
+                        <i class="bi bi-graph-up"></i> Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reports.html">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="settings.html">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile d-flex align-items-center mb-3">
+                <img src="https://ui-avatars.com/api/?name=Editor&background=random" 
+                     class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                <div>
+                    <div class="fw-bold" id="userName">Editor</div>
+                    <small class="text-white-50" id="userRole">Editorial Team</small>
+                </div>
+            </div>
+            <div class="d-grid gap-2">
+                <a href="profile.html" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-person-circle"></i> Profile
+                </a>
+                <button id="logoutBtn" class="btn btn-danger btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-light" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <div class="navbar-nav ms-auto">
+                    <div class="dropdown ms-3">
+                        <button class="btn btn-light position-relative" type="button" 
+                                data-bs-toggle="dropdown" id="notificationDropdown">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  id="notificationCount">5</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-0" style="width: 350px;">
+                            <div class="p-3 border-bottom">
+                                <h6 class="mb-0">Notifications</h6>
+                            </div>
+                            <div class="notification-list" style="max-height: 300px; overflow-y: auto;" id="notificationList">
+                                <div class="notification-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-danger">New Request</small>
+                                        <small class="text-muted">2 min ago</small>
+                                    </div>
+                                    <div class="fw-medium">Press conference coverage needed</div>
+                                </div>
+                                <div class="notification-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-warning">Request Updated</small>
+                                        <small class="text-muted">1 hour ago</small>
+                                    </div>
+                                    <div class="fw-medium">Sports event details updated</div>
+                                </div>
+                                <div class="notification-item p-3">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-success">Request Approved</small>
+                                        <small class="text-muted">3 hours ago</small>
+                                    </div>
+                                    <div class="fw-medium">Product launch approved</div>
+                                </div>
+                            </div>
+                            <div class="p-2 border-top">
+                                <a href="#" class="btn btn-sm btn-link w-100 text-center">
+                                    View All Notifications
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="container-fluid py-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">Coverage Requests</h2>
+                            <p class="text-muted mb-0">Manage and track coverage requests</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" onclick="newRequest()">
+                                <i class="bi bi-plus-circle me-1"></i>New Request
+                            </button>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <i class="bi bi-funnel me-1"></i>Filter
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="exportRequests()">
+                                <i class="bi bi-download me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Total</h6>
+                            <h3 class="mb-0" id="totalRequests">24</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Draft</h6>
+                            <h3 class="mb-0 text-secondary" id="draftRequests">2</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Pending</h6>
+                            <h3 class="mb-0 text-warning" id="pendingRequests">3</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Approved</h6>
+                            <h3 class="mb-0 text-success" id="approvedRequests">8</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Rejected</h6>
+                            <h3 class="mb-0 text-danger" id="rejectedRequests">1</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card">
+                        <div class="card-body text-center p-3">
+                            <h6 class="text-muted mb-2">Completed</h6>
+                            <h3 class="mb-0 text-info" id="completedRequests">10</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <ul class="nav nav-tabs" id="requestsTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all">
+                                <i class="bi bi-grid me-1"></i>All Requests
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="my-tab" data-bs-toggle="tab" data-bs-target="#my">
+                                <i class="bi bi-person me-1"></i>My Requests
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending">
+                                <i class="bi bi-clock me-1"></i>Pending Approval
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="assigned-tab" data-bs-toggle="tab" data-bs-target="#assigned">
+                                <i class="bi bi-clipboard-check me-1"></i>Assigned to Me
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="requestsTabContent">
+                <!-- All Requests Tab -->
+                <div class="tab-pane fade show active" id="all">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0" id="allRequestsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Requester</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="allRequestsBody">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Requests Tab -->
+                <div class="tab-pane fade" id="my">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="myRequestsBody">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Approval Tab -->
+                <div class="tab-pane fade" id="pending">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Requester</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pendingRequestsBody">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned to Me Tab -->
+                <div class="tab-pane fade" id="assigned">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title</th>
+                                            <th>Category</th>
+                                            <th>Priority</th>
+                                            <th>Due Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="assignedRequestsBody">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal fade" id="filterModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Filter Requests</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="filterStatus" multiple>
+                                        <option value="draft">Draft</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                        <option value="assigned">Assigned</option>
+                                        <option value="in-progress">In Progress</option>
+                                        <option value="completed">Completed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" id="filterPriority" multiple>
+                                        <option value="high">High</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="low">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="filterCategory" multiple>
+                                        <option value="breaking_news">Breaking News</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="politics">Politics</option>
+                                        <option value="culture">Culture</option>
+                                        <option value="entertainment">Entertainment</option>
+                                        <option value="business">Business</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Date Range</label>
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" id="filterDateFrom">
+                                        <span class="input-group-text">to</span>
+                                        <input type="date" class="form-control" id="filterDateTo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="clearFilters()">Clear</button>
+                    <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal fade" id="requestDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestModalTitle">Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="requestDetailsContent">
+                    <!-- Request details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="editRequest()">Edit</button>
+                    <div class="btn-group" id="requestActionButtons">
+                        <!-- Action buttons will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Coverage Requests Management
+        class CoverageRequests {
+            constructor() {
+                this.requests = [];
+                this.currentRequest = null;
+                this.filters = {};
+                this.currentUser = { id: 1, name: 'Editor', role: 'editor' };
+                this.init();
+            }
+
+            init() {
+                this.loadMockData();
+                this.renderAllRequests();
+                this.setupEventListeners();
+                this.setDefaultDates();
+            }
+
+            loadMockData() {
+                this.requests = [
+                    {
+                        id: 'REQ-001',
+                        title: 'Annual Press Conference Coverage',
+                        category: 'politics',
+                        priority: 'high',
+                        requester: 'John Doe',
+                        requesterId: 2,
+                        date: '2024-03-15',
+                        dueDate: '2024-03-20',
+                        status: 'approved',
+                        assignedTo: 1,
+                        description: 'Coverage of the annual government press conference at City Hall',
+                        location: 'City Hall, Main Conference Room',
+                        budget: 5000,
+                        notes: 'Requires live streaming setup',
+                        createdAt: '2024-03-10',
+                        updatedAt: '2024-03-12'
+                    },
+                    {
+                        id: 'REQ-002',
+                        title: 'Sports Championship Finals',
+                        category: 'sports',
+                        priority: 'high',
+                        requester: 'Sarah Wilson',
+                        requesterId: 3,
+                        date: '2024-03-18',
+                        dueDate: '2024-03-18',
+                        status: 'in-progress',
+                        assignedTo: 1,
+                        description: 'Live coverage of championship finals',
+                        location: 'National Stadium',
+                        budget: 8000,
+                        notes: 'Multiple camera angles required',
+                        createdAt: '2024-03-05',
+                        updatedAt: '2024-03-15'
+                    },
+                    {
+                        id: 'REQ-003',
+                        title: 'Product Launch Event',
+                        category: 'business',
+                        priority: 'medium',
+                        requester: 'Mike Johnson',
+                        requesterId: 4,
+                        date: '2024-03-22',
+                        dueDate: '2024-03-22',
+                        status: 'pending',
+                        assignedTo: null,
+                        description: 'Coverage of new product launch',
+                        location: 'Tech Innovation Center',
+                        budget: 3000,
+                        notes: 'CEO keynote and product demo',
+                        createdAt: '2024-03-14',
+                        updatedAt: '2024-03-14'
+                    },
+                    {
+                        id: 'REQ-004',
+                        title: 'Cultural Festival Coverage',
+                        category: 'culture',
+                        priority: 'low',
+                        requester: 'Lisa Brown',
+                        requesterId: 5,
+                        date: '2024-03-25',
+                        dueDate: '2024-03-25',
+                        status: 'draft',
+                        assignedTo: null,
+                        description: 'Coverage of annual cultural festival',
+                        location: 'Central Park',
+                        budget: 2000,
+                        notes: 'Multiple stages and performances',
+                        createdAt: '2024-03-13',
+                        updatedAt: '2024-03-13'
+                    },
+                    {
+                        id: 'REQ-005',
+                        title: 'Breaking News: City Council Meeting',
+                        category: 'breaking_news',
+                        priority: 'high',
+                        requester: 'David Chen',
+                        requesterId: 6,
+                        date: '2024-03-16',
+                        dueDate: '2024-03-16',
+                        status: 'assigned',
+                        assignedTo: 1,
+                        description: 'Emergency city council meeting coverage',
+                        location: 'City Council Chambers',
+                        budget: 1500,
+                        notes: 'Urgent - budget approval meeting',
+                        createdAt: '2024-03-15',
+                        updatedAt: '2024-03-15'
+                    },
+                    {
+                        id: 'REQ-006',
+                        title: 'Music Award Ceremony',
+                        category: 'entertainment',
+                        priority: 'medium',
+                        requester: 'Emma Davis',
+                        requesterId: 7,
+                        date: '2024-03-28',
+                        dueDate: '2024-03-28',
+                        status: 'completed',
+                        assignedTo: 1,
+                        description: 'Annual music awards coverage',
+                        location: 'Grand Theater',
+                        budget: 6000,
+                        notes: 'Red carpet and award ceremony',
+                        createdAt: '2024-03-01',
+                        updatedAt: '2024-03-10'
+                    },
+                    {
+                        id: 'REQ-007',
+                        title: 'Business Conference',
+                        category: 'business',
+                        priority: 'medium',
+                        requester: 'Robert Taylor',
+                        requesterId: 8,
+                        date: '2024-03-30',
+                        dueDate: '2024-03-30',
+                        status: 'rejected',
+                        assignedTo: null,
+                        description: 'Annual business conference coverage',
+                        location: 'Convention Center',
+                        budget: 4000,
+                        notes: 'Budget constraints',
+                        createdAt: '2024-03-12',
+                        updatedAt: '2024-03-13'
+                    }
+                ];
+            }
+
+            setupEventListeners() {
+                // Sidebar toggle
+                document.getElementById('sidebarToggle').addEventListener('click', () => {
+                    document.querySelector('.sidebar').classList.toggle('collapsed');
+                });
+
+                // Tab switching
+                document.querySelectorAll('#requestsTab button').forEach(button => {
+                    button.addEventListener('click', event => {
+                        const tabId = event.target.getAttribute('data-bs-target').substring(1);
+                        this.switchTab(tabId);
+                    });
+                });
+
+                // Logout
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        window.location.href = 'login.html';
+                    }
+                });
+
+                // Filter form submit
+                document.getElementById('filterForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.applyFilters();
+                });
+            }
+
+            setDefaultDates() {
+                const today = new Date().toISOString().split('T')[0];
+                const lastMonth = new Date();
+                lastMonth.setMonth(lastMonth.getMonth() - 1);
+                
+                document.getElementById('filterDateFrom').value = lastMonth.toISOString().split('T')[0];
+                document.getElementById('filterDateTo').value = today;
+            }
+
+            renderAllRequests(filters = {}) {
+                this.filters = filters;
+                let filteredRequests = this.getFilteredRequests(filters);
+                
+                const tbody = document.getElementById('allRequestsBody');
+                tbody.innerHTML = filteredRequests.map(request => `
+                    <tr class="request-row" onclick="coverageRequests.viewRequest('${request.id}')" style="cursor: pointer;">
+                        <td><code>${request.id}</code></td>
+                        <td>
+                            <div class="fw-semibold">${request.title}</div>
+                            <small class="text-muted">${request.location}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">
+                                ${request.category.replace('_', ' ')}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="priority-${request.priority}">
+                                ${request.priority.toUpperCase()}
+                            </span>
+                        </td>
+                        <td>${request.requester}</td>
+                        <td>${request.date}</td>
+                        <td>
+                            <span class="status-badge badge-${request.status}">
+                                ${request.status.replace('-', ' ')}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="coverageRequests.viewRequest('${request.id}'); event.stopPropagation();">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            renderMyRequests() {
+                const myRequests = this.requests.filter(req => req.requesterId === this.currentUser.id);
+                const tbody = document.getElementById('myRequestsBody');
+                tbody.innerHTML = this.renderRequestsTable(myRequests);
+            }
+
+            renderPendingRequests() {
+                const pendingRequests = this.requests.filter(req => req.status === 'pending');
+                const tbody = document.getElementById('pendingRequestsBody');
+                tbody.innerHTML = this.renderRequestsTable(pendingRequests);
+            }
+
+            renderAssignedRequests() {
+                const assignedRequests = this.requests.filter(req => req.assignedTo === this.currentUser.id);
+                const tbody = document.getElementById('assignedRequestsBody');
+                tbody.innerHTML = this.renderRequestsTable(assignedRequests);
+            }
+
+            renderRequestsTable(requests) {
+                if (requests.length === 0) {
+                    return `
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <i class="bi bi-inbox text-muted"></i>
+                                <p class="text-muted mt-2">No requests found</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                return requests.map(request => `
+                    <tr class="request-row" onclick="coverageRequests.viewRequest('${request.id}')" style="cursor: pointer;">
+                        <td><code>${request.id}</code></td>
+                        <td>
+                            <div class="fw-semibold">${request.title}</div>
+                            <small class="text-muted">${request.location}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark">
+                                ${request.category.replace('_', ' ')}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="priority-${request.priority}">
+                                ${request.priority.toUpperCase()}
+                            </span>
+                        </td>
+                        <td>${request.requester}</td>
+                        <td>${request.date}</td>
+                        <td>
+                            <span class="status-badge badge-${request.status}">
+                                ${request.status.replace('-', ' ')}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="coverageRequests.viewRequest('${request.id}'); event.stopPropagation();">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            getFilteredRequests(filters) {
+                let filtered = [...this.requests];
+
+                if (filters.status && filters.status.length > 0) {
+                    filtered = filtered.filter(req => filters.status.includes(req.status));
+                }
+
+                if (filters.priority && filters.priority.length > 0) {
+                    filtered = filtered.filter(req => filters.priority.includes(req.priority));
+                }
+
+                if (filters.category && filters.category.length > 0) {
+                    filtered = filtered.filter(req => filters.category.includes(req.category));
+                }
+
+                if (filters.dateFrom) {
+                    filtered = filtered.filter(req => req.date >= filters.dateFrom);
+                }
+
+                if (filters.dateTo) {
+                    filtered = filtered.filter(req => req.date <= filters.dateTo);
+                }
+
+                return filtered;
+            }
+
+            switchTab(tabId) {
+                switch(tabId) {
+                    case 'my':
+                        this.renderMyRequests();
+                        break;
+                    case 'pending':
+                        this.renderPendingRequests();
+                        break;
+                    case 'assigned':
+                        this.renderAssignedRequests();
+                        break;
+                    default:
+                        this.renderAllRequests(this.filters);
+                }
+            }
+
+            viewRequest(requestId) {
+                this.currentRequest = this.requests.find(req => req.id === requestId);
+                if (!this.currentRequest) return;
+
+                const modal = new bootstrap.Modal(document.getElementById('requestDetailsModal'));
+                document.getElementById('requestModalTitle').textContent = this.currentRequest.title;
+
+                const statusActions = this.getStatusActions(this.currentRequest.status);
+                
+                const html = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <h4 class="mb-0">${this.currentRequest.title}</h4>
+                                    <span class="status-badge badge-${this.currentRequest.status}">
+                                        ${this.currentRequest.status.replace('-', ' ')}
+                                    </span>
+                                    <span class="badge bg-light text-dark">
+                                        ${this.currentRequest.category.replace('_', ' ')}
+                                    </span>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h6>Description</h6>
+                                    <p class="text-muted">${this.currentRequest.description}</p>
+                                </div>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <small class="text-muted">Request ID:</small>
+                                            <div><code>${this.currentRequest.id}</code></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <small class="text-muted">Location:</small>
+                                            <div>${this.currentRequest.location}</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <small class="text-muted">Date:</small>
+                                            <div>${this.currentRequest.date}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <small class="text-muted">Priority:</small>
+                                            <div>
+                                                <span class="priority-${this.currentRequest.priority}">
+                                                    ${this.currentRequest.priority.toUpperCase()}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <small class="text-muted">Budget:</small>
+                                            <div>$${this.currentRequest.budget.toLocaleString()}</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <small class="text-muted">Due Date:</small>
+                                            <div>${this.currentRequest.dueDate}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                ${this.currentRequest.notes ? `
+                                    <div class="mb-4">
+                                        <h6>Notes</h6>
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <p class="mb-0">${this.currentRequest.notes}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Request Information</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <small class="text-muted">Requester</small>
+                                        <div>${this.currentRequest.requester}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Created</small>
+                                        <div>${this.currentRequest.createdAt}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Last Updated</small>
+                                        <div>${this.currentRequest.updatedAt}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Assigned To</small>
+                                        <div>${this.currentRequest.assignedTo ? 'Editor' : 'Not Assigned'}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Status</small>
+                                        <div>
+                                            <span class="status-badge badge-${this.currentRequest.status}">
+                                                ${this.currentRequest.status.replace('-', ' ')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="card mt-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        ${statusActions}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('requestDetailsContent').innerHTML = html;
+                
+                // Setup action buttons
+                const actionButtons = document.getElementById('requestActionButtons');
+                actionButtons.innerHTML = this.getActionButtons();
+                
+                modal.show();
+            }
+
+            getStatusActions(status) {
+                const actions = [];
+                
+                switch(status) {
+                    case 'draft':
+                        actions.push(`
+                            <button class="btn btn-primary" onclick="coverageRequests.submitRequest('${this.currentRequest.id}')">
+                                <i class="bi bi-send me-2"></i> Submit for Approval
+                            </button>
+                        `);
+                        break;
+                        
+                    case 'pending':
+                        if (this.currentUser.role === 'editor' || this.currentUser.role === 'admin') {
+                            actions.push(`
+                                <button class="btn btn-success" onclick="coverageRequests.approveRequest('${this.currentRequest.id}')">
+                                    <i class="bi bi-check-circle me-2"></i> Approve
+                                </button>
+                                <button class="btn btn-danger" onclick="coverageRequests.rejectRequest('${this.currentRequest.id}')">
+                                    <i class="bi bi-x-circle me-2"></i> Reject
+                                </button>
+                            `);
+                        }
+                        break;
+                        
+                    case 'approved':
+                        actions.push(`
+                            <button class="btn btn-primary" onclick="coverageRequests.assignRequest('${this.currentRequest.id}')">
+                                <i class="bi bi-person-plus me-2"></i> Assign Team
+                            </button>
+                        `);
+                        break;
+                        
+                    case 'assigned':
+                        actions.push(`
+                            <button class="btn btn-warning" onclick="coverageRequests.startRequest('${this.currentRequest.id}')">
+                                <i class="bi bi-play-circle me-2"></i> Start Coverage
+                            </button>
+                        `);
+                        break;
+                        
+                    case 'in-progress':
+                        actions.push(`
+                            <button class="btn btn-success" onclick="coverageRequests.completeRequest('${this.currentRequest.id}')">
+                                <i class="bi bi-check-circle me-2"></i> Mark as Complete
+                            </button>
+                        `);
+                        break;
+                }
+                
+                return actions.join('');
+            }
+
+            getActionButtons() {
+                const buttons = [];
+                
+                // Edit button for creator or editor/admin
+                if (this.currentRequest.requesterId === this.currentUser.id || 
+                    this.currentUser.role === 'editor' || 
+                    this.currentUser.role === 'admin') {
+                    buttons.push(`
+                        <button type="button" class="btn btn-warning" onclick="coverageRequests.editRequest()">
+                            <i class="bi bi-pencil me-2"></i> Edit
+                        </button>
+                    `);
+                }
+                
+                // Delete button for creator or editor/admin
+                if (this.currentRequest.requesterId === this.currentUser.id || 
+                    this.currentUser.role === 'editor' || 
+                    this.currentUser.role === 'admin') {
+                    buttons.push(`
+                        <button type="button" class="btn btn-danger" onclick="coverageRequests.deleteRequest()">
+                            <i class="bi bi-trash me-2"></i> Delete
+                        </button>
+                    `);
+                }
+                
+                return buttons.join('');
+            }
+
+            // Action methods
+            submitRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'pending';
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Request submitted for approval', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            approveRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'approved';
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Request approved', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            rejectRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'rejected';
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Request rejected', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            assignRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'assigned';
+                    request.assignedTo = this.currentUser.id;
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Request assigned to you', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            startRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'in-progress';
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Coverage started', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            completeRequest(requestId) {
+                const request = this.requests.find(req => req.id === requestId);
+                if (request) {
+                    request.status = 'completed';
+                    request.updatedAt = new Date().toISOString().split('T')[0];
+                    this.showToast('Request completed', 'success');
+                    this.renderAllRequests(this.filters);
+                }
+            }
+
+            editRequest() {
+                this.showToast('Edit feature coming soon', 'info');
+            }
+
+            deleteRequest() {
+                if (!this.currentRequest) return;
+                
+                if (confirm(`Are you sure you want to delete request ${this.currentRequest.id}?`)) {
+                    this.requests = this.requests.filter(req => req.id !== this.currentRequest.id);
+                    
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestDetailsModal'));
+                    if (modal) modal.hide();
+                    
+                    this.renderAllRequests(this.filters);
+                    this.updateStats();
+                    this.showToast('Request deleted', 'success');
+                }
+            }
+
+            updateStats() {
+                const total = this.requests.length;
+                const draft = this.requests.filter(req => req.status === 'draft').length;
+                const pending = this.requests.filter(req => req.status === 'pending').length;
+                const approved = this.requests.filter(req => req.status === 'approved').length;
+                const rejected = this.requests.filter(req => req.status === 'rejected').length;
+                const completed = this.requests.filter(req => req.status === 'completed').length;
+
+                document.getElementById('totalRequests').textContent = total;
+                document.getElementById('draftRequests').textContent = draft;
+                document.getElementById('pendingRequests').textContent = pending;
+                document.getElementById('approvedRequests').textContent = approved;
+                document.getElementById('rejectedRequests').textContent = rejected;
+                document.getElementById('completedRequests').textContent = completed;
+            }
+
+            applyFilters() {
+                const filters = {
+                    status: Array.from(document.getElementById('filterStatus').selectedOptions).map(o => o.value),
+                    priority: Array.from(document.getElementById('filterPriority').selectedOptions).map(o => o.value),
+                    category: Array.from(document.getElementById('filterCategory').selectedOptions).map(o => o.value),
+                    dateFrom: document.getElementById('filterDateFrom').value,
+                    dateTo: document.getElementById('filterDateTo').value
+                };
+                
+                this.renderAllRequests(filters);
+                bootstrap.Modal.getInstance(document.getElementById('filterModal')).hide();
+            }
+
+            clearFilters() {
+                document.getElementById('filterForm').reset();
+                this.setDefaultDates();
+                this.filters = {};
+                this.renderAllRequests();
+            }
+
+            newRequest() {
+                window.location.href = 'new-request.html';
+            }
+
+            exportRequests() {
+                // In a real app, this would generate a CSV or PDF
+                this.showToast('Export feature coming soon', 'info');
+            }
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.style.cssText = `
+                    padding: 1rem;
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                toast.innerHTML = `
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : 'bi-info-circle'}"></i>
+                    <span>${message}</span>
+                    <button class="btn btn-sm btn-link ms-auto" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container';
+                    document.body.appendChild(container);
+                }
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 5000);
+            }
+        }
+
+        // Initialize Coverage Requests
+        const coverageRequests = new CoverageRequests();
+        window.coverageRequests = coverageRequests;
+
+        // Make functions available globally
+        function newRequest() {
+            coverageRequests.newRequest();
+        }
+
+        function exportRequests() {
+            coverageRequests.exportRequests();
+        }
+
+        function applyFilters() {
+            coverageRequests.applyFilters();
+        }
+
+        function clearFilters() {
+            coverageRequests.clearFilters();
+        }
+    </script>
+</body>
+</html>

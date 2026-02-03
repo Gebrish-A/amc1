@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requester Dashboard - Amhara Media</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background: white;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-approved { background-color: #d4edda; color: #155724; }
+        .status-rejected { background-color: #f8d7da; color: #721c24; }
+        .status-in-progress { background-color: #d1ecf1; color: #0c5460; }
+        .status-completed { background-color: #d4edda; color: #155724; }
+        .status-draft { background-color: #e2e3e5; color: #383d41; }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h4 {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #adb5bd;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        /* Get Started Section */
+        .get-started-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem 1rem;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            background: #e9ecef;
+            transform: translateY(-5px);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        /* Analytics specific styles */
+        .analytics-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        .progress-container {
+            margin-top: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+
+        /* View Requests specific styles */
+        .requests-filter {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-left: 4px solid #3498db;
+        }
+
+        .request-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .request-card.pending { border-left-color: #ffc107; }
+        .request-card.approved { border-left-color: #28a745; }
+        .request-card.rejected { border-left-color: #dc3545; }
+        .request-card.in-progress { border-left-color: #17a2b8; }
+        .request-card.completed { border-left-color: #28a745; }
+        .request-card.draft { border-left-color: #6c757d; }
+
+        .request-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        /* Summary Cards for Analytics */
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 0.5rem 0;
+        }
+
+        .summary-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trend-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .trend-down {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .trend-neutral {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login to AMC Dashboard</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="loginName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userAvatarInput" class="form-label">Avatar Initials (2 letters)</label>
+                            <input type="text" class="form-control" id="userAvatarInput" maxlength="2" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="dashboard.loginAsDefault()">
+                                Continue as Guest
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal fade" id="requestDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="requestModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>AMC</h3>
+            <span class="badge" id="userRoleBadge">Requester</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="newRequestLink">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>New Request</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="myRequestsLink">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>My Requests</span>
+                        <span class="badge bg-info ms-auto" id="requestsBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="analyticsLink">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>My Analytics</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-info d-flex align-items-center gap-3">
+                <div class="avatar-initials" id="userAvatar">
+                    RQ
+                </div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">Content Requester</h6>
+                    <small class="text-white-50" id="userEmail">requester@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="navbar-top">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <h4 class="mb-0 fw-bold" id="pageTitle">Content Requester Dashboard</h4>
+                        <small class="text-muted" id="currentDate"></small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="position-relative">
+                        <button class="btn btn-light position-relative" id="notificationsBtn">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+                                0
+                            </span>
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm" id="switchUserBtn">
+                        <i class="bi bi-person-switch"></i> Switch User
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="content-wrapper" id="dashboardSection">
+            <!-- New User View (Empty State) -->
+            <div id="newUserView" style="display: none;">
+                <!-- Welcome Banner for New User -->
+                <div class="welcome-banner fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 id="welcomeMessageNew">Welcome to AMC Content System!</h1>
+                            <p>Get started by creating your first content request. The system is ready for you to begin.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <span id="currentTime"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Started Section -->
+                <div class="get-started-section fade-in">
+                    <h3 class="text-center mb-4">Let's Get Started</h3>
+                    <p class="text-center text-muted mb-5">Follow these simple steps to begin using the AMC Content System</p>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="bi bi-plus-circle"></i>
+                                <h5>Create Your First Request</h5>
+                                <p class="text-muted">Start by creating a new content request with all necessary details.</p>
+                                <a href="#" class="btn btn-primary mt-3 show-new-request">New Request</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="bi bi-file-earmark-text"></i>
+                                <h5>Track Your Requests</h5>
+                                <p class="text-muted">Monitor the status of your requests and see updates in real-time.</p>
+                                <a href="#" class="btn btn-outline-primary mt-3 view-my-requests">View Requests</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-card">
+                                <i class="bi bi-bar-chart"></i>
+                                <h5>Analyze Performance</h5>
+                                <p class="text-muted">Once you have requests, view analytics on your content performance.</p>
+                                <button class="btn btn-outline-secondary mt-3" disabled>Analytics</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4 fade-in">
+                    <div class="col-lg-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="#" class="btn btn-primary show-new-request">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        Create Your First Request
+                                    </a>
+                                    <a href="#" class="btn btn-outline-primary" id="tourBtn">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Take a Tour
+                                    </a>
+                                    <button class="btn btn-outline-secondary" id="refreshDashboardBtn">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>
+                                        Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing User View (With Data) -->
+            <div id="existingUserView" style="display: none;">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 id="welcomeMessage">Welcome back!</h1>
+                            <p>You have <strong id="pendingRequestsCount">0 pending requests</strong> and <strong id="dueTodayCount">0 requests due today</strong>.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                <span id="currentTime2"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                        <div class="stats-card" id="totalRequestsCard">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <h3 class="count" id="totalRequestsCount">0</h3>
+                            <p class="label">Total Requests</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                        <div class="stats-card" id="pendingCard">
+                            <i class="bi bi-hourglass-split"></i>
+                            <h3 class="count" id="pendingCount">0</h3>
+                            <p class="label">Pending</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                        <div class="stats-card" id="approvedCard">
+                            <i class="bi bi-check-circle"></i>
+                            <h3 class="count" id="approvedCount">0</h3>
+                            <p class="label">Approved</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                        <div class="stats-card" id="rejectedCard">
+                            <i class="bi bi-x-circle"></i>
+                            <h3 class="count" id="rejectedCount">0</h3>
+                            <p class="label">Rejected</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Recent Requests -->
+                    <div class="col-lg-7 mb-4 fade-in">
+                        <div class="dashboard-card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">My Recent Requests</h5>
+                                <a href="#" class="btn btn-sm btn-primary view-my-requests">
+                                    View All My Requests
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <div id="recentRequestsContent">
+                                    <!-- Content will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="col-lg-5 mb-4 fade-in">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">My Request Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="dashboardChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4 fade-in">
+                    <div class="col-lg-12">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="#" class="btn btn-primary show-new-request">
+                                        <i class="bi bi-plus-circle me-2"></i>
+                                        Create New Request
+                                    </a>
+                                    <a href="#" class="btn btn-outline-primary view-my-requests">
+                                        <i class="bi bi-list-check me-2"></i>
+                                        View My Requests
+                                    </a>
+                                    <a href="#" class="btn btn-outline-success view-analytics">
+                                        <i class="bi bi-bar-chart me-2"></i>
+                                        View Analytics
+                                    </a>
+                                    <button class="btn btn-outline-secondary" id="refreshDashboardBtn2">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>
+                                        Refresh Dashboard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Requests View -->
+            <div id="myRequestsView" style="display: none;">
+                <div class="welcome-banner fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1>My Requests</h1>
+                            <p>View and manage all your content requests in one place</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button class="btn btn-primary back-to-dashboard">
+                                    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="requests-filter fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="all">All Categories</option>
+                                <option value="breaking_news">Breaking News</option>
+                                <option value="sports">Sports</option>
+                                <option value="politics">Politics</option>
+                                <option value="culture">Culture</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="business">Business</option>
+                                <option value="health">Health</option>
+                                <option value="education">Education</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Sort By</label>
+                            <select class="form-select" id="sortFilter">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="date">Date</option>
+                                <option value="priority">Priority</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" id="applyFiltersBtn">
+                                    <i class="bi bi-filter me-2"></i> Apply Filters
+                                </button>
+                                <button class="btn btn-outline-secondary" id="clearFiltersBtn">
+                                    <i class="bi bi-x-circle me-2"></i> Clear Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Requests List -->
+                <div id="requestsListContainer">
+                    <!-- Requests will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analyticsView" style="display: none;">
+                <div class="welcome-banner fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1>My Analytics</h1>
+                            <p>Detailed insights and performance metrics for your content requests</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button class="btn btn-primary back-to-dashboard">
+                                    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                                </button>
+                                <button class="btn btn-outline-primary" id="exportAnalyticsBtn">
+                                    <i class="bi bi-download me-2"></i> Export Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div class="row mb-4 fade-in">
+                    <div class="col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">Total Requests</div>
+                            <div class="summary-value" id="analyticsTotal">0</div>
+                            <div class="trend-badge trend-neutral" id="totalTrend">All time</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">Approval Rate</div>
+                            <div class="summary-value" id="approvalRate">0%</div>
+                            <div class="progress mt-2" style="height: 6px;">
+                                <div class="progress-bar bg-success" id="approvalProgressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">Avg. Response Time</div>
+                            <div class="summary-value" id="avgResponseTime">0 days</div>
+                            <div class="trend-badge trend-neutral" id="responseTrend">From submission</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">Total Budget</div>
+                            <div class="summary-value" id="totalBudget">$0</div>
+                            <div class="summary-label">Avg: <span id="avgBudget">$0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row mb-4 fade-in">
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h5 class="mb-0">Requests by Status</h5>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h5 class="mb-0">Requests by Category</h5>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Chart -->
+                <div class="row mb-4 fade-in">
+                    <div class="col-lg-12">
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h5 class="mb-0">Monthly Request Trends</h5>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm w-auto" id="timePeriodSelect">
+                                        <option value="3">Last 3 Months</option>
+                                        <option value="6" selected>Last 6 Months</option>
+                                        <option value="12">Last 12 Months</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-primary" id="refreshAnalyticsBtn">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="timelineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Statistics -->
+                <div class="row fade-in">
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h5 class="mb-0">Performance Metrics</h5>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th class="text-end">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Pending Requests</td>
+                                            <td class="text-end" id="metricPending">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>In Progress</td>
+                                            <td class="text-end" id="metricInProgress">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Completed</td>
+                                            <td class="text-end" id="metricCompleted">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Approved</td>
+                                            <td class="text-end" id="metricApproved">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Rejected</td>
+                                            <td class="text-end" id="metricRejected">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Drafts</td>
+                                            <td class="text-end" id="metricDrafts">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h5 class="mb-0">Recent Activity</h5>
+                            </div>
+                            <div id="recentActivityList" style="max-height: 300px; overflow-y: auto;">
+                                <!-- Activity will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Request Form -->
+            <div id="newRequestView" style="display: none;">
+                <div class="welcome-banner fade-in">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1>New Coverage Request</h1>
+                            <p>Create a new media coverage request</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-primary back-to-dashboard">
+                                <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- The form from new-request.html will be loaded here -->
+                <div id="newRequestFormContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class RequesterDashboard {
+            constructor() {
+                this.data = {
+                    user: null,
+                    requests: []
+                };
+                this.isNewUser = true;
+                this.dateTimeInterval = null;
+                this.currentView = 'dashboard';
+                this.filters = {
+                    status: 'all',
+                    category: 'all',
+                    sort: 'newest'
+                };
+                this.charts = {
+                    dashboard: null,
+                    status: null,
+                    category: null,
+                    timeline: null
+                };
+            }
+            
+            init() {
+                this.showLoginModal();
+                this.setupEventListeners();
+                this.updateDateTime();
+            }
+            
+            login(userData) {
+                this.data.user = {
+                    ...userData,
+                    role: 'requester'
+                };
+                
+                // Save user to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(this.data.user));
+                
+                // Load user's requests
+                this.loadUserRequests();
+                
+                // Update UI
+                this.updateUserUI();
+                
+                // Close login modal
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                if (loginModal) {
+                    loginModal.hide();
+                }
+                
+                // Determine view based on requests
+                this.determineUserView();
+                
+                // Show dashboard
+                this.showView('dashboard');
+            }
+            
+            loginAsDefault() {
+                this.login({
+                    name: 'Content Requester',
+                    email: 'requester@ameco.et',
+                    avatar: 'RQ'
+                });
+            }
+            
+            loadUserRequests() {
+                // Load coverage requests from localStorage
+                const allRequests = JSON.parse(localStorage.getItem('coverageRequests') || '[]');
+                
+                // Filter requests for current user
+                if (this.data.user && this.data.user.email) {
+                    this.data.requests = allRequests.filter(request => 
+                        request.submitterEmail === this.data.user.email
+                    );
+                } else {
+                    this.data.requests = [];
+                }
+                
+                console.log('Loaded requests for user:', this.data.user?.email, 'Count:', this.data.requests.length);
+                
+                // Convert string dates to Date objects
+                this.data.requests.forEach(request => {
+                    if (typeof request.submittedAt === 'string') {
+                        request.submittedAt = new Date(request.submittedAt);
+                    }
+                    if (typeof request.createdAt === 'string') {
+                        request.createdAt = new Date(request.createdAt);
+                    }
+                    if (typeof request.date === 'string') {
+                        request.date = new Date(request.date);
+                    }
+                    // Ensure request has an ID
+                    if (!request.id) {
+                        request.id = 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    }
+                });
+                
+                // Check if user has any requests
+                if (this.data.requests.length > 0) {
+                    this.isNewUser = false;
+                }
+            }
+            
+            saveUserRequests() {
+                // Get all existing requests
+                const allRequests = JSON.parse(localStorage.getItem('coverageRequests') || '[]');
+                
+                // Filter out current user's old requests
+                const otherRequests = allRequests.filter(request => 
+                    !this.data.requests.some(userReq => userReq.id === request.id)
+                );
+                
+                // Add current user's requests
+                const updatedRequests = [...otherRequests, ...this.data.requests];
+                
+                // Save back to localStorage
+                localStorage.setItem('coverageRequests', JSON.stringify(updatedRequests));
+            }
+            
+            showLoginModal() {
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                loginModal.show();
+                
+                // Setup login form
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        
+                        const email = document.getElementById('loginEmail').value;
+                        const name = document.getElementById('loginName').value;
+                        const avatar = document.getElementById('userAvatarInput').value.toUpperCase().substring(0, 2);
+                        
+                        this.login({ name, email, avatar });
+                    });
+                }
+            }
+            
+            determineUserView() {
+                if (this.isNewUser) {
+                    this.showNewUserView();
+                } else {
+                    this.showExistingUserView();
+                    this.loadDashboardData();
+                }
+            }
+            
+            showNewUserView() {
+                document.getElementById('newUserView').style.display = 'block';
+                document.getElementById('existingUserView').style.display = 'none';
+                
+                if (this.data.user) {
+                    document.getElementById('welcomeMessageNew').textContent = 
+                        `Welcome to AMC, ${this.data.user.name.split(' ')[0]}!`;
+                }
+                
+                document.getElementById('requestsBadge').textContent = '0';
+            }
+            
+            showExistingUserView() {
+                document.getElementById('newUserView').style.display = 'none';
+                document.getElementById('existingUserView').style.display = 'block';
+            }
+            
+            updateUserUI() {
+                const user = this.data.user;
+                if (!user) return;
+                
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.avatar;
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
+                document.getElementById('userRoleBadge').textContent = user.role.toUpperCase();
+            }
+            
+            loadDashboardData() {
+                this.updateDashboardStats();
+                this.renderRecentRequests();
+                this.initDashboardChart();
+                
+                // Update badge in sidebar
+                document.getElementById('requestsBadge').textContent = this.data.requests.length;
+            }
+            
+            updateDashboardStats() {
+                const total = this.data.requests.length;
+                const pending = this.data.requests.filter(r => r.status === 'pending').length;
+                const approved = this.data.requests.filter(r => r.status === 'approved').length;
+                const rejected = this.data.requests.filter(r => r.status === 'rejected').length;
+                const drafts = this.data.requests.filter(r => r.status === 'draft').length;
+                
+                // Count requests due today
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const dueToday = this.data.requests.filter(request => {
+                    if (!request.date) return false;
+                    const dueDate = new Date(request.date);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate.getTime() === today.getTime();
+                }).length;
+                
+                // Update UI
+                document.getElementById('totalRequestsCount').textContent = total;
+                document.getElementById('pendingCount').textContent = pending;
+                document.getElementById('approvedCount').textContent = approved;
+                document.getElementById('rejectedCount').textContent = rejected;
+                
+                document.getElementById('pendingRequestsCount').textContent = `${pending} pending request${pending !== 1 ? 's' : ''}`;
+                document.getElementById('dueTodayCount').textContent = `${dueToday} request${dueToday !== 1 ? 's' : ''} due today`;
+                
+                // Update notifications badge
+                document.getElementById('notificationCount').textContent = pending;
+                document.getElementById('requestsBadge').textContent = total;
+            }
+            
+            renderRecentRequests() {
+                const container = document.getElementById('recentRequestsContent');
+                
+                if (this.data.requests.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <h4>No Requests Yet</h4>
+                            <p>You haven't created any content requests yet. Start by creating your first request!</p>
+                            <a href="#" class="btn btn-primary show-new-request">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create Your First Request
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort by date (newest first) and get top 5
+                const recentRequests = [...this.data.requests]
+                    .sort((a, b) => {
+                        const dateA = a.submittedAt || a.createdAt || new Date(0);
+                        const dateB = b.submittedAt || b.createdAt || new Date(0);
+                        return new Date(dateB) - new Date(dateA);
+                    })
+                    .slice(0, 5);
+                
+                let tableHTML = `
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                recentRequests.forEach(request => {
+                    const date = request.submittedAt || request.createdAt || new Date();
+                    const dateStr = date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    });
+                    
+                    const statusClass = `status-${request.status || 'pending'}`;
+                    const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
+                                     (request.status || 'pending').slice(1).replace('_', ' ');
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>
+                                <strong>${request.title || 'Untitled Request'}</strong>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark">${request.category || 'Uncategorized'}</span>
+                            </td>
+                            <td>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </td>
+                            <td>
+                                <small>${dateStr}</small>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-request-btn" data-id="${request.id}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                container.innerHTML = tableHTML;
+                
+                // Add event listeners to view buttons
+                container.querySelectorAll('.view-request-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const requestId = e.target.closest('button').getAttribute('data-id');
+                        this.viewRequestDetails(requestId);
+                    });
+                });
+            }
+            
+            initDashboardChart() {
+                const ctx = document.getElementById('dashboardChart');
+                if (!ctx) return;
+                
+                // Destroy existing chart
+                if (this.charts.dashboard) {
+                    this.charts.dashboard.destroy();
+                }
+                
+                // Get status counts
+                const statusCounts = {
+                    pending: this.data.requests.filter(r => r.status === 'pending').length,
+                    approved: this.data.requests.filter(r => r.status === 'approved').length,
+                    rejected: this.data.requests.filter(r => r.status === 'rejected').length,
+                    draft: this.data.requests.filter(r => r.status === 'draft').length,
+                    'in-progress': this.data.requests.filter(r => r.status === 'in-progress').length,
+                    completed: this.data.requests.filter(r => r.status === 'completed').length
+                };
+                
+                // Filter out zero values
+                const labels = [];
+                const data = [];
+                const colors = [];
+                
+                Object.entries(statusCounts).forEach(([status, count]) => {
+                    if (count > 0) {
+                        labels.push(status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' '));
+                        data.push(count);
+                        colors.push(this.getStatusColor(status));
+                    }
+                });
+                
+                this.charts.dashboard = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+            
+            getStatusColor(status) {
+                const colors = {
+                    'pending': '#ffc107',
+                    'approved': '#28a745',
+                    'rejected': '#dc3545',
+                    'draft': '#6c757d',
+                    'in-progress': '#17a2b8',
+                    'completed': '#20c997'
+                };
+                return colors[status] || '#6c757d';
+            }
+            
+            viewRequestDetails(requestId) {
+                const request = this.data.requests.find(r => r.id === requestId);
+                if (!request) {
+                    alert('Request not found!');
+                    return;
+                }
+                
+                const modalTitle = document.getElementById('requestModalTitle');
+                const modalBody = document.getElementById('requestModalBody');
+                
+                if (!modalTitle || !modalBody) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                modalTitle.textContent = request.title || 'Request Details';
+                
+                const statusClass = `status-${request.status || 'pending'}`;
+                const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
+                                 (request.status || 'pending').slice(1).replace('_', ' ');
+                const dateStr = request.submittedAt ? 
+                    request.submittedAt.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) : 'Not submitted';
+                
+                modalBody.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <h6>Description</h6>
+                                <p>${request.description || 'No description provided'}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <h6>Details</h6>
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Status</span>
+                                    <span class="status-badge ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Category</span>
+                                    <span class="detail-value">${request.category || 'Uncategorized'}</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Priority</span>
+                                    <span class="detail-value">${request.priority || 'Medium'}</span>
+                                </div>
+                                <div class="detail-item mb-2">
+                                    <span class="detail-label">Budget</span>
+                                    <span class="detail-value">${request.budget ? 'Birr ' + request.budget : 'Not specified'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <span class="detail-label">Submitted Date</span>
+                                <span class="detail-value">${dateStr}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <span class="detail-label">Coverage Date</span>
+                                <span class="detail-value">${request.date ? new Date(request.date).toLocaleDateString() : 'Not specified'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${request.notes ? `
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <h6>Additional Notes</h6>
+                                <p>${request.notes}</p>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+                
+                const modal = new bootstrap.Modal(document.getElementById('requestDetailsModal'));
+                modal.show();
+            }
+            
+            showView(viewName) {
+                this.currentView = viewName;
+                
+                // Hide all views
+                ['newUserView', 'existingUserView', 'myRequestsView', 'analyticsView', 'newRequestView'].forEach(viewId => {
+                    document.getElementById(viewId).style.display = 'none';
+                });
+                
+                // Update page title
+                const titles = {
+                    'dashboard': 'Content Requester Dashboard',
+                    'myRequests': 'My Requests',
+                    'analytics': 'My Analytics',
+                    'newRequest': 'New Coverage Request'
+                };
+                
+                document.getElementById('pageTitle').textContent = titles[viewName] || titles.dashboard;
+                
+                // Show selected view
+                switch(viewName) {
+                    case 'dashboard':
+                        if (this.isNewUser) {
+                            document.getElementById('newUserView').style.display = 'block';
+                        } else {
+                            document.getElementById('existingUserView').style.display = 'block';
+                            this.loadDashboardData();
+                        }
+                        break;
+                    case 'myRequests':
+                        document.getElementById('myRequestsView').style.display = 'block';
+                        this.renderMyRequests();
+                        break;
+                    case 'analytics':
+                        document.getElementById('analyticsView').style.display = 'block';
+                        this.renderAnalytics();
+                        break;
+                    case 'newRequest':
+                        document.getElementById('newRequestView').style.display = 'block';
+                        this.loadNewRequestForm();
+                        break;
+                }
+                
+                // Update sidebar active state
+                this.updateSidebarActiveState(viewName);
+                
+                // Trigger fade-in animations
+                setTimeout(() => {
+                    const fadeElements = document.querySelectorAll(`#${viewName}View .fade-in`);
+                    fadeElements.forEach((el, index) => {
+                        el.style.animationDelay = `${index * 0.1}s`;
+                    });
+                }, 100);
+            }
+            
+            updateSidebarActiveState(viewName) {
+                const navLinks = document.querySelectorAll('.sidebar-menu .nav-link');
+                navLinks.forEach(link => link.classList.remove('active'));
+                
+                switch(viewName) {
+                    case 'dashboard':
+                        document.getElementById('dashboardLink').classList.add('active');
+                        break;
+                    case 'myRequests':
+                        document.getElementById('myRequestsLink').classList.add('active');
+                        break;
+                    case 'analytics':
+                        document.getElementById('analyticsLink').classList.add('active');
+                        break;
+                    case 'newRequest':
+                        document.getElementById('newRequestLink').classList.add('active');
+                        break;
+                }
+            }
+            
+            renderMyRequests() {
+                const container = document.getElementById('requestsListContainer');
+                
+                if (this.data.requests.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <h4>No Requests Found</h4>
+                            <p>You haven't created any content requests yet.</p>
+                            <a href="#" class="btn btn-primary show-new-request">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Create Your First Request
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Apply filters
+                let filteredRequests = [...this.data.requests];
+                
+                if (this.filters.status !== 'all') {
+                    filteredRequests = filteredRequests.filter(r => r.status === this.filters.status);
+                }
+                
+                if (this.filters.category !== 'all') {
+                    filteredRequests = filteredRequests.filter(r => r.category === this.filters.category);
+                }
+                
+                // Apply sorting
+                switch(this.filters.sort) {
+                    case 'newest':
+                        filteredRequests.sort((a, b) => {
+                            const dateA = a.submittedAt || a.createdAt || new Date(0);
+                            const dateB = b.submittedAt || b.createdAt || new Date(0);
+                            return new Date(dateB) - new Date(dateA);
+                        });
+                        break;
+                    case 'oldest':
+                        filteredRequests.sort((a, b) => {
+                            const dateA = a.submittedAt || a.createdAt || new Date(0);
+                            const dateB = b.submittedAt || b.createdAt || new Date(0);
+                            return new Date(dateA) - new Date(dateB);
+                        });
+                        break;
+                    case 'date':
+                        filteredRequests.sort((a, b) => {
+                            const dateA = a.date || new Date(0);
+                            const dateB = b.date || new Date(0);
+                            return new Date(dateA) - new Date(dateB);
+                        });
+                        break;
+                    case 'priority':
+                        const priorityOrder = { 'high': 1, 'medium': 2, 'low': 3 };
+                        filteredRequests.sort((a, b) => {
+                            return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
+                        });
+                        break;
+                }
+                
+                // Display filtered requests
+                let requestsHTML = '';
+                
+                if (filteredRequests.length === 0) {
+                    requestsHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-search"></i>
+                            <h4>No Matching Requests</h4>
+                            <p>No requests match your current filters. Try adjusting your criteria.</p>
+                            <button class="btn btn-outline-primary" onclick="document.getElementById('clearFiltersBtn').click()">
+                                Clear Filters
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    requestsHTML = '<div class="row">';
+                    
+                    filteredRequests.forEach(request => {
+                        const date = request.submittedAt || request.createdAt || new Date();
+                        const dateStr = date.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        });
+                        const statusClass = `status-${request.status || 'pending'}`;
+                        const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
+                                         (request.status || 'pending').slice(1).replace('_', ' ');
+                        
+                        requestsHTML += `
+                            <div class="col-lg-6 mb-3">
+                                <div class="request-card ${request.status || 'pending'}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">${request.title || 'Untitled Request'}</h6>
+                                            <small class="text-muted">${request.category || 'Uncategorized'} • ${dateStr}</small>
+                                        </div>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </div>
+                                    <div class="request-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">Priority</span>
+                                            <span class="detail-value">${request.priority || 'Medium'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Budget</span>
+                                            <span class="detail-value">${request.budget ? 'Birr ' + request.budget : 'Not specified'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Date</span>
+                                            <span class="detail-value">${request.date ? new Date(request.date).toLocaleDateString() : 'Not specified'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-outline-primary view-request-btn" data-id="${request.id}">
+                                            <i class="bi bi-eye me-1"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    requestsHTML += '</div>';
+                }
+                
+                container.innerHTML = requestsHTML;
+                
+                // Add event listeners to view buttons
+                container.querySelectorAll('.view-request-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const requestId = e.target.closest('button').getAttribute('data-id');
+                        this.viewRequestDetails(requestId);
+                    });
+                });
+            }
+            
+            renderAnalytics() {
+                if (this.data.requests.length === 0) {
+                    this.showEmptyAnalyticsState();
+                    return;
+                }
+                
+                // Calculate analytics
+                this.calculateAnalyticsData();
+                
+                // Initialize charts
+                this.initStatusChart();
+                this.initCategoryChart();
+                this.initTimelineChart();
+                
+                // Render recent activity
+                this.renderRecentActivity();
+            }
+            
+            showEmptyAnalyticsState() {
+                const analyticsView = document.getElementById('analyticsView');
+                analyticsView.innerHTML = `
+                    <div class="welcome-banner fade-in">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1>My Analytics</h1>
+                                <p>Detailed insights and performance metrics for your content requests</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-primary back-to-dashboard">
+                                    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="empty-state">
+                        <i class="bi bi-bar-chart"></i>
+                        <h4>No Analytics Data Yet</h4>
+                        <p>Create some requests to see your analytics and performance metrics.</p>
+                        <a href="#" class="btn btn-primary show-new-request">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Create Your First Request
+                        </a>
+                    </div>
+                `;
+                
+                // Re-attach event listeners
+                document.querySelector('.back-to-dashboard').addEventListener('click', () => {
+                    this.showView('dashboard');
+                });
+                
+                document.querySelector('.show-new-request').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showView('newRequest');
+                });
+            }
+            
+            calculateAnalyticsData() {
+                const requests = this.data.requests;
+                const total = requests.length;
+                
+                // Calculate status counts
+                const statusCounts = {
+                    pending: requests.filter(r => r.status === 'pending').length,
+                    approved: requests.filter(r => r.status === 'approved').length,
+                    rejected: requests.filter(r => r.status === 'rejected').length,
+                    'in-progress': requests.filter(r => r.status === 'in-progress').length,
+                    completed: requests.filter(r => r.status === 'completed').length,
+                    draft: requests.filter(r => r.status === 'draft').length
+                };
+                
+                // Calculate category counts
+                const categoryCounts = {};
+                requests.forEach(request => {
+                    const category = request.category || 'Uncategorized';
+                    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+                });
+                
+                // Calculate approval rate (excluding drafts)
+                const nonDraftRequests = requests.filter(r => r.status !== 'draft');
+                const approvedCount = statusCounts.approved;
+                const approvalRate = nonDraftRequests.length > 0 ? 
+                    Math.round((approvedCount / nonDraftRequests.length) * 100) : 0;
+                
+                // Calculate average response time for non-pending requests
+                const respondedRequests = requests.filter(r => 
+                    r.status !== 'pending' && r.status !== 'draft' && r.submittedAt
+                );
+                let totalResponseDays = 0;
+                respondedRequests.forEach(request => {
+                    if (request.submittedAt) {
+                        const submittedDate = new Date(request.submittedAt);
+                        const now = new Date();
+                        const responseTime = (now - submittedDate) / (1000 * 60 * 60 * 24);
+                        totalResponseDays += responseTime;
+                    }
+                });
+                const avgResponseTime = respondedRequests.length > 0 ? 
+                    Math.round(totalResponseDays / respondedRequests.length) : 0;
+                
+                // Calculate budget metrics
+                const budgetRequests = requests.filter(r => r.budget);
+                const totalBudget = budgetRequests.reduce((sum, request) => {
+                    const budget = parseFloat(request.budget) || 0;
+                    return sum + budget;
+                }, 0);
+                const avgBudget = budgetRequests.length > 0 ? 
+                    Math.round(totalBudget / budgetRequests.length) : 0;
+                
+                // Update UI
+                document.getElementById('analyticsTotal').textContent = total;
+                document.getElementById('approvalRate').textContent = `${approvalRate}%`;
+                document.getElementById('approvalProgressBar').style.width = `${approvalRate}%`;
+                document.getElementById('avgResponseTime').textContent = `${avgResponseTime} days`;
+                document.getElementById('totalBudget').textContent = `Birr ${Math.round(totalBudget)}`;
+                document.getElementById('avgBudget').textContent = `Birr ${avgBudget}`;
+                
+                // Update metrics table
+                document.getElementById('metricPending').textContent = statusCounts.pending;
+                document.getElementById('metricInProgress').textContent = statusCounts['in-progress'];
+                document.getElementById('metricCompleted').textContent = statusCounts.completed;
+                document.getElementById('metricApproved').textContent = statusCounts.approved;
+                document.getElementById('metricRejected').textContent = statusCounts.rejected;
+                document.getElementById('metricDrafts').textContent = statusCounts.draft;
+                
+                return {
+                    statusCounts,
+                    categoryCounts,
+                    approvalRate,
+                    avgResponseTime,
+                    totalBudget,
+                    avgBudget
+                };
+            }
+            
+            initStatusChart() {
+                const ctx = document.getElementById('statusChart');
+                if (!ctx) return;
+                
+                // Destroy existing chart
+                if (this.charts.status) {
+                    this.charts.status.destroy();
+                }
+                
+                const analyticsData = this.calculateAnalyticsData();
+                const statusCounts = analyticsData.statusCounts;
+                
+                const labels = Object.keys(statusCounts).map(key => {
+                    return key.charAt(0).toUpperCase() + key.slice(1).replace('-', ' ');
+                });
+                
+                const data = Object.values(statusCounts);
+                const backgroundColors = Object.keys(statusCounts).map(key => this.getStatusColor(key));
+                
+                this.charts.status = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Number of Requests',
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderColor: backgroundColors.map(color => color.replace('0.8', '1')),
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            initCategoryChart() {
+                const ctx = document.getElementById('categoryChart');
+                if (!ctx) return;
+                
+                // Destroy existing chart
+                if (this.charts.category) {
+                    this.charts.category.destroy();
+                }
+                
+                const analyticsData = this.calculateAnalyticsData();
+                const categoryCounts = analyticsData.categoryCounts;
+                
+                const labels = Object.keys(categoryCounts);
+                const data = Object.values(categoryCounts);
+                const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#95a5a6'];
+                
+                this.charts.category = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors.slice(0, labels.length)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            initTimelineChart() {
+                const ctx = document.getElementById('timelineChart');
+                if (!ctx) return;
+                
+                // Destroy existing chart
+                if (this.charts.timeline) {
+                    this.charts.timeline.destroy();
+                }
+                
+                const monthsCount = parseInt(document.getElementById('timePeriodSelect').value) || 6;
+                const monthlyData = this.getMonthlyData(monthsCount);
+                
+                this.charts.timeline = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: monthlyData.labels,
+                        datasets: [{
+                            label: 'Requests Created',
+                            data: monthlyData.data,
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderColor: '#3498db',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#3498db',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            getMonthlyData(monthsCount) {
+                const months = [];
+                const now = new Date();
+                
+                // Generate labels for the last N months
+                for (let i = monthsCount - 1; i >= 0; i--) {
+                    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                    const label = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                    months.push({
+                        label: label,
+                        month: date.getMonth(),
+                        year: date.getFullYear()
+                    });
+                }
+                
+                // Count requests per month
+                const data = months.map(month => {
+                    return this.data.requests.filter(request => {
+                        const requestDate = request.submittedAt || request.createdAt;
+                        if (!requestDate) return false;
+                        
+                        const date = new Date(requestDate);
+                        return date.getMonth() === month.month && 
+                               date.getFullYear() === month.year;
+                    }).length;
+                });
+                
+                return {
+                    labels: months.map(m => m.label),
+                    data: data
+                };
+            }
+            
+            renderRecentActivity() {
+                const container = document.getElementById('recentActivityList');
+                if (!container) return;
+                
+                // Get recent requests (last 5)
+                const recentRequests = [...this.data.requests]
+                    .sort((a, b) => {
+                        const dateA = a.submittedAt || a.createdAt || new Date(0);
+                        const dateB = b.submittedAt || b.createdAt || new Date(0);
+                        return new Date(dateB) - new Date(dateA);
+                    })
+                    .slice(0, 5);
+                
+                let activityHTML = '';
+                
+                if (recentRequests.length === 0) {
+                    activityHTML = '<p class="text-muted text-center py-3">No recent activity</p>';
+                } else {
+                    recentRequests.forEach(request => {
+                        const date = request.submittedAt || request.createdAt || new Date();
+                        const timeAgo = this.getTimeAgo(date);
+                        const statusClass = `status-${request.status || 'pending'}`;
+                        const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
+                                         (request.status || 'pending').slice(1).replace('_', ' ');
+                        
+                        activityHTML += `
+                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                <div class="flex-shrink-0">
+                                    <div class="avatar-initials bg-light text-dark" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                                        ${this.data.user?.avatar?.charAt(0) || 'R'}
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong class="d-block">${request.title || 'Untitled Request'}</strong>
+                                            <small class="text-muted">${request.category || 'Uncategorized'}</small>
+                                        </div>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">
+                                        <i class="bi bi-clock me-1"></i>${timeAgo}
+                                    </small>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML = activityHTML;
+            }
+            
+            getTimeAgo(date) {
+                if (!date) return 'Unknown time';
+                
+                const now = new Date();
+                const dateObj = new Date(date);
+                const diffInSeconds = Math.floor((now - dateObj) / 1000);
+                
+                if (diffInSeconds < 60) return 'Just now';
+                if (diffInSeconds < 3600) {
+                    const minutes = Math.floor(diffInSeconds / 60);
+                    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+                }
+                if (diffInSeconds < 86400) {
+                    const hours = Math.floor(diffInSeconds / 3600);
+                    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+                }
+                if (diffInSeconds < 2592000) {
+                    const days = Math.floor(diffInSeconds / 86400);
+                    return `${days} day${days !== 1 ? 's' : ''} ago`;
+                }
+                if (diffInSeconds < 31536000) {
+                    const months = Math.floor(diffInSeconds / 2592000);
+                    return `${months} month${months !== 1 ? 's' : ''} ago`;
+                }
+                const years = Math.floor(diffInSeconds / 31536000);
+                return `${years} year${years !== 1 ? 's' : ''} ago`;
+            }
+            
+            loadNewRequestForm() {
+                const container = document.getElementById('newRequestFormContainer');
+                container.innerHTML = `
+                    <div class="dashboard-card">
+                        <div class="card-body">
+                            <p class="text-center">Redirecting to new request form...</p>
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Redirect to the new request page
+                setTimeout(() => {
+                    window.location.href = 'new-request.html';
+                }, 1000);
+            }
+            
+            setupEventListeners() {
+                // Mobile menu toggle
+                document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    const sidebar = document.getElementById('sidebar');
+                    const menuToggle = document.getElementById('mobileMenuToggle');
+                    
+                    if (window.innerWidth <= 768 && 
+                        sidebar.classList.contains('active') && 
+                        !sidebar.contains(e.target) && 
+                        e.target !== menuToggle && 
+                        !menuToggle.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+                
+                // Navigation links
+                document.getElementById('dashboardLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showView('dashboard');
+                });
+                
+                document.getElementById('myRequestsLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showView('myRequests');
+                });
+                
+                document.getElementById('analyticsLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showView('analytics');
+                });
+                
+                document.getElementById('newRequestLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showView('newRequest');
+                });
+                
+                // Quick action buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.show-new-request')) {
+                        e.preventDefault();
+                        this.showView('newRequest');
+                    }
+                    
+                    if (e.target.closest('.view-my-requests')) {
+                        e.preventDefault();
+                        this.showView('myRequests');
+                    }
+                    
+                    if (e.target.closest('.view-analytics')) {
+                        e.preventDefault();
+                        this.showView('analytics');
+                    }
+                    
+                    if (e.target.closest('.back-to-dashboard')) {
+                        e.preventDefault();
+                        this.showView('dashboard');
+                    }
+                });
+                
+                // Notifications button
+                document.getElementById('notificationsBtn').addEventListener('click', () => {
+                    const pendingCount = this.data.requests.filter(r => r.status === 'pending').length;
+                    if (pendingCount === 0) {
+                        alert('No pending notifications!');
+                    } else {
+                        alert(`You have ${pendingCount} pending request${pendingCount !== 1 ? 's' : ''}.`);
+                    }
+                });
+                
+                // Switch user button
+                document.getElementById('switchUserBtn').addEventListener('click', () => {
+                    if (confirm('Switch to a different user?')) {
+                        localStorage.removeItem('currentUser');
+                        this.showLoginModal();
+                    }
+                });
+                
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to logout?')) {
+                        localStorage.removeItem('currentUser');
+                    }
+                      // Redirect to login page
+        window.location.href = 'login.html';
+                });
+                
+                // Refresh dashboard buttons
+                const refreshDashboard = () => {
+                    this.loadUserRequests();
+                    this.determineUserView();
+                    if (!this.isNewUser) {
+                        this.loadDashboardData();
+                    }
+                    
+                    // Show feedback
+                    const btn = event?.target || document.querySelector('#refreshDashboardBtn2');
+                    if (btn) {
+                        const originalHTML = btn.innerHTML;
+                        btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Refreshed!';
+                        btn.classList.add('btn-success');
+                        btn.classList.remove('btn-outline-secondary');
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = originalHTML;
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-outline-secondary');
+                        }, 1500);
+                    }
+                };
+                
+                document.getElementById('refreshDashboardBtn')?.addEventListener('click', refreshDashboard);
+                document.getElementById('refreshDashboardBtn2')?.addEventListener('click', refreshDashboard);
+                
+                // Request filters
+                document.getElementById('applyFiltersBtn')?.addEventListener('click', () => {
+                    this.filters.status = document.getElementById('statusFilter').value;
+                    this.filters.category = document.getElementById('categoryFilter').value;
+                    this.filters.sort = document.getElementById('sortFilter').value;
+                    this.renderMyRequests();
+                });
+                
+                document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
+                    document.getElementById('statusFilter').value = 'all';
+                    document.getElementById('categoryFilter').value = 'all';
+                    document.getElementById('sortFilter').value = 'newest';
+                    this.filters = { status: 'all', category: 'all', sort: 'newest' };
+                    this.renderMyRequests();
+                });
+                
+                // Analytics time period
+                document.getElementById('timePeriodSelect')?.addEventListener('change', () => {
+                    if (this.currentView === 'analytics') {
+                        this.initTimelineChart();
+                    }
+                });
+                
+                // Refresh analytics button
+                document.getElementById('refreshAnalyticsBtn')?.addEventListener('click', () => {
+                    if (this.currentView === 'analytics') {
+                        this.renderAnalytics();
+                        
+                        // Show feedback
+                        const btn = document.getElementById('refreshAnalyticsBtn');
+                        const originalHTML = btn.innerHTML;
+                        btn.innerHTML = '<i class="bi bi-check2"></i>';
+                        btn.classList.add('btn-success');
+                        btn.classList.remove('btn-outline-primary');
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-outline-primary');
+                        }, 1000);
+                    }
+                });
+                
+                // Export analytics button
+                document.getElementById('exportAnalyticsBtn')?.addEventListener('click', () => {
+                    this.exportAnalytics();
+                });
+                
+                // Tour button for new users
+                document.getElementById('tourBtn')?.addEventListener('click', () => {
+                    alert('Welcome to AMC Content System!\n\n1. Click "New Request" to create content requests\n2. Track your requests in "My Requests"\n3. View analytics in "My Analytics"\n\nLet\'s get started!');
+                });
+                
+                // Initialize filters if they exist
+                if (document.getElementById('statusFilter')) {
+                    document.getElementById('statusFilter').value = this.filters.status;
+                }
+                if (document.getElementById('categoryFilter')) {
+                    document.getElementById('categoryFilter').value = this.filters.category;
+                }
+                if (document.getElementById('sortFilter')) {
+                    document.getElementById('sortFilter').value = this.filters.sort;
+                }
+            }
+            
+            exportAnalytics() {
+                if (this.data.requests.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                const analyticsData = this.calculateAnalyticsData();
+                
+                // Create CSV content
+                let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Add header
+                csvContent += "Metric,Value\n";
+                
+                // Add summary data
+                csvContent += `Total Requests,${this.data.requests.length}\n`;
+                csvContent += `Approval Rate,${analyticsData.approvalRate}%\n`;
+                csvContent += `Average Response Time,${analyticsData.avgResponseTime} days\n`;
+                csvContent += `Total Budget,Birr ${Math.round(analyticsData.totalBudget)}\n`;
+                csvContent += `Average Budget,Birr ${analyticsData.avgBudget}\n\n`;
+                
+                // Add status breakdown
+                csvContent += "Status,Count\n";
+                Object.entries(analyticsData.statusCounts).forEach(([status, count]) => {
+                    csvContent += `${status},${count}\n`;
+                });
+                
+                csvContent += "\n";
+                
+                // Add category breakdown
+                csvContent += "Category,Count\n";
+                Object.entries(analyticsData.categoryCounts).forEach(([category, count]) => {
+                    csvContent += `${category},${count}\n`;
+                });
+                
+                csvContent += "\n";
+                
+                // Add recent requests
+                csvContent += "Recent Requests\n";
+                csvContent += "Title,Category,Status,Date,Budget\n";
+                const recentRequests = [...this.data.requests]
+                    .sort((a, b) => {
+                        const dateA = a.submittedAt || a.createdAt || new Date(0);
+                        const dateB = b.submittedAt || b.createdAt || new Date(0);
+                        return new Date(dateB) - new Date(dateA);
+                    })
+                    .slice(0, 10);
+                
+                recentRequests.forEach(request => {
+                    const date = request.submittedAt || request.createdAt || new Date();
+                    csvContent += `"${request.title || 'Untitled'}",${request.category || 'Uncategorized'},${request.status || 'pending'},${date.toLocaleDateString()},${request.budget || '0'}\n`;
+                });
+                
+                // Create download link
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                const fileName = `amc_analytics_${this.data.user?.name?.replace(/\s+/g, '_') || 'user'}_${new Date().toISOString().split('T')[0]}.csv`;
+                link.setAttribute("download", fileName);
+                document.body.appendChild(link);
+                
+                // Trigger download
+                link.click();
+                document.body.removeChild(link);
+                
+                alert('Analytics data exported successfully!');
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                const dateOptions = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const timeOptions = { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true
+                };
+                
+                const dateStr = now.toLocaleDateString('en-US', dateOptions);
+                const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+                
+                document.getElementById('currentDate').textContent = dateStr;
+                document.getElementById('currentTime').textContent = timeStr;
+                if (document.getElementById('currentTime2')) {
+                    document.getElementById('currentTime2').textContent = timeStr;
+                }
+                
+                // Update every minute for better performance
+                clearTimeout(this.dateTimeInterval);
+                this.dateTimeInterval = setTimeout(() => this.updateDateTime(), 60000);
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.dashboard = new RequesterDashboard();
+            window.dashboard.init();
+        });
+    </script>
+</body>
+</html>

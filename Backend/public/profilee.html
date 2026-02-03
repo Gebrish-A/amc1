@@ -1,0 +1,1693 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Master Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --info-color: #7209b7;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --border-color: #dee2e6;
+            --sidebar-width: 250px;
+            --header-height: 70px;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding: 20px 0;
+            transition: all 0.3s;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 20px 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: var(--success-color);
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-links li {
+            margin-bottom: 5px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 25px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-icon i {
+            font-size: 1.3rem;
+            color: var(--gray-color);
+            transition: color 0.3s;
+        }
+
+        .notification-icon:hover i {
+            color: var(--primary-color);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background-color: var(--light-color);
+            transition: all 0.3s;
+        }
+
+        .admin-profile:hover {
+            background-color: var(--border-color);
+        }
+
+        .admin-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Profile Container */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .profile-header {
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--light-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .avatar-upload:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-title {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .profile-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-item h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .stat-item p {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--dark-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-color);
+            transform: translateY(-2px);
+        }
+
+        /* Profile Details Card */
+        .profile-details-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+
+        .edit-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+
+        .edit-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 i {
+            color: var(--primary-color);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            padding: 10px 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .info-value.editable {
+            border: 1px solid var(--border-color);
+            background-color: white;
+        }
+
+        /* Security Section */
+        .security-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .security-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .security-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .security-info p {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+
+        .security-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-enabled {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-disabled {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray-color);
+        }
+
+        .toggle-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Activity Log */
+        .activity-log {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .login-icon {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .password-icon {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+        }
+
+        .security-icon {
+            background-color: rgba(248, 149, 30, 0.1);
+            color: var(--warning-color);
+        }
+
+        .update-icon {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+        }
+
+        .activity-content h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .activity-content p {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.3rem;
+            color: var(--dark-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d1145a;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-meter {
+            height: 5px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-text {
+            font-size: 0.85rem;
+            color: var(--gray-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar .logo h2, .sidebar .nav-links a span {
+                display: none;
+            }
+            
+            .sidebar .nav-links a {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .sidebar .nav-links a i {
+                margin-right: 0;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--dark-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 3000;
+            animation: slideInRight 0.3s, fadeOut 0.3s 2.7s;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .toast-success {
+            background-color: var(--success-color);
+        }
+
+        .toast-error {
+            background-color: var(--danger-color);
+        }
+
+        .toast-warning {
+            background-color: var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>Admin<span>Panel</span></h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="user-management.html"><i class="fas fa-users"></i> <span>User Management</span></a></li>
+            <li><a href="profile.html" class="active"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Analytics</span></a></li>
+            <li><a href="#"><i class="fas fa-shield-alt"></i> <span>Security</span></a></li>
+            <li><a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1>My Profile</h1>
+            <div class="header-right">
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="admin-profile" id="adminProfile">
+                    <img src="https://ui-avatars.com/api/?name=Master+Admin&background=4361ee&color=fff" alt="Admin">
+                    <div>
+                        <h4>Master Admin</h4>
+                        <p>Super Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Profile Container -->
+        <div class="profile-container">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Master+Admin&size=150&background=4361ee&color=fff&bold=true" 
+                             alt="Master Admin" id="profileAvatar">
+                        <div class="avatar-upload" id="avatarUpload">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <h2 class="profile-name" id="profileName">Master Admin</h2>
+                    <p class="profile-title">Super Administrator</p>
+                    <span class="profile-badge">Master Access Level</span>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <h3 id="totalUsers">1,247</h3>
+                        <p>Total Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="adminCount">15</h3>
+                        <p>Administrators</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="activeSessions">3</h3>
+                        <p>Active Sessions</p>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn btn-primary" id="editProfileBtn">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                    <button class="btn btn-outline" id="changePasswordBtn">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                    <button class="btn btn-outline" id="downloadDataBtn">
+                        <i class="fas fa-download"></i> Download My Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Details Card -->
+            <div class="profile-details-card">
+                <div class="card-header">
+                    <h2>Profile Information</h2>
+                    <button class="edit-btn" id="editInfoBtn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="section">
+                    <h3><i class="fas fa-user"></i> Personal Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Full Name</span>
+                            <div class="info-value" id="fullNameValue">Master Admin</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email Address</span>
+                            <div class="info-value" id="emailValue">admin@masterdashboard.com</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone Number</span>
+                            <div class="info-value" id="phoneValue">+1 (555) 123-4567</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Employee ID</span>
+                            <div class="info-value" id="employeeIdValue">MA-001</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Department</span>
+                            <div class="info-value" id="departmentValue">System Administration</div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Location</span>
+                            <div class="info-value" id="locationValue">Global Headquarters</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Settings Section -->
+                <div class="section">
+                    <h3><i class="fas fa-shield-alt"></i> Security Settings</h3>
+                    <div class="security-items">
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Two-Factor Authentication</h4>
+                                <p>Add an extra layer of security to your account</p>
+                            </div>
+                            <span class="security-status status-enabled" id="twoFactorStatus">Enabled</span>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Login Notifications</h4>
+                                <p>Get notified about new sign-ins</p>
+                            </div>
+                            <button class="toggle-btn" id="loginNotificationsBtn">Enable</button>
+                        </div>
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Active Sessions</h4>
+                                <p>Manage your active login sessions</p>
+                            </div>
+                            <button class="btn-outline" id="viewSessionsBtn" style="padding: 8px 15px;">View All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="section">
+                    <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    <div class="activity-log" id="activityLog">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile Information</h3>
+                <button class="close-modal" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editFirstName">First Name</label>
+                            <input type="text" id="editFirstName" value="Master">
+                        </div>
+                        <div class="form-group">
+                            <label for="editLastName">Last Name</label>
+                            <input type="text" id="editLastName" value="Admin">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email Address</label>
+                        <input type="email" id="editEmail" value="admin@masterdashboard.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone Number</label>
+                        <input type="tel" id="editPhone" value="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDepartment">Department</label>
+                            <input type="text" id="editDepartment" value="System Administration">
+                        </div>
+                        <div class="form-group">
+                            <label for="editLocation">Location</label>
+                            <input type="text" id="editLocation" value="Global Headquarters">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBio">Bio</label>
+                        <textarea id="editBio" rows="3">Master administrator with full system access and control over all dashboard functionalities.</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Change Password</h3>
+                <button class="close-modal" id="closePasswordModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" required>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Password strength</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelPasswordBtn">Cancel</button>
+                <button class="btn btn-primary" id="savePasswordBtn">Update Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Avatar Modal -->
+    <div class="modal" id="uploadAvatarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Profile Picture</h3>
+                <button class="close-modal" id="closeAvatarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="width: 150px; height: 150px; margin: 0 auto 20px; position: relative;">
+                        <img src="https://ui-avatars.com/api/?name=Master+Admin&size=150&background=4361ee&color=fff&bold=true" 
+                             alt="Preview" id="avatarPreview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    </div>
+                    <p style="color: var(--gray-color); margin-bottom: 20px;">Recommended: Square image, 500x500px minimum</p>
+                </div>
+                <div class="form-group">
+                    <label for="avatarFile">Choose an image file</label>
+                    <input type="file" id="avatarFile" accept="image/*">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-outline" id="removeAvatarBtn" style="flex: 1;">
+                        <i class="fas fa-trash"></i> Remove Current
+                    </button>
+                    <button class="btn btn-primary" id="uploadAvatarBtn" style="flex: 1;">
+                        <i class="fas fa-upload"></i> Upload New
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+// Global configuration
+const API_BASE_URL = '/api';
+const APP_CONFIG = {
+    ROLES: {
+        ADMIN: 'admin',
+        EDITOR: 'editor',
+        REPORTER: 'reporter',
+        CAMERAMAN: 'cameraman',
+        REQUESTER: 'requester'
+    }
+};
+
+// Helper function for API calls
+async function apiRequest(url, options = {}) {
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        });
+        
+        if (!response.ok) {
+            throw new Error('API request failed');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        alert('Error: ' + error.message);
+        throw error;
+    }
+}
+
+        // Sample data
+        const profileData = {
+            firstName: "Master",
+            lastName: "Admin",
+            email: "admin@masterdashboard.com",
+            phone: "+1 (555) 123-4567",
+            employeeId: "MA-001",
+            department: "System Administration",
+            location: "Global Headquarters",
+            bio: "Master administrator with full system access and control over all dashboard functionalities.",
+            avatar: "https://ui-avatars.com/api/?name=Master+Admin&background=4361ee&color=fff&bold=true",
+            twoFactorEnabled: true,
+            loginNotifications: false,
+            activeSessions: 3
+        };
+
+        // Activity log data
+        const activities = [
+            {
+                id: 1,
+                type: "login",
+                title: "Successful Login",
+                description: "Logged in from Chrome on Windows",
+                time: "2024-01-15 14:30",
+                icon: "fas fa-sign-in-alt"
+            },
+            {
+                id: 2,
+                type: "password",
+                title: "Password Changed",
+                description: "Password was successfully updated",
+                time: "2024-01-14 10:15",
+                icon: "fas fa-key"
+            },
+            {
+                id: 3,
+                type: "security",
+                title: "Two-Factor Enabled",
+                description: "Two-factor authentication was enabled",
+                time: "2024-01-13 16:45",
+                icon: "fas fa-shield-alt"
+            },
+            {
+                id: 4,
+                type: "update",
+                title: "Profile Updated",
+                description: "Personal information was updated",
+                time: "2024-01-12 09:20",
+                icon: "fas fa-user-edit"
+            },
+            {
+                id: 5,
+                type: "login",
+                title: "New Device Login",
+                description: "Logged in from Safari on macOS",
+                time: "2024-01-11 18:30",
+                icon: "fas fa-laptop"
+            }
+        ];
+
+        // DOM Elements
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editInfoBtn = document.getElementById('editInfoBtn');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const downloadDataBtn = document.getElementById('downloadDataBtn');
+        const loginNotificationsBtn = document.getElementById('loginNotificationsBtn');
+        const viewSessionsBtn = document.getElementById('viewSessionsBtn');
+        const avatarUpload = document.getElementById('avatarUpload');
+        
+        // Modals
+        const editProfileModal = document.getElementById('editProfileModal');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        const uploadAvatarModal = document.getElementById('uploadAvatarModal');
+        
+        // Modal close buttons
+        const closeEditModal = document.getElementById('closeEditModal');
+        const closePasswordModal = document.getElementById('closePasswordModal');
+        const closeAvatarModal = document.getElementById('closeAvatarModal');
+        
+        // Modal cancel buttons
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+        
+        // Modal save buttons
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const savePasswordBtn = document.getElementById('savePasswordBtn');
+        
+        // Avatar modal buttons
+        const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+        const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+        const avatarFile = document.getElementById('avatarFile');
+        const avatarPreview = document.getElementById('avatarPreview');
+        
+        // Form elements
+        const editProfileForm = document.getElementById('editProfileForm');
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        
+        // Profile display elements
+        const profileName = document.getElementById('profileName');
+        const profileAvatar = document.getElementById('profileAvatar');
+        const fullNameValue = document.getElementById('fullNameValue');
+        const emailValue = document.getElementById('emailValue');
+        const phoneValue = document.getElementById('phoneValue');
+        const employeeIdValue = document.getElementById('employeeIdValue');
+        const departmentValue = document.getElementById('departmentValue');
+        const locationValue = document.getElementById('locationValue');
+        const twoFactorStatus = document.getElementById('twoFactorStatus');
+        
+        // Activity log container
+        const activityLog = document.getElementById('activityLog');
+        
+        // Stats elements
+        const totalUsersElement = document.getElementById('totalUsers');
+        const adminCountElement = document.getElementById('adminCount');
+        const activeSessionsElement = document.getElementById('activeSessions');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfileData();
+            loadActivityLog();
+            setupEventListeners();
+            updateStats();
+        });
+
+        // Load profile data
+        function loadProfileData() {
+            profileName.textContent = `${profileData.firstName} ${profileData.lastName}`;
+            profileAvatar.src = profileData.avatar;
+            
+            fullNameValue.textContent = `${profileData.firstName} ${profileData.lastName}`;
+            emailValue.textContent = profileData.email;
+            phoneValue.textContent = profileData.phone;
+            employeeIdValue.textContent = profileData.employeeId;
+            departmentValue.textContent = profileData.department;
+            locationValue.textContent = profileData.location;
+            
+            // Update two-factor status
+            twoFactorStatus.textContent = profileData.twoFactorEnabled ? "Enabled" : "Disabled";
+            twoFactorStatus.className = profileData.twoFactorEnabled ? 
+                "security-status status-enabled" : "security-status status-disabled";
+            
+            // Update login notifications button
+            loginNotificationsBtn.textContent = profileData.loginNotifications ? "Disable" : "Enable";
+            
+            // Update active sessions
+            activeSessionsElement.textContent = profileData.activeSessions;
+        }
+
+        // Load activity log
+        function loadActivityLog() {
+            activityLog.innerHTML = '';
+            
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                let iconClass = '';
+                switch(activity.type) {
+                    case 'login':
+                        iconClass = 'login-icon';
+                        break;
+                    case 'password':
+                        iconClass = 'password-icon';
+                        break;
+                    case 'security':
+                        iconClass = 'security-icon';
+                        break;
+                    case 'update':
+                        iconClass = 'update-icon';
+                        break;
+                }
+                
+                activityItem.innerHTML = `
+                    <div class="activity-icon ${iconClass}">
+                        <i class="${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${activity.title}</h4>
+                        <p>${activity.description}</p>
+                        <div class="activity-time">${formatActivityTime(activity.time)}</div>
+                    </div>
+                `;
+                
+                activityLog.appendChild(activityItem);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Edit profile buttons
+            editProfileBtn.addEventListener('click', openEditProfileModal);
+            editInfoBtn.addEventListener('click', openEditProfileModal);
+            
+            // Change password button
+            changePasswordBtn.addEventListener('click', openChangePasswordModal);
+            
+            // Download data button
+            downloadDataBtn.addEventListener('click', downloadProfileData);
+            
+            // Security buttons
+            loginNotificationsBtn.addEventListener('click', toggleLoginNotifications);
+            viewSessionsBtn.addEventListener('click', viewActiveSessions);
+            
+            // Avatar upload
+            avatarUpload.addEventListener('click', openUploadAvatarModal);
+            
+            // Modal close buttons
+            closeEditModal.addEventListener('click', closeEditProfileModal);
+            closePasswordModal.addEventListener('click', closeChangePasswordModal);
+            closeAvatarModal.addEventListener('click', closeUploadAvatarModal);
+            
+            // Modal cancel buttons
+            cancelEditBtn.addEventListener('click', closeEditProfileModal);
+            cancelPasswordBtn.addEventListener('click', closeChangePasswordModal);
+            
+            // Modal save buttons
+            saveProfileBtn.addEventListener('click', saveProfileChanges);
+            savePasswordBtn.addEventListener('click', savePasswordChanges);
+            
+            // Avatar modal buttons
+            removeAvatarBtn.addEventListener('click', removeCurrentAvatar);
+            uploadAvatarBtn.addEventListener('click', uploadNewAvatar);
+            avatarFile.addEventListener('change', previewAvatar);
+            
+            // Password strength checker
+            const newPasswordInput = document.getElementById('newPassword');
+            newPasswordInput.addEventListener('input', checkPasswordStrength);
+            
+            // Close modals on outside click
+            window.addEventListener('click', function(event) {
+                if (event.target === editProfileModal) {
+                    closeEditProfileModal();
+                }
+                if (event.target === changePasswordModal) {
+                    closeChangePasswordModal();
+                }
+                if (event.target === uploadAvatarModal) {
+                    closeUploadAvatarModal();
+                }
+            });
+        }
+
+        // Open edit profile modal
+        function openEditProfileModal() {
+            // Populate form with current data
+            document.getElementById('editFirstName').value = profileData.firstName;
+            document.getElementById('editLastName').value = profileData.lastName;
+            document.getElementById('editEmail').value = profileData.email;
+            document.getElementById('editPhone').value = profileData.phone;
+            document.getElementById('editDepartment').value = profileData.department;
+            document.getElementById('editLocation').value = profileData.location;
+            document.getElementById('editBio').value = profileData.bio;
+            
+            editProfileModal.style.display = 'flex';
+        }
+
+        // Close edit profile modal
+        function closeEditProfileModal() {
+            editProfileModal.style.display = 'none';
+            editProfileForm.reset();
+        }
+
+        // Open change password modal
+        function openChangePasswordModal() {
+            changePasswordModal.style.display = 'flex';
+            changePasswordForm.reset();
+        }
+
+        // Close change password modal
+        function closeChangePasswordModal() {
+            changePasswordModal.style.display = 'none';
+        }
+
+        // Open upload avatar modal
+        function openUploadAvatarModal() {
+            avatarPreview.src = profileData.avatar;
+            uploadAvatarModal.style.display = 'flex';
+        }
+
+        // Close upload avatar modal
+        function closeUploadAvatarModal() {
+            uploadAvatarModal.style.display = 'none';
+            avatarFile.value = '';
+        }
+
+        // Save profile changes
+        function saveProfileChanges() {
+            const firstName = document.getElementById('editFirstName').value;
+            const lastName = document.getElementById('editLastName').value;
+            const email = document.getElementById('editEmail').value;
+            const phone = document.getElementById('editPhone').value;
+            const department = document.getElementById('editDepartment').value;
+            const location = document.getElementById('editLocation').value;
+            const bio = document.getElementById('editBio').value;
+            
+            // Update profile data
+            profileData.firstName = firstName;
+            profileData.lastName = lastName;
+            profileData.email = email;
+            profileData.phone = phone;
+            profileData.department = department;
+            profileData.location = location;
+            profileData.bio = bio;
+            
+            // Update avatar with new name
+            profileData.avatar = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=4361ee&color=fff&bold=true`;
+            
+            // Update display
+            loadProfileData();
+            
+            // Add activity log entry
+            addActivityLogEntry('update', 'Profile Updated', 'Personal information was updated');
+            
+            // Show success message
+            showToast('Profile updated successfully!', 'success');
+            
+            closeEditProfileModal();
+        }
+
+        // Save password changes
+        function savePasswordChanges() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('Please fill in all password fields', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('New passwords do not match', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                showToast('Password must be at least 8 characters long', 'error');
+                return;
+            }
+            
+            // In a real application, you would verify current password and update via API
+            
+            // Add activity log entry
+            addActivityLogEntry('password', 'Password Changed', 'Password was successfully updated');
+            
+            // Show success message
+            showToast('Password updated successfully!', 'success');
+            
+            // Clear form and close modal
+            changePasswordForm.reset();
+            closeChangePasswordModal();
+        }
+
+        // Preview avatar before upload
+        function previewAvatar() {
+            const file = avatarFile.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Remove current avatar
+        function removeCurrentAvatar() {
+            // Reset to default avatar
+            profileData.avatar = `https://ui-avatars.com/api/?name=Master+Admin&background=4361ee&color=fff&bold=true`;
+            
+            // Update display
+            profileAvatar.src = profileData.avatar;
+            
+            // Add activity log entry
+            addActivityLogEntry('update', 'Avatar Removed', 'Profile picture was removed');
+            
+            // Show success message
+            showToast('Avatar removed successfully!', 'success');
+            
+            closeUploadAvatarModal();
+        }
+
+        // Upload new avatar
+        function uploadNewAvatar() {
+            const file = avatarFile.files[0];
+            if (!file) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('File size must be less than 5MB', 'error');
+                return;
+            }
+            
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                showToast('Please select an image file', 'error');
+                return;
+            }
+            
+            // In a real application, you would upload the file to a server
+            // For demo purposes, we'll use a data URL
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileData.avatar = e.target.result;
+                profileAvatar.src = profileData.avatar;
+                
+                // Add activity log entry
+                addActivityLogEntry('update', 'Avatar Updated', 'Profile picture was updated');
+                
+                // Show success message
+                showToast('Avatar updated successfully!', 'success');
+                
+                closeUploadAvatarModal();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Download profile data
+        function downloadProfileData() {
+            const data = {
+                profile: profileData,
+                activities: activities,
+                downloadDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `profile_data_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            // Add activity log entry
+            addActivityLogEntry('download', 'Data Downloaded', 'Profile data was downloaded');
+            
+            showToast('Profile data downloaded successfully!', 'success');
+        }
+
+        // Toggle login notifications
+        function toggleLoginNotifications() {
+            profileData.loginNotifications = !profileData.loginNotifications;
+            loginNotificationsBtn.textContent = profileData.loginNotifications ? "Disable" : "Enable";
+            
+            const action = profileData.loginNotifications ? "enabled" : "disabled";
+            addActivityLogEntry('security', 'Login Notifications', `Login notifications were ${action}`);
+            
+            showToast(`Login notifications ${action}`, 'success');
+        }
+
+        // View active sessions
+        function viewActiveSessions() {
+            // In a real application, this would open a modal with session details
+            alert(`Active Sessions: ${profileData.activeSessions}\n\nThis would show detailed session information including device, location, and IP address.`);
+        }
+
+        // Check password strength
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let text = 'Very Weak';
+            let color = '#f72585'; // Red
+            
+            // Check password length
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 25;
+            
+            // Check for mixed case
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 25;
+            
+            // Check for numbers and special characters
+            if (/\d/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 10;
+            
+            // Determine strength level
+            if (strength >= 80) {
+                text = 'Very Strong';
+                color = '#4cc9f0'; // Blue
+            } else if (strength >= 60) {
+                text = 'Strong';
+                color = '#4cc9f0'; // Cyan
+            } else if (strength >= 40) {
+                text = 'Good';
+                color = '#f8961e'; // Orange
+            } else if (strength >= 20) {
+                text = 'Weak';
+                color = '#f8961e'; // Orange
+            }
+            
+            strengthFill.style.width = `${strength}%`;
+            strengthFill.style.backgroundColor = color;
+            strengthText.textContent = text;
+            strengthText.style.color = color;
+        }
+
+        // Add activity log entry
+        function addActivityLogEntry(type, title, description) {
+            const now = new Date();
+            const time = now.toISOString();
+            
+            const newActivity = {
+                id: activities.length + 1,
+                type: type,
+                title: title,
+                description: description,
+                time: time,
+                icon: getActivityIcon(type)
+            };
+            
+            activities.unshift(newActivity);
+            
+            // Keep only last 10 activities
+            if (activities.length > 10) {
+                activities.pop();
+            }
+            
+            loadActivityLog();
+        }
+
+        // Get activity icon based on type
+        function getActivityIcon(type) {
+            switch(type) {
+                case 'login': return 'fas fa-sign-in-alt';
+                case 'password': return 'fas fa-key';
+                case 'security': return 'fas fa-shield-alt';
+                case 'update': return 'fas fa-user-edit';
+                case 'download': return 'fas fa-download';
+                default: return 'fas fa-info-circle';
+            }
+        }
+
+        // Format activity time
+        function formatActivityTime(timeString) {
+            const now = new Date();
+            const time = new Date(timeString);
+            const diffMs = now - time;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minutes ago`;
+            if (diffHours < 24) return `${diffHours} hours ago`;
+            if (diffDays < 7) return `${diffDays} days ago`;
+            
+            return time.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            // Create new toast
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Remove toast after animation
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 3000);
+        }
+
+        // Update statistics
+        function updateStats() {
+            // In a real application, these would come from an API
+            totalUsersElement.textContent = '1,247';
+            adminCountElement.textContent = '15';
+            activeSessionsElement.textContent = profileData.activeSessions;
+        }
+    </script>
+        <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- GLOBAL CONFIG (Add this line) -->
+    <script src="js/config.js"></script>
+    
+    <!-- PAGE SCRIPT -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Update login button if user is logged in
+        const user = window.authHelper.getCurrentUser();
+        const loginBtn = document.querySelector('a[href="login.html"]');
+        
+        if (loginBtn && user) {
+            loginBtn.innerHTML = '<i class="bi bi-speedometer2 me-1"></i>Dashboard';
+            loginBtn.href = window.authHelper.getUserDashboard();
+        }
+        
+        // Add your page-specific JavaScript here
+    });
+    </script>
+</body>
+</html>

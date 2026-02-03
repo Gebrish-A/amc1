@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Amhara Media</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --admin-color: #9b59b6;
+            --admin-dark: #8e44ad;
+            --primary-gradient: linear-gradient(135deg, #9b59b6, #8e44ad);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #1a2530 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .logo h3 {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-link .badge,
+        .sidebar.collapsed .user-details,
+        .sidebar.collapsed .user-details small {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 0.85rem;
+        }
+
+        .sidebar.collapsed .user-info {
+            justify-content: center;
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 80px;
+        }
+
+        .sidebar .logo h3 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .sidebar-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+        }
+
+        .sidebar-menu .nav-link .badge {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card.admin {
+            background: var(--primary-gradient);
+        }
+
+        .stats-card.warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .stats-card.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .stats-card.info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background: white;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-banner {
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .welcome-banner h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
+            border-left: 4px solid #3498db;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .toast-success { border-left-color: #2ecc71; }
+        .toast-info { border-left-color: #3498db; }
+        .toast-warning { border-left-color: #f39c12; }
+        .toast-error { border-left-color: #e74c3c; }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--primary-gradient);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Table improvements */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table td {
+            vertical-align: middle;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(155, 89, 182, 0.05);
+            transform: scale(1.01);
+            transition: all 0.2s;
+        }
+
+        /* Progress bars */
+        .progress {
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        /* Activity items */
+        .activity-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .activity-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        /* Quick actions */
+        .quick-action-btn {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+            height: 100%;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--admin-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(155, 89, 182, 0.15);
+        }
+
+        .quick-action-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--admin-color);
+        }
+
+        /* Search improvements */
+        .search-container {
+            position: relative;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .search-results.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Loader */
+        .loader {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--admin-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .dark-mode-toggle:hover {
+            background: #e9ecef;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 992px) {
+            .welcome-banner h1 {
+                font-size: 2rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            .stats-card {
+                min-height: 150px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-top {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .search-container {
+                order: 3;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .welcome-banner {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <button class="sidebar-toggle-btn" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h3>AMC Admin</h3>
+            <span class="badge bg-primary" id="userRoleBadge">Admin</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="usersLink">
+                        <i class="bi bi-people"></i>
+                        <span>User Management</span>
+                        <span class="badge bg-info" id="usersBadge">24</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="requestsLink">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>All Requests</span>
+                        <span class="badge bg-primary" id="requestsBadge">156</span>
+                    </a>
+                </li>
+              <li class="nav-item">
+    <a class="nav-link" href="admin-approvals.html" id="approvalsLink">
+        <i class="bi bi-shield-check me-2"></i>
+        Admin Approvals
+        <span class="badge bg-warning ms-1" id="pendingNotifications">0</span>
+    </a>
+</li>
+                <li class="nav-item">
+                    <a class="nav-link" href="reports.html" id="reportsLink">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="analyticsLink">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="setting.html" id="settingsLink">
+                        <i class="bi bi-gear"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logsLink">
+                        <i class="bi bi-journal-text"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+               
+            </ul>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-info d-flex align-items-center">
+                <div class="avatar-initials" id="userAvatar">AD</div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">System Admin</h6>
+                    <small class="text-white-50" id="userEmail">admin@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Add this at the bottom of your sidebar navigation -->
+<hr class="mx-3 my-4 bg-white-50">
+<li class="nav-item mt-auto">
+    <a class="nav-link text-danger" href="#" onclick="logout()">
+        <i class="bi bi-box-arrow-right me-2"></i>
+        Logout
+    </a>
+</li>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent" style="display: none;">
+        <!-- Top Navbar -->
+        <nav class="navbar-top">
+            <div class="d-flex align-items-center gap-3">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h4 class="mb-0 fw-bold" id="pageTitle">Admin Dashboard</h4>
+                    <small class="text-muted" id="currentDate">Loading date...</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="search-container">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" class="form-control" placeholder="Search users, requests..." id="searchInput">
+                        <button class="btn btn-primary" type="button" id="searchBtn">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+                <div class="position-relative">
+                    <button class="btn btn-light position-relative" id="notificationsBtn">
+                        <i class="bi bi-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+                            5
+                        </span>
+                    </button>
+                </div>
+                <div class="dark-mode-toggle" id="darkModeToggle" title="Toggle dark mode">
+                    <i class="bi bi-moon"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="content-wrapper" id="dashboardSection">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 id="welcomeMessage">Welcome, System Admin</h1>
+                        <p>System Health: <strong id="systemHealth">All systems operational</strong>. You have <strong id="pendingApprovals">12 pending approvals</strong> and <strong id="activeUsers">24 active users</strong>.</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block shadow-sm">
+                            <i class="bi bi-shield-check me-2"></i>
+                            <span id="currentTime">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card admin" id="totalUsersCard" onclick="adminDashboard.showSection('users')">
+                        <i class="bi bi-people"></i>
+                        <h3 class="count" id="totalUsersCount">156</h3>
+                        <p class="label">Total Users</p>
+                        <small class="opacity-75"><i class="bi bi-arrow-up"></i> 12% this month</small>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card warning" id="activeRequestsCard" onclick="adminDashboard.showSection('requests')">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <h3 class="count" id="activeRequestsCount">48</h3>
+                        <p class="label">Active Requests</p>
+                        <small class="opacity-75"><i class="bi bi-clock"></i> 12 pending review</small>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card success" id="systemHealthCard">
+                        <i class="bi bi-shield-check"></i>
+                        <h3 class="count" id="systemHealthPercent">99.8%</h3>
+                        <p class="label">System Uptime</p>
+                        <small class="opacity-75"><i class="bi bi-check-circle"></i> No issues detected</small>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card info" id="revenueCard">
+                        <i class="bi bi-cash-stack"></i>
+                        <h3 class="count" id="revenueCount">$42.5K</h3>
+                        <p class="label">Monthly Revenue</p>
+                        <small class="opacity-75"><i class="bi bi-arrow-up"></i> 8% from last month</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- System Overview -->
+                <div class="col-lg-8 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">System Overview</h5>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-secondary active" data-period="day">Day</button>
+                                <button class="btn btn-sm btn-outline-secondary" data-period="week">Week</button>
+                                <button class="btn btn-sm btn-outline-secondary" data-period="month">Month</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-3 mb-3">
+                                    <div class="text-center">
+                                        <h6>Server Load</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                                <div class="progress-bar bg-success" style="width: 45%" role="progressbar">45%</div>
+                                            </div>
+                                            <i class="bi bi-check-circle text-success"></i>
+                                        </div>
+                                        <small class="text-muted">Optimal</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="text-center">
+                                        <h6>Database</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                                <div class="progress-bar bg-info" style="width: 68%" role="progressbar">68%</div>
+                                            </div>
+                                            <i class="bi bi-info-circle text-info"></i>
+                                        </div>
+                                        <small class="text-muted">2.4GB used</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="text-center">
+                                        <h6>Active Sessions</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                                <div class="progress-bar bg-warning" style="width: 82%" role="progressbar">82%</div>
+                                            </div>
+                                            <i class="bi bi-exclamation-triangle text-warning"></i>
+                                        </div>
+                                        <small class="text-muted">24/30 sessions</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="text-center">
+                                        <h6>Backup Status</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                                <div class="progress-bar bg-success" style="width: 100%" role="progressbar">100%</div>
+                                            </div>
+                                            <i class="bi bi-check-circle text-success"></i>
+                                        </div>
+                                        <small class="text-muted">Last: 2 hours ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="systemChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="col-lg-4 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Activities</h5>
+                            <button class="btn btn-sm btn-link" onclick="adminDashboard.showSection('logs')">View All</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="activityList">
+                                <!-- Activities will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management & System Alerts -->
+            <div class="row">
+                <!-- User Management -->
+                <div class="col-lg-7 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Users</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary me-2" onclick="adminDashboard.refreshUsers()">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="adminDashboard.addNewUser()">
+                                    <i class="bi bi-person-plus me-1"></i> Add User
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Last Active</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTable">
+                                        <!-- Users will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Alerts -->
+                <div class="col-lg-5 mb-4">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">System Alerts</h5>
+                            <button class="btn btn-sm btn-link" onclick="adminDashboard.markAllAsRead()">Mark All Read</button>
+                        </div>
+                        <div class="card-body" id="systemAlerts">
+                            <!-- Alerts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Admin Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <button class="quick-action-btn" onclick="adminDashboard.addNewUser()">
+                                        <i class="bi bi-person-plus"></i>
+                                        <h6>Add New User</h6>
+                                        <small class="text-muted">Create user account</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="quick-action-btn" onclick="adminDashboard.runBackup()">
+                                        <i class="bi bi-database-add"></i>
+                                        <h6>Backup Database</h6>
+                                        <small class="text-muted">Create system backup</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="quick-action-btn" onclick="adminDashboard.runSecurityScan()">
+                                        <i class="bi bi-shield-check"></i>
+                                        <h6>Security Scan</h6>
+                                        <small class="text-muted">Run security audit</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button class="quick-action-btn" onclick="adminDashboard.showSection('settings')">
+                                        <i class="bi bi-gear-wide"></i>
+                                        <h6>System Settings</h6>
+                                        <small class="text-muted">Configure system</small>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Content -->
+        <div id="sectionContent" class="content-wrapper" style="display: none;"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+ <script>
+// ============================================
+// COMPLETELY DISABLE ALL SESSION CHECKS
+// ============================================
+
+// Admin Dashboard Module
+class AdminDashboard {
+    constructor() {
+        this.config = {
+            refreshInterval: 30000,
+            toastDuration: 5000,
+            chartColors: {
+                primary: '#9b59b6',
+                success: '#2ecc71',
+                warning: '#f39c12',
+                danger: '#e74c3c',
+                info: '#3498db'
+            }
+        };
+        
+        this.data = {
+            user: null,
+            users: [],
+            alerts: [],
+            activities: [],
+            systemStats: null,
+            searchResults: []
+        };
+        
+        this.currentSection = 'dashboard';
+        this.isLoggedIn = true; // FORCE LOGGED IN
+        this.isSidebarCollapsed = false;
+        this.isDarkMode = false;
+        
+        // Initialize demo data
+        this.initDemoData();
+    }
+    
+    initDemoData() {
+        this.data.users = [
+            { id: 'usr001', name: 'John Doe', email: 'johndoe@ameco.et', role: 'Reporter', status: 'active', lastActive: '2 minutes ago', avatar: 'JD' },
+            { id: 'usr002', name: 'Sarah Reporter', email: 'sarah@ameco.et', role: 'Editor', status: 'active', lastActive: '15 minutes ago', avatar: 'SR' },
+            { id: 'usr003', name: 'Mike Journalist', email: 'mike@ameco.et', role: 'Crew', status: 'away', lastActive: '1 hour ago', avatar: 'MJ' },
+            { id: 'usr004', name: 'Emma Producer', email: 'emma@ameco.et', role: 'Producer', status: 'active', lastActive: '30 minutes ago', avatar: 'EP' },
+            { id: 'usr005', name: 'Alex Director', email: 'alex@ameco.et', role: 'Director', status: 'inactive', lastActive: '2 days ago', avatar: 'AD' }
+        ];
+        
+        this.data.alerts = [
+            { type: 'warning', title: 'Database Backup Overdue', message: 'Scheduled backup was missed. Please run manual backup.', time: '1 hour ago', read: false },
+            { type: 'info', title: 'Storage Usage High', message: 'Database storage at 85%. Consider cleaning old logs.', time: '2 hours ago', read: false },
+            { type: 'success', title: 'System Update Available', message: 'New version v2.1.0 is ready to install.', time: '3 hours ago', read: true },
+            { type: 'danger', title: 'Security Alert', message: 'Multiple failed login attempts detected from unknown IP.', time: '5 hours ago', read: false }
+        ];
+        
+        this.data.activities = [
+            { type: 'user', icon: 'person-plus', color: 'success', title: 'New User Registered', description: 'John Doe joined as Reporter', time: '2 minutes ago' },
+            { type: 'warning', icon: 'exclamation-triangle', color: 'warning', title: 'Warning Alert', description: 'Database backup overdue', time: '1 hour ago' },
+            { type: 'system', icon: 'arrow-clockwise', color: 'info', title: 'System Update', description: 'Security patches applied', time: '3 hours ago' },
+            { type: 'security', icon: 'shield-check', color: 'primary', title: 'Security Scan', description: 'No threats detected', time: '5 hours ago' },
+            { type: 'request', icon: 'file-earmark-text', color: 'success', title: 'New Content Request', description: 'Sports department submitted request', time: '10 minutes ago' }
+        ];
+        
+        this.data.systemStats = {
+            totalUsers: 156,
+            activeRequests: 48,
+            systemUptime: 99.8,
+            monthlyRevenue: 42500,
+            serverLoad: 45,
+            databaseUsage: 68,
+            activeSessions: 24,
+            backupStatus: 100,
+            pendingApprovals: 12
+        };
+    }
+    
+    init() {
+        console.log('=== ADMIN DASHBOARD LOADING (NO SESSION CHECK) ===');
+        
+        // ALWAYS SHOW MAIN CONTENT - NO CHECKS
+        document.getElementById('mainContent').style.display = 'block';
+        
+        // Set default admin user
+        this.data.user = {
+            id: 'admin001',
+            name: 'System Administrator',
+            email: 'admin@amedia.et',
+            role: 'Administrator',
+            avatar: 'SA',
+            permissions: ['all'],
+            department: 'Administration',
+            lastLogin: new Date().toISOString()
+        };
+        
+        // Load all dashboard components
+        this.loadUserData();
+        this.loadDashboardData();
+        this.setupEventListeners();
+        this.initCharts();
+        this.startAutoRefresh();
+        this.updateDateTime();
+        this.renderActivities();
+        this.renderUsersTable();
+        this.renderAlerts();
+        
+        console.log('Admin Dashboard loaded successfully');
+        this.showToast('Admin Dashboard loaded!', 'success');
+    }
+    
+    loadUserData() {
+        // Always use default admin
+        this.data.user = {
+            id: 'admin001',
+            name: 'System Administrator',
+            email: 'admin@amedia.et',
+            role: 'Administrator',
+            avatar: 'SA',
+            permissions: ['all'],
+            department: 'Administration'
+        };
+        
+        // Update UI elements
+        document.getElementById('userName').textContent = this.data.user.name;
+        document.getElementById('userEmail').textContent = this.data.user.email;
+        document.getElementById('userAvatar').textContent = this.data.user.avatar;
+        document.getElementById('userRoleBadge').textContent = this.data.user.role;
+        document.getElementById('welcomeMessage').textContent = `Welcome, ${this.data.user.name}`;
+    }
+    
+    loadDashboardData() {
+        // Update stats
+        document.getElementById('totalUsersCount').textContent = this.data.systemStats.totalUsers;
+        document.getElementById('activeRequestsCount').textContent = this.data.systemStats.activeRequests;
+        document.getElementById('systemHealthPercent').textContent = this.data.systemStats.systemUptime + '%';
+        document.getElementById('revenueCount').textContent = '$' + (this.data.systemStats.monthlyRevenue / 1000).toFixed(1) + 'K';
+        document.getElementById('pendingApprovals').textContent = this.data.systemStats.pendingApprovals;
+        document.getElementById('activeUsers').textContent = this.data.users.filter(u => u.status === 'active').length;
+        
+        // Update badges
+        document.getElementById('usersBadge').textContent = this.data.users.length;
+        document.getElementById('requestsBadge').textContent = this.data.systemStats.activeRequests;
+        document.getElementById('notificationCount').textContent = this.data.alerts.filter(a => !a.read).length;
+    }
+    
+    setupEventListeners() {
+        // Mobile menu
+        document.getElementById('mobileMenuToggle').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Sidebar toggle
+        document.getElementById('sidebarToggle').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.toggleSidebar();
+        });
+        
+        // Search
+        document.getElementById('searchBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.performSearch();
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            this.handleSearchInput(e.target.value);
+        });
+        
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.performSearch();
+            }
+        });
+        
+        // Notifications
+        document.getElementById('notificationsBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showNotifications();
+        });
+        
+        // Logout - modified to not redirect
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Logout? (This will just show a message in demo mode)')) {
+                this.showToast('Logout would happen here in production', 'info');
+            }
+        });
+        
+        // Dark mode toggle
+        document.getElementById('darkModeToggle').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.toggleDarkMode();
+        });
+        
+        // Sidebar navigation
+        const sections = {
+            'dashboardLink': 'dashboard',
+            'usersLink': 'users',
+            'requestsLink': 'requests',
+            'approvalsLink': 'pending',
+            'reportsLink': 'reports',
+            'analyticsLink': 'analytics',
+            'settingsLink': 'settings',
+            'logsLink': 'logs'
+        };
+        
+        Object.keys(sections).forEach(linkId => {
+            const link = document.getElementById(linkId);
+            if (link) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSection(sections[linkId]);
+                });
+            }
+        });
+        
+        // Period buttons
+        document.querySelectorAll('[data-period]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('[data-period]').forEach(b => {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+                this.updateSystemChart(btn.getAttribute('data-period'));
+            });
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar.classList.contains('active') && 
+                !sidebar.contains(e.target) && 
+                e.target !== mobileToggle && 
+                !mobileToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+    
+    toggleSidebar() {
+        this.isSidebarCollapsed = !this.isSidebarCollapsed;
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        if (this.isSidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+        } else {
+            sidebar.classList.remove('collapsed');
+            mainContent.classList.remove('expanded');
+        }
+    }
+    
+    toggleDarkMode() {
+        this.isDarkMode = !this.isDarkMode;
+        const body = document.body;
+        const toggleBtn = document.getElementById('darkModeToggle');
+        
+        if (this.isDarkMode) {
+            body.classList.add('dark-mode');
+            toggleBtn.innerHTML = '<i class="bi bi-sun"></i>';
+            toggleBtn.title = 'Switch to light mode';
+        } else {
+            body.classList.remove('dark-mode');
+            toggleBtn.innerHTML = '<i class="bi bi-moon"></i>';
+            toggleBtn.title = 'Switch to dark mode';
+        }
+        
+        localStorage.setItem('adminDarkMode', this.isDarkMode);
+    }
+    
+    initCharts() {
+        this.initSystemChart();
+    }
+    
+    initSystemChart() {
+        const ctx = document.getElementById('systemChart');
+        if (!ctx) return;
+        
+        const data = {
+            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            datasets: [{
+                label: 'Server Load (%)',
+                data: [35, 40, 45, 55, 50, 45],
+                borderColor: this.config.chartColors.primary,
+                backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }, {
+                label: 'Active Users',
+                data: [18, 22, 24, 26, 23, 20],
+                borderColor: this.config.chartColors.success,
+                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        };
+        
+        // Destroy existing chart if it exists
+        if (window.systemChartInstance) {
+            window.systemChartInstance.destroy();
+        }
+        
+        window.systemChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'nearest'
+                },
+                animation: {
+                    duration: 1000
+                }
+            }
+        });
+    }
+    
+    updateSystemChart(period) {
+        // Update chart based on period
+        const periods = {
+            day: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            month: ['Week 1', 'Week 2', 'Week 3', 'Week 4']
+        };
+        
+        if (window.systemChartInstance) {
+            window.systemChartInstance.data.labels = periods[period] || periods.day;
+            window.systemChartInstance.update();
+        }
+        
+        this.showToast(`Showing ${period} data`, 'info');
+    }
+    
+    startAutoRefresh() {
+        setInterval(() => {
+            this.refreshDashboard();
+        }, this.config.refreshInterval);
+    }
+    
+    updateDateTime() {
+        const now = new Date();
+        const dateElement = document.getElementById('currentDate');
+        const timeElement = document.getElementById('currentTime');
+        
+        if (dateElement) {
+            dateElement.textContent = now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        
+        if (timeElement) {
+            timeElement.textContent = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        setTimeout(() => this.updateDateTime(), 1000);
+    }
+    
+    renderActivities() {
+        const activityList = document.getElementById('activityList');
+        if (!activityList) return;
+        
+        activityList.innerHTML = this.data.activities.map(activity => `
+            <div class="activity-item" onclick="adminDashboard.showSection('logs')">
+                <div class="d-flex">
+                    <div class="activity-icon bg-${activity.color} rounded-circle d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                        <i class="bi bi-${activity.icon} text-white"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${activity.title}</h6>
+                        <small class="text-muted">${activity.description}</small>
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            <i class="bi bi-clock me-1"></i>${activity.time}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    renderUsersTable() {
+        const usersTable = document.getElementById('usersTable');
+        if (!usersTable) return;
+        
+        usersTable.innerHTML = this.data.users.map(user => `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-initials bg-primary me-2">${user.avatar}</div>
+                        <div>
+                            <strong>${user.name}</strong><br>
+                            <small class="text-muted">${user.email}</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-info">${user.role}</span></td>
+                <td>
+                    <span class="badge bg-${user.status === 'active' ? 'success' : user.status === 'away' ? 'warning' : 'secondary'}">
+                        ${user.status}
+                    </span>
+                </td>
+                <td><small>${user.lastActive}</small></td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="adminDashboard.editUser('${user.id}')" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-${user.status === 'active' ? 'warning' : 'success'}" 
+                                onclick="adminDashboard.toggleUserStatus('${user.id}')" 
+                                title="${user.status === 'active' ? 'Deactivate' : 'Activate'}">
+                            <i class="bi bi-${user.status === 'active' ? 'pause' : 'play'}"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="adminDashboard.deleteUser('${user.id}')" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    renderAlerts() {
+        const systemAlerts = document.getElementById('systemAlerts');
+        if (!systemAlerts) return;
+        
+        systemAlerts.innerHTML = this.data.alerts.map(alert => `
+            <div class="alert alert-${alert.type} d-flex align-items-center mb-3 ${alert.read ? 'opacity-75' : ''}" 
+                 onclick="adminDashboard.markAlertAsRead(${this.data.alerts.indexOf(alert)})">
+                <i class="bi bi-${this.getAlertIcon(alert.type)} me-3 fs-4"></i>
+                <div class="flex-grow-1">
+                    <strong>${alert.title}</strong>
+                    <p class="mb-0 small">${alert.message}</p>
+                    <small class="text-muted"><i class="bi bi-clock me-1"></i>${alert.time}</small>
+                </div>
+                ${!alert.read ? '<span class="badge bg-danger">New</span>' : ''}
+            </div>
+        `).join('');
+    }
+    
+    getAlertIcon(type) {
+        switch(type) {
+            case 'warning': return 'exclamation-triangle';
+            case 'info': return 'info-circle';
+            case 'success': return 'check-circle';
+            case 'danger': return 'shield-exclamation';
+            default: return 'bell';
+        }
+    }
+    
+    showSection(section) {
+        this.currentSection = section;
+        
+        // Update active nav
+        document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        const sectionMap = {
+            'dashboard': 'dashboardLink',
+            'users': 'usersLink',
+            'requests': 'requestsLink',
+            'pending': 'approvalsLink',
+            'reports': 'reportsLink',
+            'analytics': 'analyticsLink',
+            'settings': 'settingsLink',
+            'logs': 'logsLink'
+        };
+        
+        const activeLink = document.getElementById(sectionMap[section]);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+        
+        // Update title
+        const titles = {
+            'dashboard': 'Admin Dashboard',
+            'users': 'User Management',
+            'requests': 'All Requests',
+            'pending': 'Pending Approvals',
+            'reports': 'System Reports',
+            'analytics': 'Analytics',
+            'settings': 'System Settings',
+            'logs': 'Activity Logs'
+        };
+        
+        document.getElementById('pageTitle').textContent = titles[section] || 'Admin Dashboard';
+        
+        // Close mobile menu
+        document.getElementById('sidebar').classList.remove('active');
+        
+        // Show section content
+        if (section === 'dashboard') {
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.getElementById('sectionContent').style.display = 'none';
+        } else {
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('sectionContent').style.display = 'block';
+            this.loadSectionContent(section);
+        }
+        
+        this.showToast(`${titles[section]} loaded`, 'info');
+    }
+    
+    loadSectionContent(section) {
+        const sectionContent = document.getElementById('sectionContent');
+        
+        switch(section) {
+            case 'users':
+                sectionContent.innerHTML = this.getUsersContent();
+                break;
+            case 'requests':
+                sectionContent.innerHTML = this.getRequestsContent();
+                break;
+            case 'pending':
+                sectionContent.innerHTML = this.getPendingContent();
+                break;
+            default:
+                sectionContent.innerHTML = `
+                    <div class="dashboard-card">
+                        <div class="card-body">
+                            <h5>${section.charAt(0).toUpperCase() + section.slice(1)} Section</h5>
+                            <p>This section is working in demo mode.</p>
+                        </div>
+                    </div>
+                `;
+        }
+    }
+    
+    getUsersContent() {
+        return `
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-people me-2"></i>User Management</h5>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="adminDashboard.exportUsers()">
+                            <i class="bi bi-download me-1"></i> Export
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="adminDashboard.addNewUser()">
+                            <i class="bi bi-person-plus me-1"></i> Create User
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Active</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${this.data.users.map(user => `
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-initials bg-primary me-2">${user.avatar}</div>
+                                                <div>
+                                                    <strong>${user.name}</strong><br>
+                                                    <small class="text-muted">${user.email}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-info">${user.role}</span></td>
+                                        <td>
+                                            <span class="badge bg-${user.status === 'active' ? 'success' : user.status === 'away' ? 'warning' : 'secondary'}">
+                                                ${user.status}
+                                            </span>
+                                        </td>
+                                        <td><small>${user.lastActive}</small></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" onclick="adminDashboard.editUser('${user.id}')" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-outline-${user.status === 'active' ? 'warning' : 'success'}" 
+                                                        onclick="adminDashboard.toggleUserStatus('${user.id}')" 
+                                                        title="${user.status === 'active' ? 'Deactivate' : 'Activate'}">
+                                                    <i class="bi bi-${user.status === 'active' ? 'pause' : 'play'}"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger" onclick="adminDashboard.deleteUser('${user.id}')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    getRequestsContent() {
+        return `
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Content Requests</h5>
+                </div>
+                <div class="card-body">
+                    <p>Requests management section (demo mode).</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    getPendingContent() {
+        return `
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Pending Approvals</h5>
+                </div>
+                <div class="card-body">
+                    <p>Pending approvals section (demo mode).</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Various methods
+    handleSearchInput(query) {
+        if (query.length < 2) {
+            document.getElementById('searchResults').classList.remove('active');
+            return;
+        }
+        
+        this.showToast(`Searching for: ${query}`, 'info');
+    }
+    
+    performSearch() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) {
+            this.showToast('Please enter search term', 'warning');
+            return;
+        }
+        this.showToast(`Searching for: "${query}"`, 'info');
+    }
+    
+    showNotifications() {
+        this.showToast('Notifications shown', 'info');
+    }
+    
+    markAlertAsRead(index) {
+        if (this.data.alerts[index]) {
+            this.data.alerts[index].read = true;
+            this.renderAlerts();
+            this.showToast('Notification marked as read', 'success');
+        }
+    }
+    
+    markAllAsRead() {
+        this.data.alerts.forEach(alert => alert.read = true);
+        this.renderAlerts();
+        this.showToast('All notifications marked as read', 'success');
+    }
+    
+    addNewUser() {
+        this.showModal('Add New User', `
+            <div class="new-user-form">
+                <p>Add user functionality (demo mode)</p>
+                <button class="btn btn-primary" onclick="adminDashboard.showToast('User added (demo)', 'success'); document.querySelector('.modal').remove();">
+                    Simulate Add User
+                </button>
+            </div>
+        `);
+    }
+    
+    editUser(userId) {
+        this.showToast(`Editing user: ${userId}`, 'info');
+    }
+    
+    toggleUserStatus(userId) {
+        const user = this.data.users.find(u => u.id === userId);
+        if (user) {
+            user.status = user.status === 'active' ? 'inactive' : 'active';
+            this.renderUsersTable();
+            this.showToast(`User ${user.name} ${user.status === 'active' ? 'activated' : 'deactivated'}`, 'success');
+        }
+    }
+    
+    deleteUser(userId) {
+        const user = this.data.users.find(u => u.id === userId);
+        if (user && confirm(`Delete user "${user.name}"?`)) {
+            this.data.users = this.data.users.filter(u => u.id !== userId);
+            this.renderUsersTable();
+            this.showToast(`User ${user.name} deleted`, 'success');
+        }
+    }
+    
+    exportUsers() {
+        this.showToast('Exporting user data...', 'info');
+    }
+    
+    refreshDashboard() {
+        this.showToast('Dashboard refreshed', 'info');
+    }
+    
+    refreshUsers() {
+        this.renderUsersTable();
+        this.showToast('User list refreshed', 'info');
+    }
+    
+    showModal(title, content) {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show';
+        modal.style.cssText = `
+            display: block;
+            background-color: rgba(0,0,0,0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        `;
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${title}</h5>
+                        <button type="button" class="btn-close close-modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        modal.querySelector('.close-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+    }
+    
+    showToast(message, type = 'info') {
+        let toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toastContainer';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-x-circle' : 'bi-info-circle'} me-2"></i>
+            <span>${message}</span>
+            <button class="btn btn-sm btn-link ms-auto close-toast">
+                <i class="bi bi-x"></i>
+            </button>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        toast.querySelector('.close-toast').addEventListener('click', () => {
+            toast.remove();
+        });
+        
+        setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+        }, this.config.toastDuration);
+    }
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== PAGE LOADED - INITIALIZING ===');
+    
+    // Clear any existing session that might cause redirects
+    localStorage.removeItem('userSession');
+    localStorage.removeItem('adminLoggedIn');
+    sessionStorage.clear();
+    
+    // Initialize dashboard
+    const dashboard = new AdminDashboard();
+    dashboard.init();
+    window.adminDashboard = dashboard;
+    
+    console.log('=== DASHBOARD READY ===');
+});
+</script>
+ 
+
+<!-- REMOVE ALL OTHER JAVASCRIPT CODE AFTER THIS -->
+</body>
+</html>

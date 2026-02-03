@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Master Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .credentials-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .credential-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .credential-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .credential-value {
+            color: #212529;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="success-icon">
+            <i class="bi bi-shield-check"></i>
+        </div>
+        
+        <h2>Master Administrator Created</h2>
+        
+        <p class="text-muted mb-4">
+            Master admin account has been created successfully.
+        </p>
+        
+        <div class="credentials-box">
+            <div class="credential-item">
+                <span class="credential-label">Email:</span><br>
+                <span class="credential-value">master@ameco.et</span>
+            </div>
+            <div class="credential-item">
+                <span class="credential-label">Password:</span><br>
+                <span class="credential-value">Master@2024</span>
+            </div>
+            <div class="credential-item">
+                <span class="credential-label">Role:</span><br>
+                <span class="credential-value">Master Administrator</span>
+            </div>
+            <div class="credential-item">
+                <span class="credential-label">Permissions:</span><br>
+                <span class="credential-value">Full system access + Admin approvals</span>
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Important:</strong> Use these credentials to approve other admin registrations.
+        </div>
+        
+        <div class="mt-4">
+            <button class="btn btn-primary me-2" onclick="window.location.href='login.html'">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Go to Login
+            </button>
+            <button class="btn btn-outline-primary" onclick="window.location.href='admin-approvals.html'">
+                <i class="bi bi-shield-check me-1"></i> Go to Admin Approvals
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Create master admin on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const realUsersKey = 'amecoRealUsers';
+            let realUsers = JSON.parse(localStorage.getItem(realUsersKey) || '{}');
+            
+            // Check if master admin already exists
+            if (realUsers['master@ameco.et']) {
+                console.log('Master admin already exists');
+                return;
+            }
+            
+            // Create master admin
+            realUsers['master@ameco.et'] = {
+                password: 'Master@2024',
+                role: 'admin',
+                name: 'Master Administrator',
+                firstName: 'Master',
+                lastName: 'Administrator',
+                department: 'Administration',
+                phone: '+251911234567',
+                isRealAccount: true,
+                registered: new Date().toISOString(),
+                status: 'active',
+                isMasterAdmin: true,
+                canApproveAdmins: true,
+                avatar: 'MA',
+                permissions: {
+                    approveUsers: true,
+                    deleteUsers: true,
+                    manageRoles: true,
+                    viewLogs: true,
+                    exportData: true,
+                    systemConfig: true
+                },
+                accessLevel: 10,
+                language: 'en',
+                email: 'master@ameco.et'
+            };
+            
+            // Save to localStorage
+            localStorage.setItem(realUsersKey, JSON.stringify(realUsers));
+            
+            // Also add to admin activity logs
+            const activityLogsKey = 'adminActivityLogs';
+            const logs = JSON.parse(localStorage.getItem(activityLogsKey) || '[]');
+            logs.unshift({
+                action: 'system_init',
+                description: 'Master admin account created',
+                admin: 'System',
+                timestamp: new Date().toISOString(),
+                ip: '127.0.0.1'
+            });
+            localStorage.setItem(activityLogsKey, JSON.stringify(logs));
+            
+            console.log('Master admin created successfully');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Library - Media Coverage System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Lightbox CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #0dcaf0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s;
+            border-radius: 6px;
+            margin: 0 2px;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white !important;
+        }
+
+        .main-content {
+            margin-left: 0;
+            min-height: calc(100vh - 70px);
+            padding-top: 1rem;
+        }
+
+        .content-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+            border-color: var(--primary-color);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            padding-top: 56.25%;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .video-thumbnail video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .audio-player {
+            width: 100%;
+            height: 40px;
+        }
+
+        .content-badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.75em;
+            border-radius: 20px;
+        }
+
+        .upload-area {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8f9fa;
+        }
+
+        .upload-area:hover,
+        .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background: rgba(13, 110, 253, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 4rem;
+            color: #adb5bd;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover i {
+            color: var(--primary-color);
+        }
+
+        .file-list-item {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .file-list-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(13, 110, 253, 0.02);
+        }
+
+        .file-list-item .progress {
+            height: 6px;
+        }
+
+        .stats-card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stats-card .card-body {
+            padding: 1.25rem;
+        }
+
+        .stats-card h3 {
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .stats-card .icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .stats-card:nth-child(1) .icon-wrapper { background: rgba(13, 110, 253, 0.1); color: var(--primary-color); }
+        .stats-card:nth-child(2) .icon-wrapper { background: rgba(25, 135, 84, 0.1); color: var(--success-color); }
+        .stats-card:nth-child(3) .icon-wrapper { background: rgba(220, 53, 69, 0.1); color: var(--danger-color); }
+        .stats-card:nth-child(4) .icon-wrapper { background: rgba(255, 193, 7, 0.1); color: var(--warning-color); }
+        .stats-card:nth-child(5) .icon-wrapper { background: rgba(13, 202, 240, 0.1); color: var(--info-color); }
+        .stats-card:nth-child(6) .icon-wrapper { background: rgba(108, 117, 125, 0.1); color: var(--secondary-color); }
+
+        #contentTable th {
+            font-weight: 600;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        #contentTable tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        #contentTable tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+        }
+
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-group .btn {
+            border-radius: 6px !important;
+            margin: 0 2px;
+        }
+
+        .btn-group .btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .preview-container {
+            max-height: 70vh;
+            overflow-y: auto;
+            border-radius: 10px;
+            background: #f8f9fa;
+            padding: 1rem;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .preview-container video {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding-top: 0.5rem;
+            }
+            
+            .container-fluid {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+            
+            .stats-card .card-body {
+                padding: 1rem;
+            }
+            
+            .btn-group {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .btn-group .btn {
+                margin: 2px;
+            }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .toast.success { border-color: var(--success-color); }
+        .toast.error { border-color: var(--danger-color); }
+        .toast.warning { border-color: var(--warning-color); }
+        .toast.info { border-color: var(--info-color); }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-camera-reels me-2"></i>MediaCoverage
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="bi bi-collection me-1"></i>Content Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="assignments.html">
+                            <i class="bi bi-calendar-check me-1"></i>Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="editors.html">
+                            <i class="bi bi-pencil-square me-1"></i>Editorial
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html">
+                            <i class="bi bi-bar-chart me-1"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">
+                            <i class="bi bi-people me-1"></i>Users
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" class="form-control" placeholder="Search content...">
+                        <button class="btn btn-outline-light" type="button">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" 
+                           data-bs-toggle="dropdown">
+                            <div class="rounded-circle bg-light text-primary d-flex align-items-center justify-content-center" 
+                                 style="width: 36px; height: 36px;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <span class="ms-2 d-none d-md-inline">Editor</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.html">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="settings.html">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="login.html">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container-fluid pt-4 px-4">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h2 fw-bold mb-1">Content Library</h1>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Content Library</li>
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                <i class="bi bi-cloud-upload me-1"></i>Upload Content
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-download me-1"></i>Export
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="exportData('csv')">Export as CSV</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="exportData('json')">Export as JSON</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="exportData('excel')">Export to Excel</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-folder2"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Total Files</h6>
+                                <h3 class="mb-0" id="totalFiles">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Photos</h6>
+                                <h3 class="mb-0 text-primary" id="photoCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-camera-video"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Videos</h6>
+                                <h3 class="mb-0 text-success" id="videoCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-mic"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Audio</h6>
+                                <h3 class="mb-0 text-warning" id="audioCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Pending Review</h6>
+                                <h3 class="mb-0 text-danger" id="pendingReviewCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm stats-card h-100">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="icon-wrapper">
+                                <i class="bi bi-hdd"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-2">Storage Used</h6>
+                                <h3 class="mb-0 text-info" id="storageUsed">0 GB</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Controls -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <div class="btn-group me-3">
+                            <button type="button" class="btn btn-outline-primary active" id="viewGrid">
+                                <i class="bi bi-grid-3x3-gap me-1"></i>Grid
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="viewList">
+                                <i class="bi bi-list-task me-1"></i>List
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="viewTimeline">
+                                <i class="bi bi-calendar me-1"></i>Timeline
+                            </button>
+                        </div>
+                        <div class="btn-group me-3">
+                            <button type="button" class="btn btn-outline-secondary" id="filterAll">All</button>
+                            <button type="button" class="btn btn-outline-secondary" id="filterPhotos">
+                                <i class="bi bi-image"></i> Photos
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="filterVideos">
+                                <i class="bi bi-camera-video"></i> Videos
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="filterAudio">
+                                <i class="bi bi-mic"></i> Audio
+                            </button>
+                        </div>
+                        <div class="flex-grow-1"></div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="text" class="form-control" placeholder="Search files..." 
+                                   style="width: 200px;" id="searchInput">
+                            <button class="btn btn-outline-secondary" onclick="searchContent()">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div id="gridView" class="content-view">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="contentGrid">
+                    <!-- Content cards will be loaded here -->
+                </div>
+                <div class="text-center py-5" id="gridLoading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading content...</span>
+                    </div>
+                </div>
+                <div class="text-center py-5 d-none" id="noContentGrid">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h5 class="mt-3">No content found</h5>
+                    <p class="text-muted">Upload your first file to get started</p>
+                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                        <i class="bi bi-cloud-upload me-1"></i>Upload Content
+                    </button>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div id="listView" class="content-view d-none">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="contentTable">
+                                <thead>
+                                    <tr>
+                                        <th width="60"></th>
+                                        <th>File Name</th>
+                                        <th>Type</th>
+                                        <th>Size</th>
+                                        <th>Uploaded By</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th width="120">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contentTableBody">
+                                    <!-- Content list will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-center d-none" id="tableLoading">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div id="timelineView" class="content-view d-none">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div id="contentTimeline">
+                            <p class="text-muted text-center">Timeline view coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Content</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-area text-center p-5 mb-4" id="dropArea">
+                        <i class="bi bi-cloud-upload"></i>
+                        <h5>Drag & Drop Files Here</h5>
+                        <p class="text-muted mb-3">or click to browse</p>
+                        <input type="file" id="fileInput" multiple class="d-none">
+                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-folder2-open me-2"></i>Browse Files
+                        </button>
+                        <p class="small text-muted mt-2">Max file size: 2GB per file</p>
+                    </div>
+
+                    <div id="selectedFiles" class="d-none">
+                        <h6>Selected Files</h6>
+                        <div id="fileList"></div>
+                    </div>
+
+                    <div id="metadataForm" class="d-none">
+                        <hr>
+                        <h6>Metadata</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Related Assignment</label>
+                                    <select class="form-select" id="relatedAssignment">
+                                        <option value="">Select Assignment</option>
+                                        <option value="1">Annual Conference</option>
+                                        <option value="2">Product Launch</option>
+                                        <option value="3">Press Briefing</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="contentCategory">
+                                        <option value="news">News</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="entertainment">Entertainment</option>
+                                        <option value="business">Business</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tags</label>
+                            <input type="text" class="form-control" placeholder="tag1, tag2, tag3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" rows="3" placeholder="Describe the content..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadBtn" disabled onclick="startUpload()">
+                        <i class="bi bi-cloud-upload me-2"></i>Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Content Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="previewContainer"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="downloadBtn">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Lightbox JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+    
+    <script>
+        // Content Library Module
+        const contentLibrary = {
+            data: {
+                content: [],
+                filteredContent: [],
+                viewType: 'grid',
+                currentFilter: 'all',
+                searchTerm: ''
+            },
+
+            init() {
+                this.setupEventListeners();
+                this.loadContent();
+                this.updateStats();
+            },
+
+            setupEventListeners() {
+                // View type buttons
+                document.getElementById('viewGrid').addEventListener('click', () => this.switchView('grid'));
+                document.getElementById('viewList').addEventListener('click', () => this.switchView('list'));
+                document.getElementById('viewTimeline').addEventListener('click', () => this.switchView('timeline'));
+
+                // Filter buttons
+                document.getElementById('filterAll').addEventListener('click', () => this.applyFilter('all'));
+                document.getElementById('filterPhotos').addEventListener('click', () => this.applyFilter('photo'));
+                document.getElementById('filterVideos').addEventListener('click', () => this.applyFilter('video'));
+                document.getElementById('filterAudio').addEventListener('click', () => this.applyFilter('audio'));
+
+                // Search
+                document.getElementById('searchInput').addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') this.searchContent();
+                });
+
+                // File upload
+                const dropArea = document.getElementById('dropArea');
+                const fileInput = document.getElementById('fileInput');
+
+                dropArea.addEventListener('click', () => fileInput.click());
+                dropArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropArea.classList.add('drag-over');
+                });
+                dropArea.addEventListener('dragleave', () => {
+                    dropArea.classList.remove('drag-over');
+                });
+                dropArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropArea.classList.remove('drag-over');
+                    this.handleFiles(e.dataTransfer.files);
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    this.handleFiles(e.target.files);
+                });
+            },
+
+            loadContent() {
+                // Simulate API call
+                setTimeout(() => {
+                    this.data.content = this.getMockContent();
+                    this.data.filteredContent = [...this.data.content];
+                    this.renderContent();
+                    document.getElementById('gridLoading').classList.add('d-none');
+                }, 1000);
+            },
+
+            getMockContent() {
+                return [
+                    {
+                        id: 1,
+                        name: 'Conference Opening.jpg',
+                        type: 'photo',
+                        size: '2.4 MB',
+                        uploadedBy: 'John Doe',
+                        date: '2024-01-15',
+                        status: 'approved',
+                        thumbnail: 'https://via.placeholder.com/400x300/4A90E2/FFFFFF?text=Conference+Opening',
+                        tags: ['conference', 'opening', 'keynote'],
+                        description: 'Opening ceremony of the annual conference'
+                    },
+                    {
+                        id: 2,
+                        name: 'Product Demo.mp4',
+                        type: 'video',
+                        size: '45.2 MB',
+                        uploadedBy: 'Jane Smith',
+                        date: '2024-01-14',
+                        status: 'pending',
+                        thumbnail: 'https://via.placeholder.com/400x300/50E3C2/FFFFFF?text=Product+Demo',
+                        tags: ['demo', 'product', 'launch'],
+                        description: 'Product demonstration video'
+                    },
+                    {
+                        id: 3,
+                        name: 'Interview Audio.mp3',
+                        type: 'audio',
+                        size: '12.8 MB',
+                        uploadedBy: 'Mike Johnson',
+                        date: '2024-01-13',
+                        status: 'approved',
+                        thumbnail: 'https://via.placeholder.com/400x300/9013FE/FFFFFF?text=Audio+Interview',
+                        tags: ['interview', 'audio', 'podcast'],
+                        description: 'CEO interview for weekly podcast'
+                    },
+                    {
+                        id: 4,
+                        name: 'Team Photo.jpg',
+                        type: 'photo',
+                        size: '3.1 MB',
+                        uploadedBy: 'Sarah Wilson',
+                        date: '2024-01-12',
+                        status: 'approved',
+                        thumbnail: 'https://via.placeholder.com/400x300/F5A623/FFFFFF?text=Team+Photo',
+                        tags: ['team', 'group', 'photo'],
+                        description: 'Team group photo after successful project'
+                    },
+                    {
+                        id: 5,
+                        name: 'Press Conference.mov',
+                        type: 'video',
+                        size: '128.5 MB',
+                        uploadedBy: 'Robert Brown',
+                        date: '2024-01-11',
+                        status: 'pending',
+                        thumbnail: 'https://via.placeholder.com/400x300/417505/FFFFFF?text=Press+Conference',
+                        tags: ['press', 'conference', 'media'],
+                        description: 'Full press conference recording'
+                    },
+                    {
+                        id: 6,
+                        name: 'Background Music.wav',
+                        type: 'audio',
+                        size: '8.4 MB',
+                        uploadedBy: 'Emily Davis',
+                        date: '2024-01-10',
+                        status: 'approved',
+                        thumbnail: 'https://via.placeholder.com/400x300/BD10E0/FFFFFF?text=Background+Music',
+                        tags: ['music', 'background', 'audio'],
+                        description: 'Background music for videos'
+                    }
+                ];
+            },
+
+            renderContent() {
+                if (this.data.viewType === 'grid') {
+                    this.renderGridView();
+                } else if (this.data.viewType === 'list') {
+                    this.renderListView();
+                }
+            },
+
+            renderGridView() {
+                const grid = document.getElementById('contentGrid');
+                grid.innerHTML = '';
+
+                if (this.data.filteredContent.length === 0) {
+                    document.getElementById('noContentGrid').classList.remove('d-none');
+                    return;
+                }
+
+                this.data.filteredContent.forEach(item => {
+                    const col = document.createElement('div');
+                    col.className = 'col';
+                    col.innerHTML = `
+                        <div class="card content-card h-100" onclick="contentLibrary.previewContent(${item.id})">
+                            <div class="video-thumbnail">
+                                <img src="${item.thumbnail}" alt="${item.name}" class="w-100 h-100 object-fit-cover">
+                                <div class="position-absolute bottom-0 end-0 m-2">
+                                    <span class="badge bg-dark bg-opacity-75">${item.type.toUpperCase()}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title text-truncate">${item.name}</h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${item.size}</small>
+                                    <span class="badge ${item.status === 'approved' ? 'bg-success' : 'bg-warning'}">
+                                        ${item.status}
+                                    </span>
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">By ${item.uploadedBy}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(col);
+                });
+            },
+
+            renderListView() {
+                const tbody = document.getElementById('contentTableBody');
+                tbody.innerHTML = '';
+
+                this.data.filteredContent.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <i class="bi ${this.getFileIcon(item.type)}"></i>
+                        </td>
+                        <td>${item.name}</td>
+                        <td><span class="badge bg-secondary">${item.type}</span></td>
+                        <td>${item.size}</td>
+                        <td>${item.uploadedBy}</td>
+                        <td>${item.date}</td>
+                        <td>
+                            <span class="badge ${item.status === 'approved' ? 'bg-success' : 'bg-warning'}">
+                                ${item.status}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="contentLibrary.previewContent(${item.id})">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            },
+
+            getFileIcon(type) {
+                const icons = {
+                    photo: 'bi-image',
+                    video: 'bi-camera-video',
+                    audio: 'bi-mic',
+                    document: 'bi-file-earmark-text'
+                };
+                return icons[type] || 'bi-file';
+            },
+
+            switchView(viewType) {
+                this.data.viewType = viewType;
+                
+                // Update active button
+                ['grid', 'list', 'timeline'].forEach(type => {
+                    const btn = document.getElementById(`view${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                    if (btn) {
+                        btn.classList.toggle('active', type === viewType);
+                    }
+                });
+
+                // Show/hide views
+                document.getElementById('gridView').classList.toggle('d-none', viewType !== 'grid');
+                document.getElementById('listView').classList.toggle('d-none', viewType !== 'list');
+                document.getElementById('timelineView').classList.toggle('d-none', viewType !== 'timeline');
+
+                if (viewType === 'timeline') {
+                    this.renderTimelineView();
+                } else {
+                    this.renderContent();
+                }
+            },
+
+            applyFilter(filter) {
+                this.data.currentFilter = filter;
+                
+                // Update active filter button
+                ['all', 'photos', 'videos', 'audio'].forEach(type => {
+                    const btn = document.getElementById(`filter${type.charAt(0).toUpperCase() + type.slice(1)}`);
+                    if (btn) {
+                        btn.classList.toggle('active', 
+                            (type === 'photos' && filter === 'photo') || 
+                            (type === 'videos' && filter === 'video') ||
+                            (type === 'audio' && filter === 'audio') ||
+                            (type === 'all' && filter === 'all')
+                        );
+                    }
+                });
+
+                if (filter === 'all') {
+                    this.data.filteredContent = [...this.data.content];
+                } else {
+                    this.data.filteredContent = this.data.content.filter(item => 
+                        item.type === filter
+                    );
+                }
+
+                this.renderContent();
+            },
+
+            searchContent() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                this.data.searchTerm = searchTerm;
+
+                this.data.filteredContent = this.data.content.filter(item =>
+                    item.name.toLowerCase().includes(searchTerm) ||
+                    item.description.toLowerCase().includes(searchTerm) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+
+                this.renderContent();
+            },
+
+            updateStats() {
+                const total = this.data.content.length;
+                const photos = this.data.content.filter(item => item.type === 'photo').length;
+                const videos = this.data.content.filter(item => item.type === 'video').length;
+                const audio = this.data.content.filter(item => item.type === 'audio').length;
+                const pending = this.data.content.filter(item => item.status === 'pending').length;
+
+                document.getElementById('totalFiles').textContent = total;
+                document.getElementById('photoCount').textContent = photos;
+                document.getElementById('videoCount').textContent = videos;
+                document.getElementById('audioCount').textContent = audio;
+                document.getElementById('pendingReviewCount').textContent = pending;
+                document.getElementById('storageUsed').textContent = '1.2 GB';
+            },
+
+            previewContent(id) {
+                const item = this.data.content.find(c => c.id === id);
+                if (!item) return;
+
+                const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+                const container = document.getElementById('previewContainer');
+
+                let previewHTML = '';
+                if (item.type === 'photo') {
+                    previewHTML = `
+                        <img src="${item.thumbnail}" alt="${item.name}" class="img-fluid rounded">
+                        <div class="mt-3">
+                            <h5>${item.name}</h5>
+                            <p>${item.description}</p>
+                            <div class="d-flex flex-wrap gap-1">
+                                ${item.tags.map(tag => `<span class="badge bg-primary">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (item.type === 'video') {
+                    previewHTML = `
+                        <video controls class="w-100 rounded">
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="mt-3">
+                            <h5>${item.name}</h5>
+                            <p>${item.description}</p>
+                        </div>
+                    `;
+                } else if (item.type === 'audio') {
+                    previewHTML = `
+                        <audio controls class="w-100 my-3">
+                            <source src="#" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div>
+                            <h5>${item.name}</h5>
+                            <p>${item.description}</p>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = previewHTML;
+                modal.show();
+            },
+
+            handleFiles(files) {
+                const fileList = document.getElementById('fileList');
+                const selectedFiles = document.getElementById('selectedFiles');
+                const metadataForm = document.getElementById('metadataForm');
+                const uploadBtn = document.getElementById('uploadBtn');
+
+                fileList.innerHTML = '';
+                
+                Array.from(files).forEach((file, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'file-list-item';
+                    div.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark me-2"></i>
+                                <div>
+                                    <div class="fw-medium">${file.name}</div>
+                                    <small class="text-muted">${this.formatFileSize(file.size)}</small>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="badge bg-secondary">${file.type || 'Unknown'}</span>
+                            </div>
+                        </div>
+                    `;
+                    fileList.appendChild(div);
+                });
+
+                selectedFiles.classList.remove('d-none');
+                metadataForm.classList.remove('d-none');
+                uploadBtn.disabled = false;
+            },
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            },
+
+            startUpload() {
+                // Show upload progress
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+                uploadBtn.disabled = true;
+
+                // Simulate upload
+                setTimeout(() => {
+                    this.showToast('Files uploaded successfully!', 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                    modal.hide();
+                    
+                    // Reset form
+                    this.resetUploadForm();
+                    
+                    // Reload content
+                    this.loadContent();
+                    this.updateStats();
+                }, 2000);
+            },
+
+            resetUploadForm() {
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileList').innerHTML = '';
+                document.getElementById('selectedFiles').classList.add('d-none');
+                document.getElementById('metadataForm').classList.add('d-none');
+                
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i>Upload';
+                uploadBtn.disabled = true;
+            },
+
+            showToast(message, type = 'info') {
+                // Create toast container if it doesn't exist
+                let container = document.querySelector('.toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.className = 'toast-container';
+                    document.body.appendChild(container);
+                }
+
+                // Create toast
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.style.cssText = `
+                    padding: 1rem;
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                toast.innerHTML = `
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : 'bi-info-circle'}"></i>
+                    <span>${message}</span>
+                    <button class="btn btn-sm btn-link ms-auto" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                
+                container.appendChild(toast);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 5000);
+            },
+
+            renderTimelineView() {
+                const timeline = document.getElementById('contentTimeline');
+                timeline.innerHTML = '<p class="text-muted text-center">Timeline view will be implemented here</p>';
+            },
+
+            exportData(format) {
+                const data = this.data.filteredContent;
+                let content = '';
+                
+                if (format === 'csv') {
+                    const headers = ['Name', 'Type', 'Size', 'Uploaded By', 'Date', 'Status'];
+                    const rows = data.map(item => [
+                        `"${item.name}"`,
+                        item.type,
+                        item.size,
+                        item.uploadedBy,
+                        item.date,
+                        item.status
+                    ]);
+                    content = [headers, ...rows].map(row => row.join(',')).join('\n');
+                } else if (format === 'json') {
+                    content = JSON.stringify(data, null, 2);
+                }
+                
+                // Create download link
+                const blob = new Blob([content], { type: format === 'csv' ? 'text/csv' : 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `content-export.${format === 'csv' ? 'csv' : 'json'}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showToast(`Exported as ${format.toUpperCase()}`, 'success');
+            }
+        };
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            contentLibrary.init();
+        });
+    </script>
+</body>
+</html>

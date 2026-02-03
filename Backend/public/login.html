@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>Login - Amhara Media Corporation</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* Modern CSS Variables */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Main Container */
+        .login-container {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glass Effect Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            padding: 40px 0 20px;
+            position: relative;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .company-name {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--secondary-color), #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #6c757d;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-btn:hover {
+            transform: scale(1.1);
+            background: white;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Role Cards Section */
+        .role-section {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            margin: 20px;
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Role Cards Grid */
+        .role-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Role Card */
+        .role-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform var(--transition-speed);
+            transform-origin: left;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .role-card.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2);
+        }
+
+        .role-card.active::before {
+            transform: scaleX(1);
+        }
+
+        /* Role Icon */
+        .role-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 1.8rem;
+            transition: all var(--transition-speed);
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+        }
+
+        .role-card:hover .role-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .role-icon.editor {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+
+        .role-icon.crew {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .role-icon.requester {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .role-icon.admin {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        /* Role Name and Description */
+        .role-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        .role-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        /* Selected Role Info */
+        .selected-role-info {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+            border-left: 4px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Login Form Section */
+        .login-form-section {
+            padding: 40px;
+        }
+
+        .login-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .login-header h2 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .current-role-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--primary-color);
+            border: 2px solid rgba(52, 152, 219, 0.2);
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-control {
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all var(--transition-speed);
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Password Input Group */
+        .password-input-group {
+            position: relative;
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all var(--transition-speed);
+        }
+
+        .toggle-password-btn:hover {
+            color: var(--primary-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        /* Form Options */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 30px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .remember-me label {
+            cursor: pointer;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .forgot-password:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            color: white;
+            transition: all var(--transition-speed);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .login-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .admin-access-btn {
+            background: transparent;
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+            width: 100%;
+            cursor: button;
+            margin-bottom: 20px;
+        }
+
+        .admin-access-btn:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(231, 76, 60, 0.2);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 2px solid #dee2e6;
+            color: #6c757d;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #f8f9fa;
+            color: var(--secondary-color);
+            border-color: #ced4da;
+        }
+
+        /* Auth Links */
+        .auth-links {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .auth-links p {
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .register-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+        }
+
+        .register-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Secret Admin Hint */
+        .secret-hint {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn" onclick="toggleLanguage()">EN</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="login-container">
+        <div class="glass-card">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="bi bi-broadcast"></i>
+                </div>
+                <h1 class="company-name" data-translate="companyName">Amhara Media Corporation</h1>
+                <p class="tagline" data-translate="tagline">Content Management System</p>
+            </div>
+
+            <div class="row g-0">
+                <!-- Role Selection Section -->
+                <div class="col-lg-6">
+                    <div class="role-section">
+                        <h2 class="section-title" data-translate="selectRole">Select Your Role</h2>
+
+                        <div class="role-cards-grid">
+                            <!-- Reporter Card -->
+                            <div class="role-card active" onclick="selectRole('reporter')">
+                                <div class="role-icon">
+                                    <i class="bi bi-newspaper"></i>
+                                </div>
+                                <h3 class="role-name" data-translate="reporter">Reporter</h3>
+                                <p class="role-desc" data-translate="reporterDesc">Field reporting and content creation
+                                </p>
+                            </div>
+
+                            <!-- Editor Card -->
+                            <div class="role-card" onclick="selectRole('editor')">
+                                <div class="role-icon editor">
+                                    <i class="bi bi-pencil-square"></i>
+                                </div>
+                                <h3 class="role-name" data-translate="editor">Editor</h3>
+                                <p class="role-desc" data-translate="editorDesc">Review, edit, and publish content</p>
+                            </div>
+
+                            <!-- Crew Card -->
+                            <div class="role-card" onclick="selectRole('crew')">
+                                <div class="role-icon crew">
+                                    <i class="bi bi-camera-video"></i>
+                                </div>
+                                <h3 class="role-name" data-translate="crew">Crew Member</h3>
+                                <p class="role-desc" data-translate="crewDesc">Technical and production support</p>
+                            </div>
+
+                            <!-- Requester Card -->
+                            <div class="role-card" onclick="selectRole('requester')">
+                                <div class="role-icon requester">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+                                <h3 class="role-name" data-translate="requester">Content Requester</h3>
+                                <p class="role-desc" data-translate="requesterDesc">Request and manage content creation
+                                </p>
+                            </div>
+
+                            <!-- Admin Card -->
+                            <div class="role-card" onclick="selectRole('admin')">
+                                <div class="role-icon admin">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <h3 class="role-name" data-translate="admin">Administrator</h3>
+                                <p class="role-desc" data-translate="adminDesc">System management and administration</p>
+                            </div>
+                        </div>
+
+                        <div class="selected-role-info fade-in">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-check-circle-fill text-primary" style="font-size: 1.2rem;"></i>
+                                <div>
+                                    <strong data-translate="reporter">Reporter</strong> <span
+                                        data-translate="selectedRole">selected</span>: <span
+                                        data-translate="reporterDesc">Field reporting and content creation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Form Section -->
+                <div class="col-lg-6">
+                    <div class="login-form-section">
+                        <div class="login-header">
+                            <div>
+                                <h2 data-translate="loginTitle">Login to Your Account</h2>
+                                <p class="text-muted mb-0" data-translate="accessDashboard">Access your dashboard</p>
+                            </div>
+                            <div class="current-role-badge">
+                                <i class="bi bi-newspaper"></i>
+                                <span id="currentRoleName">Reporter</span>
+                            </div>
+                        </div>
+
+                        <form id="loginForm">
+                            <!-- Email Input -->
+                            <div class="mb-4">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i>
+                                    <span data-translate="emailLabel">Email Address</span>
+                                </label>
+                                <input type="email" class="form-control" id="email"
+                                    placeholder="Enter your email address" data-translate-placeholder="emailPlaceholder"
+                                    required autocomplete="email">
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="mb-4">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock"></i>
+                                    <span data-translate="passwordLabel">Password</span>
+                                </label>
+                                <div class="password-input-group">
+                                    <input type="password" class="form-control" id="password"
+                                        placeholder="Enter your password"
+                                        data-translate-placeholder="passwordPlaceholder" required
+                                        autocomplete="current-password">
+                                    <button type="button" class="toggle-password-btn"
+                                        onclick="togglePasswordVisibility()">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Form Options -->
+                            <div class="form-options">
+                                <div class="remember-me">
+                                    <input type="checkbox" id="rememberMe">
+                                    <label for="rememberMe" data-translate="rememberMe">Remember me</label>
+                                </div>
+                                <a href="forgot-password.html" class="forgot-password" data-translate="forgotPassword">
+                                    Forgot Password?
+                                </a>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit" class="login-btn" id="loginBtn" data-translate="signIn">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                <span data-translate="signIn">Sign In</span>
+                            </button>
+
+                            <!-- Back to Role Selection -->
+                            <button type="button" class="back-btn" onclick="resetRoleSelection()">
+                                <i class="bi bi-arrow-left"></i>
+                                <span data-translate="backToRole">Back to Role Selection</span>
+                            </button>
+
+                            <!-- Registration Link -->
+                            <div class="auth-links">
+                                <p>
+                                    <span data-translate="noAccount">Don't have an account?</span>
+                                    <a href="register.html" class="register-link" data-translate="registerHere">Register
+                                        here</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/language-service.js"></script>
+    <script>
+        // ===========================================
+        // CORE LOGIN SYSTEM WITH BEAUTIFUL TOASTS
+        // ===========================================
+
+        // Global variables
+        let selectedRole = 'reporter';
+        const API_BASE_URL = 'http://localhost:5001/api';
+        let toastCount = 0;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Language Service
+            window.LanguageService.init();
+
+            console.log('🚀 Login page initialized');
+
+            // Create toast container
+            createToastContainer();
+
+            // Check for remembered email
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.getElementById('email').value = rememberedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'm') {
+                    e.preventDefault();
+                    quickMasterAccess();
+                }
+
+                // Ctrl+T to test toasts
+                if (e.ctrlKey && e.key.toLowerCase() === 't') {
+                    e.preventDefault();
+                    testToasts();
+                }
+            });
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Toggle password visibility
+            document.getElementById('password').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+                }
+            });
+        }
+
+        // ===========================================
+        // BEAUTIFUL TOAST NOTIFICATION SYSTEM
+        // ===========================================
+        function createToastContainer() {
+            const existing = document.getElementById('toastContainer');
+            if (existing) existing.remove();
+
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.cssText = `
+                position: fixed;
+                top: 30px;
+                right: 30px;
+                z-index: 999999;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                pointer-events: none;
+            `;
+
+            // Add toast styles
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideOutRight {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+                
+                .elegant-toast {
+                    position: relative;
+                    min-width: 300px;
+                    max-width: 350px;
+                    padding: 18px 20px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    pointer-events: auto;
+                    animation: slideInRight 0.4s ease-out;
+                    background: white;
+                    border-left: 4px solid;
+                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s, box-shadow 0.3s;
+                }
+                
+                .elegant-toast:hover {
+                    transform: translateX(-5px);
+                    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+                }
+                
+                .elegant-toast.success {
+                    border-left-color: #2ecc71;
+                    background: linear-gradient(to right, rgba(46, 204, 113, 0.05), white);
+                }
+                
+                .elegant-toast.error {
+                    border-left-color: #e74c3c;
+                    background: linear-gradient(to right, rgba(231, 76, 60, 0.05), white);
+                }
+                
+                .elegant-toast.warning {
+                    border-left-color: #f39c12;
+                    background: linear-gradient(to right, rgba(243, 156, 18, 0.05), white);
+                }
+                
+                .elegant-toast.info {
+                    border-left-color: #3498db;
+                    background: linear-gradient(to right, rgba(52, 152, 219, 0.05), white);
+                }
+                
+                .toast-icon-circle {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.2rem;
+                    flex-shrink: 0;
+                }
+                
+                .success .toast-icon-circle {
+                    background: rgba(46, 204, 113, 0.1);
+                    color: #2ecc71;
+                }
+                
+                .error .toast-icon-circle {
+                    background: rgba(231, 76, 60, 0.1);
+                    color: #e74c3c;
+                }
+                
+                .warning .toast-icon-circle {
+                    background: rgba(243, 156, 18, 0.1);
+                    color: #f39c12;
+                }
+                
+                .info .toast-icon-circle {
+                    background: rgba(52, 152, 219, 0.1);
+                    color: #3498db;
+                }
+                
+                .toast-content {
+                    flex: 1;
+                }
+                
+                .toast-title {
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    color: #2c3e50;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .toast-message {
+                    font-size: 0.9rem;
+                    color: #34495e;
+                    line-height: 1.4;
+                }
+                
+                .toast-close {
+                    background: none;
+                    border: none;
+                    color: #95a5a6;
+                    cursor: pointer;
+                    padding: 4px;
+                    border-radius: 4px;
+                    transition: all 0.2s;
+                    opacity: 0.5;
+                    flex-shrink: 0;
+                }
+                
+                .toast-close:hover {
+                    opacity: 1;
+                    color: #7f8c8d;
+                    background: rgba(0, 0, 0, 0.05);
+                }
+            `;
+            document.head.appendChild(style);
+
+            document.body.appendChild(container);
+            return container;
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer') || createToastContainer();
+            const toastId = `toast-${Date.now()}-${++toastCount}`;
+
+            const config = {
+                success: { icon: 'bi-check-lg', title: 'Success' },
+                error: { icon: 'bi-x-lg', title: 'Error' },
+                warning: { icon: 'bi-exclamation-triangle', title: 'Warning' },
+                info: { icon: 'bi-info-circle', title: 'Notice' }
+            };
+
+            const cfg = config[type] || config.info;
+
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `elegant-toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon-circle">
+                    <i class="bi ${cfg.icon}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${cfg.title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast('${toastId}')">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => removeToast(toastId), 5000);
+
+            return toastId;
+        }
+
+        window.removeToast = function (toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.style.animation = 'slideOutRight 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }
+        };
+
+        window.testToasts = function () {
+            showToast('Login successful! Welcome back.', 'success');
+            setTimeout(() => showToast('Invalid email or password', 'error'), 600);
+            setTimeout(() => showToast('Please select your role first', 'warning'), 1200);
+            setTimeout(() => showToast('You are now logged in', 'info'), 1800);
+        };
+
+        // ===========================================
+        // LOGIN SYSTEM FUNCTIONS
+        // ===========================================
+        // Role selection
+        function selectRole(role) {
+            selectedRole = role;
+
+            // Update active role card
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Update current role display
+            document.getElementById('currentRoleName').textContent =
+                role.charAt(0).toUpperCase() + role.slice(1);
+
+            // Update role icon in badge
+            const roleIcon = document.querySelector('.current-role-badge i');
+            const icons = {
+                reporter: 'bi-newspaper',
+                editor: 'bi-pencil-square',
+                crew: 'bi-camera-video',
+                requester: 'bi-file-earmark-text',
+                admin: 'bi-shield-check'
+            };
+            roleIcon.className = `bi ${icons[role]}`;
+
+            // Update selected role info
+            const roleInfo = document.querySelector('.selected-role-info');
+            const roleDescriptions = {
+                reporter: 'Field reporting and content creation',
+                editor: 'Review, edit, and publish content',
+                crew: 'Technical and production support',
+                requester: 'Request and manage content creation',
+                admin: 'System management and administration'
+            };
+
+            roleInfo.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-check-circle-fill text-primary" style="font-size: 1.2rem;"></i>
+                    <div>
+                        <strong>${role.charAt(0).toUpperCase() + role.slice(1)}</strong> 
+                        selected: ${roleDescriptions[role]}
+                    </div>
+                </div>
+            `;
+
+            // Add fade-in animation
+            roleInfo.classList.remove('fade-in');
+            void roleInfo.offsetWidth; // Trigger reflow
+            roleInfo.classList.add('fade-in');
+
+            console.log(`Role selected: ${role}`);
+        }
+
+        // Reset role selection
+        function resetRoleSelection() {
+            selectRole('reporter');
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = event.currentTarget;
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.innerHTML = '<i class="bi bi-eye"></i>';
+            }
+        }
+
+        // Toggle language
+        function toggleLanguage() {
+            const newLang = window.LanguageService.toggleLanguage();
+            showToast(`Language switched to ${newLang === 'en' ? 'English' : 'Amharic'}`, 'info');
+        }
+
+        // Quick master admin access
+        function quickMasterAccess() {
+            selectRole('admin');
+            document.getElementById('email').value = 'master@ameco.et';
+            document.getElementById('password').value = 'Master@2024';
+            document.getElementById('rememberMe').checked = true;
+            showToast('Master admin credentials loaded', 'info');
+        }
+
+        // ===========================================
+        // MAIN LOGIN HANDLER WITH ADMIN REDIRECT FIX
+        // ===========================================
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+
+            // Basic validation
+            if (!email || !password) {
+                showToast('Please enter both email and password', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Show loading state
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = `<div class="spinner"></div> ${window.LanguageService.t('signingIn')}`;
+            loginBtn.disabled = true;
+
+            try {
+                // Backend API call
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                        // Note: Removed role parameter to match backend
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || data.message || 'Login failed');
+                }
+
+                // Login successful
+                const { user, token } = data.data;
+
+                console.log('✅ Login successful!');
+                console.log('👤 User:', user);
+                console.log('🎯 User role:', user.role);
+                console.log('📧 User email:', user.email);
+
+                // Store user session
+                const sessionData = {
+                    isLoggedIn: true,
+                    email: user.email,
+                    role: user.role,
+                    name: user.name,
+                    department: user.department || 'General',
+                    loginTime: new Date().toISOString(),
+                    token: token
+                };
+
+                // Use appropriate storage based on remember me
+                const storage = rememberMe ? localStorage : sessionStorage;
+                storage.setItem('userSession', JSON.stringify(sessionData));
+                storage.setItem('authToken', token);
+
+                // Remember email if requested
+                if (rememberMe) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+
+
+
+                // ===========================================
+                // CRITICAL FIX: ADMIN REDIRECT LOGIC
+                // ===========================================
+                let redirectPath = '/dashboard.html'; // Default fallback
+
+                // Check if user is admin based on role OR email
+                const userRole = user.role ? user.role.toLowerCase() : '';
+                const userEmail = user.email ? user.email.toLowerCase() : '';
+
+                console.log('🔍 Checking redirect for:', {
+                    role: userRole,
+                    email: userEmail
+                });
+                // Check if selected role matches user's actual role
+                const selectedRoleLower = selectedRole.toLowerCase();
+                const userRoleLower = userRole.toLowerCase();
+
+                // Define which roles can access which dashboards
+                const roleAccessRules = {
+                    'admin': ['admin', 'editor', 'reporter', 'crew', 'requester'], // Admin can access all
+                    'editor': ['editor'],
+                    'reporter': ['reporter'],
+                    'crew': ['crew', 'cameraman', 'driver', 'sound_technician'],
+                    'requester': ['requester']
+                };
+
+                // Check if user's role is allowed to access selected dashboard
+                // Check if user can access the selected role dashboard
+                let isAllowed = false;
+
+                // Admin can access any dashboard
+                if (userRoleLower === 'admin' || userRoleLower.includes('admin')) {
+                    isAllowed = true;
+                }
+                // Editor can only access editor dashboard
+                else if (selectedRoleLower === 'editor' && userRoleLower === 'editor') {
+                    isAllowed = true;
+                }
+                // Reporter can only access reporter dashboard  
+                else if (selectedRoleLower === 'reporter' && userRoleLower === 'reporter') {
+                    isAllowed = true;
+                }
+                // Crew members can access crew dashboard
+                else if (selectedRoleLower === 'crew' && (userRoleLower === 'crew' ||
+                    userRoleLower === 'cameraman' ||
+                    userRoleLower === 'driver' ||
+                    userRoleLower === 'sound_technician')) {
+                    isAllowed = true;
+                }
+                // Requester can only access requester dashboard
+                else if (selectedRoleLower === 'requester' && userRoleLower === 'requester') {
+                    isAllowed = true;
+                }
+
+                if (!isAllowed) {
+                    console.warn(`⚠️ Access denied: Selected ${selectedRoleLower} role, but user is ${userRoleLower}`);
+
+                    // Create proper error message based on language
+                    let errorMessage = '';
+                    if (window.LanguageService.isAmharic()) {
+                        errorMessage = `${selectedRoleLower} ሚና መምረጥዎን ተመርጠዋል፣ ግን አካውንትዎ ${userRoleLower} ነው። ትክክለኛውን ሚና ይምረጡ።`;
+                    } else {
+                        errorMessage = `You selected ${selectedRoleLower} role, but your account is ${userRoleLower}. Please select the correct role.`;
+                    }
+
+                    showToast(errorMessage, 'warning');
+
+                    // Reset button state
+                    loginBtn.innerHTML = originalText;
+                    loginBtn.disabled = false;
+                    return; // Stop the login process
+                }
+                // Show success message
+                showToast(window.LanguageService.t('welcomeBack') + ', ' + user.name + '!', 'success');
+                // Role matches or user is admin - proceed with redirect
+                if (userRoleLower.includes('admin') || userRoleLower.includes('master') ||
+                    userEmail === 'admin@amedia.et' || userEmail === 'master@ameco.et') {
+                    redirectPath = 'dashboard-admin.html';
+                    console.log('👑 Admin detected! Redirecting to admin dashboard');
+                    showToast('Redirecting to Admin Dashboard...', 'info');
+                }
+                else if (userRoleLower.includes('reporter')) {
+                    redirectPath = 'dashboard-reporter.html';
+                    console.log('📰 Reporter detected! Redirecting to reporter dashboard');
+                }
+                else if (userRoleLower.includes('requester')) {
+                    redirectPath = 'dashboard-requester.html';
+                    console.log('📋 Requester detected! Redirecting to requester dashboard');
+                }
+                else if (userRoleLower.includes('editor')) {
+                    redirectPath = 'dashboard-editor.html';
+                    console.log('✏️ Editor detected! Redirecting to editor dashboard');
+                }
+                else if (userRoleLower.includes('crew') || userRoleLower.includes('cameraman') ||
+                    userRoleLower.includes('driver') || userRoleLower.includes('sound_technician')) {
+                    redirectPath = 'dashboard-crew.html';
+                    console.log('🎥 Crew detected! Redirecting to crew dashboard');
+                }
+                else {
+                    // Fallback to role-based dashboard
+                    redirectPath = `${userRoleLower}-index.html` || 'index.html';
+                    console.log('🔄 Using fallback redirect:', redirectPath);
+                }
+
+                console.log('📍 Final redirect path:', redirectPath);
+
+                // Wait 1.5 seconds then redirect
+                setTimeout(() => {
+                    window.location.href = redirectPath;
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Login error:', error);
+
+                // Show appropriate error message
+                let errorMessage = 'Login failed. Please try again.';
+
+                if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Network error. Please check your connection.';
+                } else if (error.message.includes('credentials') || error.message.includes('Invalid')) {
+                    errorMessage = 'Invalid email or password.';
+                } else if (error.message.includes('account') || error.message.includes('not found')) {
+                    errorMessage = 'Account not found. Please register.';
+                } else if (error.message.includes('role') || error.message.includes('access')) {
+                    errorMessage = 'You do not have access to this role.';
+                } else if (error.message.includes('deactivated')) {
+                    errorMessage = 'Account is deactivated. Contact administrator.';
+                }
+
+                showToast(errorMessage, 'error');
+
+                // Clear password field for security
+                document.getElementById('password').value = '';
+
+            } finally {
+                // Reset button state
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        }
+
+        // ===========================================
+        // DEMO LOGIN FUNCTION FOR ADMIN TESTING
+        // ===========================================
+        function demoAdminLogin() {
+            // Auto-fill admin credentials
+            selectRole('admin');
+            document.getElementById('email').value = 'admin@amedia.et';
+            document.getElementById('password').value = 'Admin@123';
+            document.getElementById('rememberMe').checked = true;
+
+            showToast('Admin credentials loaded. Click Sign In to login.', 'info');
+
+            // Scroll to login button
+            document.getElementById('loginBtn').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Handle network status
+        window.addEventListener('online', function () {
+            showToast('You are back online', 'success');
+        });
+
+        window.addEventListener('offline', function () {
+            showToast('You are offline. Some features may not work.', 'warning');
+        });
+
+        // Check initial network status
+        if (!navigator.onLine) {
+            showToast('You are offline. Please check your connection.', 'warning');
+        }
+
+        // Initialize welcome message
+        setTimeout(() => {
+            console.log('🎯 Login page ready. Press Ctrl+T to test toasts.');
+            console.log('🔑 For admin test: Call demoAdminLogin() in console');
+        }, 1000);
+
+        // ===========================================
+        // ADD QUICK ADMIN TEST BUTTON (OPTIONAL)
+        // ===========================================
+        // Uncomment to add a visible test button
+        /*
+        document.addEventListener('DOMContentLoaded', function() {
+            const adminTestBtn = document.createElement('button');
+            adminTestBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Test Admin Login';
+            adminTestBtn.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                z-index: 9999;
+                background: linear-gradient(135deg, #e74c3c, #c0392b);
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+                transition: all 0.3s;
+            `;
+            adminTestBtn.onmouseover = () => adminTestBtn.style.transform = 'translateY(-2px)';
+            adminTestBtn.onmouseout = () => adminTestBtn.style.transform = 'translateY(0)';
+            adminTestBtn.onclick = demoAdminLogin;
+            document.body.appendChild(adminTestBtn);
+        });
+        */
+    </script>
+</body>
+
+</html>

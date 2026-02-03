@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crew Dashboard - Amhara Media</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --primary-dark: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(180deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            padding: 0;
+            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .sidebar .logo {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.85rem 1.5rem;
+            margin: 0.25rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .navbar-top {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .content-wrapper {
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            height: 100%;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card .count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            background: white;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        /* Schedule Items */
+        .schedule-item {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #2ecc71;
+        }
+
+        /* Equipment Cards */
+        .equipment-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        /* Task Items */
+        .task-item {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #2ecc71;
+        }
+
+        /* Status badges */
+        .badge-available { background-color: #d4edda; color: #155724; }
+        .badge-in-use { background-color: #fff3cd; color: #856404; }
+        .badge-maintenance { background-color: #f8d7da; color: #721c24; }
+        .badge-upcoming { background-color: #d1ecf1; color: #0c5460; }
+        
+        /* Empty state styles */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        /* New user badge */
+        .new-user-badge {
+            background: white;
+            color: #27ae60;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        
+        /* First time user empty state */
+        .first-time-empty-state {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+        }
+        
+        .first-time-empty-state:hover {
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            border-color: #2ecc71;
+        }
+        
+        /* Toast container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h3>AMC Crew</h3>
+            <span class="badge bg-light text-dark" id="userRoleBadge">Crew</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" id="dashboardLink">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="assignmentsLink">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Assignments</span>
+                        <span class="badge bg-warning ms-auto" id="assignmentsBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="equipmentLink">
+                        <i class="bi bi-camera-video"></i>
+                        <span>Equipment</span>
+                        <span class="badge bg-info ms-auto" id="equipmentBadge">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="tasksLink">
+                        <i class="bi bi-list-task"></i>
+                        <span>Tasks</span>
+                        <span class="badge bg-danger ms-auto" id="tasksBadge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="user-profile">
+            <div class="user-info d-flex align-items-center gap-3">
+                <div class="avatar-initials" id="userAvatar">CU</div>
+                <div class="user-details">
+                    <h6 class="mb-0" id="userName">Crew User</h6>
+                    <small class="text-white-50" id="userEmail">crew@ameco.et</small>
+                </div>
+                <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="navbar-top">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div>
+                        <h4 class="mb-0 fw-bold" id="pageTitle">Crew Dashboard</h4>
+                        <small class="text-muted" id="currentDate"></small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="position-relative">
+                        <button class="btn btn-light position-relative" id="notificationsBtn">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+                                0
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="content-wrapper" id="dashboardSection">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner fade-in">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 id="welcomeMessage">Welcome, Crew User</h1>
+                        <p id="welcomeSubtitle">You have <strong id="activeAssignments">0 active assignments</strong>. Next assignment starts in <strong id="nextAssignmentTime">Not scheduled</strong>.</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                            <i class="bi bi-clock me-2"></i>
+                            <span id="currentTime"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="stats-card" id="assignmentsCard">
+                        <i class="bi bi-calendar-check"></i>
+                        <h3 class="count" id="assignmentsCount">0</h3>
+                        <p class="label">Active Assignments</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="stats-card">
+                        <i class="bi bi-camera-video"></i>
+                        <h3 class="count" id="equipmentCount">0</h3>
+                        <p class="label">Equipment Items</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="stats-card">
+                        <i class="bi bi-clock-history"></i>
+                        <h3 class="count" id="hoursCount">0</h3>
+                        <p class="label">Hours This Week</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="stats-card">
+                        <i class="bi bi-check-circle"></i>
+                        <h3 class="count" id="completedCount">0</h3>
+                        <p class="label">Completed Tasks</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Today's Schedule -->
+                <div class="col-lg-7 mb-4 fade-in">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Today's Schedule</h5>
+                            <button class="btn btn-sm btn-primary" id="viewScheduleBtn" onclick="dashboard.addAssignment()">
+                                Add Assignment
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="todaysSchedule">
+                                <!-- Schedule items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Status -->
+                <div class="col-lg-5 mb-4 fade-in">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Equipment Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="equipmentStatus">
+                                <!-- Equipment items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Tasks -->
+            <div class="row">
+                <div class="col-lg-12 mb-4 fade-in">
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Active Tasks</h5>
+                            <button class="btn btn-sm btn-primary" id="addTaskBtn" onclick="dashboard.addTask()">
+                                <i class="bi bi-plus"></i> Add Task
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="activeTasks">
+                                <!-- Tasks will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12 fade-in">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-primary" id="logHoursBtn" onclick="dashboard.logHours()">
+                                    <i class="bi bi-clock-history me-2"></i>
+                                    Log Hours
+                                </button>
+                                <button class="btn btn-outline-primary" id="submitReportBtn" onclick="dashboard.submitReport()">
+                                    <i class="bi bi-clipboard-check me-2"></i>
+                                    Submit Report
+                                </button>
+                                <button class="btn btn-outline-primary" id="checkEquipmentBtn" onclick="dashboard.checkEquipment()">
+                                    <i class="bi bi-tools me-2"></i>
+                                    Check Equipment
+                                </button>
+                                <button class="btn btn-outline-primary" id="refreshDashboardBtn" onclick="dashboard.refreshDashboard()">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Refresh Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Content Containers -->
+        <div id="assignmentsSection" class="content-wrapper" style="display: none;"></div>
+        <div id="equipmentSection" class="content-wrapper" style="display: none;"></div>
+        <div id="tasksSection" class="content-wrapper" style="display: none;"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        class CrewDashboard {
+            constructor() {
+                this.data = {
+                    user: null,
+                    assignments: [],
+                    equipment: [],
+                    tasks: [],
+                    notifications: [],
+                    activities: [],
+                    isNewUser: true,
+                    userHistory: {}
+                };
+                this.currentSection = 'dashboard';
+                this.dateTimeInterval = null;
+            }
+            
+            init() {
+                this.loadUserData();
+                this.setupEventListeners();
+                this.updateDateTime();
+                
+                // Initialize based on user type
+                if (this.data.isNewUser) {
+                    this.initNewUserDashboard();
+                } else {
+                    this.initReturningUserDashboard();
+                }
+                
+                console.log('Crew Dashboard initialized for ' + (this.data.isNewUser ? 'NEW' : 'RETURNING') + ' user');
+            }
+            
+            loadUserData() {
+                try {
+                    const userData = localStorage.getItem('crewUserData');
+                    const userHistory = localStorage.getItem('crewUserHistory');
+                    
+                    if (userData) {
+                        const parsedData = JSON.parse(userData);
+                        this.data.user = parsedData;
+                        
+                        // Check if user is new (first time login)
+                        this.data.isNewUser = parsedData.isNew !== false;
+                        
+                        // Load user history if exists
+                        if (userHistory) {
+                            this.data.userHistory = JSON.parse(userHistory);
+                            // Load actual data from history
+                            this.loadDataFromHistory();
+                        } else {
+                            // Initialize empty data for returning user who has no history
+                            this.initializeEmptyData();
+                        }
+                    } else {
+                        // New user - first time login
+                        this.initializeNewUser();
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                    this.initializeNewUser();
+                }
+                
+                // Update UI with user info
+                this.updateUserUI();
+            }
+            
+            initializeNewUser() {
+                this.data.user = {
+                    id: 'crew' + Date.now(),
+                    name: 'Crew User',
+                    email: 'crew@ameco.et',
+                    role: 'Crew',
+                    avatar: 'CU',
+                    department: 'Production',
+                    isNew: true,
+                    firstLogin: new Date().toISOString(),
+                    lastLogin: null
+                };
+                localStorage.setItem('crewUserData', JSON.stringify(this.data.user));
+                this.data.isNewUser = true;
+                this.initializeEmptyData();
+            }
+            
+            initializeEmptyData() {
+                this.data.assignments = [];
+                this.data.equipment = [];
+                this.data.tasks = [];
+                this.data.notifications = [];
+                this.data.activities = [];
+            }
+            
+            loadDataFromHistory() {
+                const history = this.data.userHistory;
+                this.data.assignments = history.assignments || [];
+                this.data.equipment = history.equipment || [];
+                this.data.tasks = history.tasks || [];
+                this.data.notifications = history.notifications || [];
+                this.data.activities = history.activities || [];
+            }
+            
+            saveUserHistory() {
+                const history = {
+                    assignments: this.data.assignments,
+                    equipment: this.data.equipment,
+                    tasks: this.data.tasks,
+                    notifications: this.data.notifications,
+                    activities: this.data.activities,
+                    lastUpdated: new Date().toISOString()
+                };
+                localStorage.setItem('crewUserHistory', JSON.stringify(history));
+            }
+            
+            updateUserUI() {
+                const user = this.data.user;
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.avatar;
+                document.getElementById('userRoleBadge').textContent = user.role;
+            }
+            
+            initNewUserDashboard() {
+                // Empty dashboard for new users
+                const welcomeMsg = document.getElementById('welcomeMessage');
+                welcomeMsg.innerHTML = `Welcome, ${this.data.user.name}! <span class="new-user-badge">First Time User</span>`;
+                
+                // Empty stats
+                this.updateStats();
+                
+                // Empty welcome banner message
+                document.getElementById('activeAssignments').textContent = `0 active assignments`;
+                document.getElementById('nextAssignmentTime').textContent = `Not scheduled`;
+                
+                // Empty badges
+                this.updateBadges();
+                
+                // Empty sections
+                this.renderEmptySchedule();
+                this.renderEmptyEquipment();
+                this.renderEmptyTasks();
+                
+                // Show onboarding guide
+                setTimeout(() => {
+                    this.showOnboardingGuide();
+                }, 1000);
+            }
+            
+            initReturningUserDashboard() {
+                // Update user data
+                this.data.user.lastLogin = new Date().toISOString();
+                this.data.user.isNew = false;
+                localStorage.setItem('crewUserData', JSON.stringify(this.data.user));
+                
+                // Update welcome message
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${this.data.user.name}!`;
+                
+                // Load actual user data
+                this.updateStats();
+                this.updateBadges();
+                
+                // Render user data
+                this.renderTodaysSchedule();
+                this.renderEquipmentStatus();
+                this.renderActiveTasks();
+            }
+            
+            updateStats() {
+                const today = new Date().toISOString().split('T')[0];
+                const activeAssignments = this.data.assignments.filter(a => 
+                    (a.status === 'upcoming' || a.status === 'scheduled') && 
+                    a.date === today
+                ).length;
+                
+                // Calculate hours this week (simplified)
+                const hoursThisWeek = this.data.tasks.reduce((total, task) => {
+                    if (task.completed && task.hours) {
+                        return total + task.hours;
+                    }
+                    return total;
+                }, 0);
+                
+                const completedTasks = this.data.tasks.filter(t => t.status === 'completed').length;
+                
+                document.getElementById('assignmentsCount').textContent = activeAssignments;
+                document.getElementById('equipmentCount').textContent = this.data.equipment.length;
+                document.getElementById('hoursCount').textContent = hoursThisWeek;
+                document.getElementById('completedCount').textContent = completedTasks;
+                
+                // Update welcome message
+                document.getElementById('activeAssignments').textContent = `${activeAssignments} active assignments`;
+                
+                // Find next assignment
+                const upcomingAssignments = this.data.assignments
+                    .filter(a => a.status === 'upcoming' || a.status === 'scheduled')
+                    .sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+                
+                if (upcomingAssignments.length > 0) {
+                    const nextAssignment = upcomingAssignments[0];
+                    const assignmentTime = new Date(nextAssignment.date + 'T' + nextAssignment.time);
+                    const now = new Date();
+                    const hoursUntil = Math.round((assignmentTime - now) / (1000 * 60 * 60));
+                    
+                    if (hoursUntil > 0) {
+                        document.getElementById('nextAssignmentTime').textContent = `${hoursUntil} hours`;
+                    } else {
+                        document.getElementById('nextAssignmentTime').textContent = 'Starting soon';
+                    }
+                } else {
+                    document.getElementById('nextAssignmentTime').textContent = 'Not scheduled';
+                }
+            }
+            
+            updateBadges() {
+                const today = new Date().toISOString().split('T')[0];
+                const todaysAssignments = this.data.assignments.filter(a => a.date === today && (a.status === 'upcoming' || a.status === 'scheduled')).length;
+                const pendingTasks = this.data.tasks.filter(t => t.status === 'pending').length;
+                
+                document.getElementById('assignmentsBadge').textContent = todaysAssignments;
+                document.getElementById('equipmentBadge').textContent = this.data.equipment.length;
+                document.getElementById('tasksBadge').textContent = pendingTasks;
+                document.getElementById('notificationCount').textContent = this.data.notifications.filter(n => !n.read).length;
+            }
+            
+            renderEmptySchedule() {
+                const scheduleElement = document.getElementById('todaysSchedule');
+                scheduleElement.innerHTML = `
+                    <div class="empty-state first-time-empty-state">
+                        <i class="bi bi-calendar-check"></i>
+                        <h5>No Assignments Today</h5>
+                        <p>When assignments are scheduled, they will appear here.</p>
+                        <button class="btn btn-primary mt-2" onclick="dashboard.addAssignment()">
+                            <i class="bi bi-plus-circle me-2"></i>Add Your First Assignment
+                        </button>
+                    </div>
+                `;
+            }
+            
+            renderEmptyEquipment() {
+                const equipmentElement = document.getElementById('equipmentStatus');
+                equipmentElement.innerHTML = `
+                    <div class="empty-state first-time-empty-state">
+                        <i class="bi bi-camera-video"></i>
+                        <h5>No Equipment Assigned</h5>
+                        <p>Equipment assigned to you will appear here.</p>
+                        <button class="btn btn-outline-primary btn-sm mt-2" onclick="dashboard.checkEquipment()">
+                            Check Equipment
+                        </button>
+                    </div>
+                `;
+            }
+            
+            renderEmptyTasks() {
+                const tasksElement = document.getElementById('activeTasks');
+                tasksElement.innerHTML = `
+                    <div class="empty-state first-time-empty-state">
+                        <i class="bi bi-list-task"></i>
+                        <h5>No Active Tasks</h5>
+                        <p>Your active tasks will appear here.</p>
+                        <button class="btn btn-primary mt-2" onclick="dashboard.addTask()">
+                            <i class="bi bi-plus-circle me-2"></i>Add Your First Task
+                        </button>
+                    </div>
+                `;
+            }
+            
+            renderTodaysSchedule() {
+                const scheduleElement = document.getElementById('todaysSchedule');
+                const today = new Date().toISOString().split('T')[0];
+                const todaysAssignments = this.data.assignments.filter(a => a.date === today);
+                
+                if (todaysAssignments.length === 0) {
+                    this.renderEmptySchedule();
+                    return;
+                }
+                
+                scheduleElement.innerHTML = todaysAssignments.map(assignment => `
+                    <div class="schedule-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${assignment.title}</h6>
+                                <p class="mb-1 small text-muted">
+                                    <i class="bi bi-clock me-1"></i>${assignment.time}
+                                </p>
+                                <p class="mb-1 small text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>${assignment.location}
+                                </p>
+                            </div>
+                            <span class="badge badge-upcoming">${assignment.status}</span>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">${assignment.description}</small>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderEquipmentStatus() {
+                const equipmentElement = document.getElementById('equipmentStatus');
+                
+                if (this.data.equipment.length === 0) {
+                    this.renderEmptyEquipment();
+                    return;
+                }
+                
+                equipmentElement.innerHTML = this.data.equipment.slice(0, 3).map(item => `
+                    <div class="equipment-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">${item.name}</h6>
+                                <small class="text-muted">${item.type}</small>
+                            </div>
+                            <span class="badge badge-${item.status}">
+                                ${item.status}
+                            </span>
+                        </div>
+                        <div class="mt-2">
+                            <small>
+                                <i class="bi bi-geo-alt me-1"></i>${item.location}
+                            </small>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            renderActiveTasks() {
+                const tasksElement = document.getElementById('activeTasks');
+                const activeTasks = this.data.tasks.filter(task => task.status !== 'completed');
+                
+                if (activeTasks.length === 0) {
+                    this.renderEmptyTasks();
+                    return;
+                }
+                
+                tasksElement.innerHTML = activeTasks.map(task => {
+                    const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+                    const isToday = dueDate ? dueDate.toDateString() === new Date().toDateString() : false;
+                    
+                    return `
+                        <div class="task-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${task.title}</h6>
+                                    <p class="mb-1 small text-muted">${task.description}</p>
+                                    ${dueDate ? `
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock me-1"></i>
+                                            Due: ${isToday ? 'Today' : dueDate.toLocaleDateString()} ${dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        </small>
+                                    ` : ''}
+                                </div>
+                                <span class="badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'secondary'}">
+                                    ${task.priority || 'normal'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            addActivity(type, action, title) {
+                const activity = {
+                    id: 'act' + Date.now(),
+                    type: type,
+                    action: action,
+                    title: title,
+                    user: this.data.user.name,
+                    timestamp: new Date().toISOString(),
+                    icon: this.getActivityIcon(type, action),
+                    color: this.getActivityColor(type, action)
+                };
+                
+                this.data.activities.unshift(activity);
+                this.saveUserHistory();
+            }
+            
+            getActivityIcon(type, action) {
+                const icons = {
+                    'assignment': {
+                        'added': 'calendar-plus',
+                        'updated': 'calendar-check',
+                        'completed': 'calendar-check'
+                    },
+                    'equipment': {
+                        'checked': 'tools',
+                        'assigned': 'camera-video',
+                        'maintenance': 'wrench'
+                    },
+                    'task': {
+                        'added': 'plus-circle',
+                        'completed': 'check-circle'
+                    }
+                };
+                return icons[type]?.[action] || 'activity';
+            }
+            
+            getActivityColor(type, action) {
+                const colors = {
+                    'assignment': {
+                        'added': 'primary',
+                        'updated': 'info',
+                        'completed': 'success'
+                    },
+                    'equipment': {
+                        'checked': 'warning',
+                        'assigned': 'success',
+                        'maintenance': 'danger'
+                    },
+                    'task': {
+                        'added': 'info',
+                        'completed': 'success'
+                    }
+                };
+                return colors[type]?.[action] || 'secondary';
+            }
+            
+            showOnboardingGuide() {
+                // Show welcome modal for new users
+                this.showModal('Welcome to Crew Dashboard!', `
+                    <div class="text-center mb-4">
+                        <i class="bi bi-camera-video text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">Welcome to Your Crew Dashboard</h4>
+                        <p class="text-muted">Your dashboard is currently empty. Let's get started!</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success text-center h-100">
+                                <div class="card-body">
+                                    <i class="bi bi-calendar-plus text-success mb-3" style="font-size: 2rem;"></i>
+                                    <h6>Add Assignments</h6>
+                                    <p class="small text-muted">Schedule your filming assignments</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success text-center h-100">
+                                <div class="card-body">
+                                    <i class="bi bi-tools text-success mb-3" style="font-size: 2rem;"></i>
+                                    <h6>Manage Equipment</h6>
+                                    <p class="small text-muted">Track your camera gear</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success mt-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Your dashboard will populate as you start using the system. All data will be saved to your account.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="this.closest('.modal').remove()">
+                            Skip Tutorial
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="dashboard.startOnboardingTour()">
+                            Start Quick Tour
+                        </button>
+                    </div>
+                `);
+            }
+            
+            startOnboardingTour() {
+                this.showToast('Starting onboarding tour...', 'success');
+                document.querySelector('.modal').remove();
+                
+                // Highlight quick actions
+                setTimeout(() => {
+                    this.showToast('Try adding your first assignment to get started!', 'success');
+                }, 500);
+            }
+            
+            // FIXED SIDEBAR EVENT LISTENERS
+            setupEventListeners() {
+                // Mobile menu toggle
+                document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                // FIXED: Navigation links - using event delegation
+                const sidebar = document.getElementById('sidebar');
+                sidebar.addEventListener('click', (e) => {
+                    // Handle navigation links
+                    const navLink = e.target.closest('.nav-link');
+                    if (navLink && navLink.classList.contains('nav-link')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Get all nav links
+                        const allNavLinks = document.querySelectorAll('.sidebar-menu .nav-link');
+                        
+                        // Remove active class from all links
+                        allNavLinks.forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked link
+                        navLink.classList.add('active');
+                        
+                        // Get section from link id
+                        const linkId = navLink.id;
+                        let section = '';
+                        
+                        switch(linkId) {
+                            case 'dashboardLink':
+                                section = 'dashboard';
+                                break;
+                            case 'assignmentsLink':
+                                section = 'assignments';
+                                break;
+                            case 'equipmentLink':
+                                section = 'equipment';
+                                break;
+                            case 'tasksLink':
+                                section = 'tasks';
+                                break;
+                        }
+                        
+                        if (section) {
+                            this.showSection(section);
+                        }
+                        
+                        // Close mobile menu on mobile
+                        if (window.innerWidth <= 768) {
+                            document.getElementById('sidebar').classList.remove('active');
+                        }
+                    }
+                    
+                    // Handle logout button
+                    if (e.target.closest('#logoutBtn')) {
+                        e.preventDefault();
+                        this.logout();
+                    }
+                });
+                
+                // Notifications button
+                document.getElementById('notificationsBtn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showNotifications();
+                });
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    const sidebar = document.getElementById('sidebar');
+                    const mobileToggle = document.getElementById('mobileMenuToggle');
+                    
+                    if (window.innerWidth <= 768 && 
+                        sidebar.classList.contains('active') && 
+                        !sidebar.contains(e.target) && 
+                        e.target !== mobileToggle && 
+                        !mobileToggle.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+            }
+            
+            // FIXED: Show section method
+            showSection(section) {
+                this.currentSection = section;
+                
+                // Hide all sections first
+                document.getElementById('dashboardSection').style.display = 'none';
+                document.getElementById('assignmentsSection').style.display = 'none';
+                document.getElementById('equipmentSection').style.display = 'none';
+                document.getElementById('tasksSection').style.display = 'none';
+                
+                // Show the selected section
+                if (section === 'dashboard') {
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    document.getElementById('pageTitle').textContent = 'Crew Dashboard';
+                } else {
+                    // Load section content
+                    this.loadSectionContent(section);
+                    document.getElementById('pageTitle').textContent = this.getSectionTitle(section);
+                }
+                
+                console.log(`Showing section: ${section}`);
+            }
+            
+            getSectionTitle(section) {
+                const titles = {
+                    'dashboard': 'Crew Dashboard',
+                    'assignments': 'Assignments',
+                    'equipment': 'Equipment',
+                    'tasks': 'Tasks'
+                };
+                return titles[section] || 'Crew Dashboard';
+            }
+            
+            loadSectionContent(section) {
+                const sectionId = `${section}Section`;
+                const sectionElement = document.getElementById(sectionId);
+                
+                if (!sectionElement) return;
+                
+                sectionElement.style.display = 'block';
+                
+                switch(section) {
+                    case 'assignments':
+                        sectionElement.innerHTML = this.getAssignmentsSection();
+                        break;
+                    case 'equipment':
+                        sectionElement.innerHTML = this.getEquipmentSection();
+                        break;
+                    case 'tasks':
+                        sectionElement.innerHTML = this.getTasksSection();
+                        break;
+                    default:
+                        sectionElement.innerHTML = `
+                            <div class="alert alert-info">
+                                <h4>${this.getSectionTitle(section)}</h4>
+                                <p>This section is under development.</p>
+                            </div>
+                        `;
+                }
+            }
+            
+            getAssignmentsSection() {
+                return `
+                    <div class="section-header mb-4">
+                        <h1><i class="bi bi-calendar-check me-2"></i>Assignments</h1>
+                        <p class="mb-0">Manage your filming assignments and schedule</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Assignments</h5>
+                            <button class="btn btn-sm btn-success" onclick="dashboard.addAssignment()">
+                                <i class="bi bi-plus-circle me-1"></i>Add Assignment
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            ${this.data.assignments.length === 0 ? `
+                                <div class="empty-state">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <h5>No Assignments</h5>
+                                    <p>You haven't created any assignments yet.</p>
+                                    <button class="btn btn-success mt-2" onclick="dashboard.addAssignment()">
+                                        <i class="bi bi-plus-circle me-2"></i>Create Your First Assignment
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Location</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${this.data.assignments.map(assignment => `
+                                                <tr>
+                                                    <td>
+                                                        <strong>${assignment.title}</strong>
+                                                        <div class="small text-muted">${assignment.type}</div>
+                                                    </td>
+                                                    <td>${assignment.date}</td>
+                                                    <td>${assignment.time}</td>
+                                                    <td>${assignment.location}</td>
+                                                    <td>
+                                                        <span class="badge badge-upcoming">${assignment.status}</span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="dashboard.viewAssignment('${assignment.id}')">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getEquipmentSection() {
+                return `
+                    <div class="section-header mb-4">
+                        <h1><i class="bi bi-camera-video me-2"></i>Equipment</h1>
+                        <p class="mb-0">Manage and track your production equipment</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Equipment</h5>
+                            <button class="btn btn-sm btn-success" onclick="dashboard.checkEquipment()">
+                                <i class="bi bi-plus-circle me-1"></i>Add Equipment
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            ${this.data.equipment.length === 0 ? `
+                                <div class="empty-state">
+                                    <i class="bi bi-camera-video"></i>
+                                    <h5>No Equipment</h5>
+                                    <p>You haven't added any equipment yet.</p>
+                                    <button class="btn btn-success mt-2" onclick="dashboard.checkEquipment()">
+                                        <i class="bi bi-plus-circle me-2"></i>Add Your First Equipment
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="row">
+                                    ${this.data.equipment.map(item => `
+                                        <div class="col-md-6 mb-3">
+                                            <div class="equipment-card">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1">${item.name}</h6>
+                                                        <small class="text-muted">${item.type}</small>
+                                                    </div>
+                                                    <span class="badge badge-${item.status}">
+                                                        ${item.status}
+                                                    </span>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <small>
+                                                        <i class="bi bi-geo-alt me-1"></i>${item.location}
+                                                    </small>
+                                                </div>
+                                                ${item.notes ? `
+                                                    <div class="mt-2">
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-chat-left-text me-1"></i>${item.notes}
+                                                        </small>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getTasksSection() {
+                return `
+                    <div class="section-header mb-4">
+                        <h1><i class="bi bi-list-task me-2"></i>Tasks</h1>
+                        <p class="mb-0">Manage your production tasks</p>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">All Tasks</h5>
+                            <button class="btn btn-sm btn-success" onclick="dashboard.addTask()">
+                                <i class="bi bi-plus-circle me-1"></i>Add Task
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            ${this.data.tasks.length === 0 ? `
+                                <div class="empty-state">
+                                    <i class="bi bi-list-task"></i>
+                                    <h5>No Tasks</h5>
+                                    <p>You haven't created any tasks yet.</p>
+                                    <button class="btn btn-success mt-2" onclick="dashboard.addTask()">
+                                        <i class="bi bi-plus-circle me-2"></i>Create Your First Task
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                                <th>Priority</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${this.data.tasks.map(task => `
+                                                <tr>
+                                                    <td>${task.title}</td>
+                                                    <td>${task.description || 'No description'}</td>
+                                                    <td>
+                                                        <span class="badge bg-${task.status === 'completed' ? 'success' : task.status === 'in-progress' ? 'warning' : 'secondary'}">
+                                                            ${task.status}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'secondary'}">
+                                                            ${task.priority}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-success" onclick="dashboard.completeTask('${task.id}')">
+                                                            <i class="bi bi-check"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            viewAssignment(assignmentId) {
+                const assignment = this.data.assignments.find(a => a.id === assignmentId);
+                if (assignment) {
+                    this.showModal(assignment.title, `
+                        <div class="mb-3">
+                            <p><strong>Date:</strong> ${assignment.date}</p>
+                            <p><strong>Time:</strong> ${assignment.time}</p>
+                            <p><strong>Location:</strong> ${assignment.location}</p>
+                            <p><strong>Type:</strong> ${assignment.type}</p>
+                            <p><strong>Status:</strong> <span class="badge badge-upcoming">${assignment.status}</span></p>
+                            <p><strong>Priority:</strong> ${assignment.priority}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Description:</h6>
+                            <p>${assignment.description}</p>
+                        </div>
+                    `);
+                }
+            }
+            
+            completeTask(taskId) {
+                const task = this.data.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = 'completed';
+                    task.completedDate = new Date().toISOString();
+                    this.saveUserHistory();
+                    this.updateStats();
+                    this.showToast('Task marked as completed!', 'success');
+                    
+                    // Refresh tasks if we're in tasks section
+                    if (this.currentSection === 'tasks') {
+                        this.loadSectionContent('tasks');
+                    }
+                }
+            }
+            
+            addAssignment() {
+                this.showModal('Add Assignment', `
+                    <form id="addAssignmentForm" onsubmit="event.preventDefault(); dashboard.saveAssignment();">
+                        <div class="mb-3">
+                            <label for="assignmentTitle" class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="assignmentTitle" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="assignmentDate" class="form-label">Date *</label>
+                                <input type="date" class="form-control" id="assignmentDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="assignmentTime" class="form-label">Time *</label>
+                                <input type="time" class="form-control" id="assignmentTime" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assignmentLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="assignmentLocation" placeholder="e.g., City Hall">
+                        </div>
+                        <div class="mb-3">
+                            <label for="assignmentDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="assignmentDescription" rows="3" placeholder="Brief description of the assignment..."></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assignmentType" class="form-label">Type</label>
+                                    <select class="form-select" id="assignmentType">
+                                        <option value="Press Conference">Press Conference</option>
+                                        <option value="Sports">Sports Event</option>
+                                        <option value="Documentary">Documentary</option>
+                                        <option value="Interview">Interview</option>
+                                        <option value="Event">Event Coverage</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assignmentPriority" class="form-label">Priority</label>
+                                    <select class="form-select" id="assignmentPriority">
+                                        <option value="high">High</option>
+                                        <option value="medium" selected>Medium</option>
+                                        <option value="low">Low</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button>
+                            <button type="submit" class="btn btn-success">Save Assignment</button>
+                        </div>
+                    </form>
+                `);
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                setTimeout(() => {
+                    const dateInput = document.getElementById('assignmentDate');
+                    if (dateInput) {
+                        dateInput.value = today;
+                        dateInput.min = today; // Can't select past dates
+                    }
+                }, 100);
+            }
+            
+            saveAssignment() {
+                const title = document.getElementById('assignmentTitle').value.trim();
+                const date = document.getElementById('assignmentDate').value;
+                const time = document.getElementById('assignmentTime').value;
+                const location = document.getElementById('assignmentLocation').value.trim();
+                const description = document.getElementById('assignmentDescription').value.trim();
+                const type = document.getElementById('assignmentType').value;
+                const priority = document.getElementById('assignmentPriority').value;
+                
+                if (!title || !date || !time) {
+                    this.showToast('Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                const newAssignment = {
+                    id: 'ass' + Date.now(),
+                    title: title,
+                    date: date,
+                    time: this.formatTime(time),
+                    location: location || 'Not specified',
+                    description: description || 'No description provided',
+                    type: type,
+                    priority: priority,
+                    status: 'upcoming',
+                    created: new Date().toISOString()
+                };
+                
+                this.data.assignments.push(newAssignment);
+                
+                // Add activity
+                this.addActivity('assignment', 'added', `Added assignment: "${title}"`);
+                
+                this.showToast('Assignment added successfully!', 'success');
+                
+                // Save to user history
+                this.saveUserHistory();
+                
+                // Update dashboard
+                this.updateStats();
+                this.updateBadges();
+                
+                // If new user, transition to returning user
+                if (this.data.isNewUser) {
+                    this.data.isNewUser = false;
+                    this.data.user.isNew = false;
+                    localStorage.setItem('crewUserData', JSON.stringify(this.data.user));
+                    this.initReturningUserDashboard();
+                }
+                
+                // Refresh schedule
+                this.renderTodaysSchedule();
+                
+                // Refresh assignments section if open
+                if (this.currentSection === 'assignments') {
+                    this.loadSectionContent('assignments');
+                }
+                
+                document.querySelector('.modal').remove();
+            }
+            
+            formatTime(timeString) {
+                // Convert 24h time to 12h format
+                const [hours, minutes] = timeString.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                return `${hour12}:${minutes} ${ampm}`;
+            }
+            
+            addTask() {
+                this.showModal('Add Task', `
+                    <form id="addTaskForm" onsubmit="event.preventDefault(); dashboard.saveTask();">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="taskTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="taskDescription" rows="3" placeholder="What needs to be done?"></textarea>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="taskDueDate" class="form-label">Due Date</label>
+                                <input type="date" class="form-control" id="taskDueDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="taskPriority" class="form-label">Priority</label>
+                                <select class="form-select" id="taskPriority">
+                                    <option value="high">High</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskHours" class="form-label">Estimated Hours</label>
+                            <input type="number" class="form-control" id="taskHours" min="0.5" step="0.5" value="2">
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button>
+                            <button type="submit" class="btn btn-success">Save Task</button>
+                        </div>
+                    </form>
+                `);
+                
+                // Set default due date to tomorrow
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                setTimeout(() => {
+                    const dueDateInput = document.getElementById('taskDueDate');
+                    if (dueDateInput) {
+                        dueDateInput.value = tomorrow.toISOString().split('T')[0];
+                        dueDateInput.min = new Date().toISOString().split('T')[0]; // Can't select past dates
+                    }
+                }, 100);
+            }
+            
+            saveTask() {
+                const title = document.getElementById('taskTitle').value.trim();
+                const description = document.getElementById('taskDescription').value.trim();
+                const dueDate = document.getElementById('taskDueDate').value;
+                const priority = document.getElementById('taskPriority').value;
+                const hours = parseFloat(document.getElementById('taskHours').value) || 2;
+                
+                if (!title) {
+                    this.showToast('Please enter a task title', 'warning');
+                    return;
+                }
+                
+                const newTask = {
+                    id: 'task' + Date.now(),
+                    title: title,
+                    description: description || 'No description provided',
+                    dueDate: dueDate ? dueDate + 'T12:00:00' : null,
+                    priority: priority,
+                    hours: hours,
+                    status: 'pending',
+                    created: new Date().toISOString(),
+                    assignedTo: this.data.user.name
+                };
+                
+                this.data.tasks.push(newTask);
+                
+                // Add activity
+                this.addActivity('task', 'added', `Added task: "${title}"`);
+                
+                this.showToast('Task added successfully!', 'success');
+                
+                // Save to user history
+                this.saveUserHistory();
+                
+                // Update dashboard
+                this.updateStats();
+                this.updateBadges();
+                
+                // If new user, transition to returning user
+                if (this.data.isNewUser) {
+                    this.data.isNewUser = false;
+                    this.data.user.isNew = false;
+                    localStorage.setItem('crewUserData', JSON.stringify(this.data.user));
+                    this.initReturningUserDashboard();
+                }
+                
+                // Refresh tasks
+                this.renderActiveTasks();
+                
+                // Refresh tasks section if open
+                if (this.currentSection === 'tasks') {
+                    this.loadSectionContent('tasks');
+                }
+                
+                document.querySelector('.modal').remove();
+            }
+            
+            logHours() {
+                this.showModal('Log Hours', `
+                    <form id="logHoursForm" onsubmit="event.preventDefault(); dashboard.saveHours();">
+                        <div class="mb-3">
+                            <label for="hoursDate" class="form-label">Date *</label>
+                            <input type="date" class="form-control" id="hoursDate" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="hoursStart" class="form-label">Start Time *</label>
+                                <input type="time" class="form-control" id="hoursStart" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hoursEnd" class="form-label">End Time *</label>
+                                <input type="time" class="form-control" id="hoursEnd" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="hoursActivity" class="form-label">Activity *</label>
+                            <select class="form-select" id="hoursActivity" required>
+                                <option value="">Select Activity</option>
+                                <option value="filming">Filming</option>
+                                <option value="editing">Editing</option>
+                                <option value="setup">Setup</option>
+                                <option value="meeting">Meeting</option>
+                                <option value="training">Training</option>
+                                <option value="maintenance">Equipment Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="hoursDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="hoursDescription" rows="3" placeholder="What did you work on?"></textarea>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Hours will be logged and added to your weekly total.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button>
+                            <button type="submit" class="btn btn-success">Log Hours</button>
+                        </div>
+                    </form>
+                `);
+                
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                setTimeout(() => {
+                    const dateInput = document.getElementById('hoursDate');
+                    if (dateInput) {
+                        dateInput.value = today;
+                    }
+                }, 100);
+            }
+            
+            saveHours() {
+                const date = document.getElementById('hoursDate').value;
+                const start = document.getElementById('hoursStart').value;
+                const end = document.getElementById('hoursEnd').value;
+                const activity = document.getElementById('hoursActivity').value;
+                const description = document.getElementById('hoursDescription').value.trim();
+                
+                if (!date || !start || !end || !activity) {
+                    this.showToast('Please fill in all required fields', 'warning');
+                    return;
+                }
+                
+                // Calculate hours
+                const startTime = new Date(date + 'T' + start + ':00');
+                const endTime = new Date(date + 'T' + end + ':00');
+                
+                if (endTime <= startTime) {
+                    this.showToast('End time must be after start time', 'warning');
+                    return;
+                }
+                
+                const hoursWorked = (endTime - startTime) / (1000 * 60 * 60);
+                
+                // Create a task to track these hours
+                const hourTask = {
+                    id: 'hour' + Date.now(),
+                    title: `${activity.charAt(0).toUpperCase() + activity.slice(1)} Work`,
+                    description: description || `${activity} work on ${date}`,
+                    hours: hoursWorked,
+                    status: 'completed',
+                    completedDate: new Date().toISOString(),
+                    created: new Date().toISOString()
+                };
+                
+                this.data.tasks.push(hourTask);
+                
+                // Add activity
+                this.addActivity('task', 'added', `Logged ${hoursWorked.toFixed(1)} hours for ${activity}`);
+                
+                this.showToast(`${hoursWorked.toFixed(1)} hours logged successfully!`, 'success');
+                
+                // Save to user history
+                this.saveUserHistory();
+                
+                // Update dashboard stats
+                this.updateStats();
+                
+                document.querySelector('.modal').remove();
+            }
+            
+            checkEquipment() {
+                this.showModal('Check Equipment', `
+                    <form id="checkEquipmentForm" onsubmit="event.preventDefault(); dashboard.saveEquipmentCheck();">
+                        <div class="mb-3">
+                            <label for="equipmentName" class="form-label">Equipment Name *</label>
+                            <input type="text" class="form-control" id="equipmentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipmentType" class="form-label">Type</label>
+                            <select class="form-select" id="equipmentType">
+                                <option value="Camera">Camera</option>
+                                <option value="Audio">Audio Equipment</option>
+                                <option value="Lighting">Lighting</option>
+                                <option value="Tripod">Tripod/Stand</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipmentStatus" class="form-label">Status</label>
+                            <select class="form-select" id="equipmentStatus">
+                                <option value="available" selected>Available</option>
+                                <option value="in-use">In Use</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipmentLocation" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="equipmentLocation" placeholder="e.g., Equipment Room A">
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipmentNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="equipmentNotes" rows="3" placeholder="Any issues or special notes..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="this.closest('.modal').remove()">Cancel</button>
+                            <button type="submit" class="btn btn-success">Save Equipment</button>
+                        </div>
+                    </form>
+                `);
+            }
+            
+            saveEquipmentCheck() {
+                const name = document.getElementById('equipmentName').value.trim();
+                const type = document.getElementById('equipmentType').value;
+                const status = document.getElementById('equipmentStatus').value;
+                const location = document.getElementById('equipmentLocation').value.trim();
+                const notes = document.getElementById('equipmentNotes').value.trim();
+                
+                if (!name) {
+                    this.showToast('Please enter equipment name', 'warning');
+                    return;
+                }
+                
+                const newEquipment = {
+                    id: 'eq' + Date.now(),
+                    name: name,
+                    type: type,
+                    status: status,
+                    location: location || 'Not specified',
+                    notes: notes || 'No notes',
+                    checked: new Date().toISOString(),
+                    checkedBy: this.data.user.name
+                };
+                
+                this.data.equipment.push(newEquipment);
+                
+                // Add activity
+                this.addActivity('equipment', 'checked', `Checked equipment: "${name}"`);
+                
+                this.showToast('Equipment checked and saved!', 'success');
+                
+                // Save to user history
+                this.saveUserHistory();
+                
+                // Update dashboard
+                this.updateStats();
+                this.updateBadges();
+                
+                // If new user, transition to returning user
+                if (this.data.isNewUser) {
+                    this.data.isNewUser = false;
+                    this.data.user.isNew = false;
+                    localStorage.setItem('crewUserData', JSON.stringify(this.data.user));
+                    this.initReturningUserDashboard();
+                }
+                
+                // Refresh equipment status
+                this.renderEquipmentStatus();
+                
+                // Refresh equipment section if open
+                if (this.currentSection === 'equipment') {
+                    this.loadSectionContent('equipment');
+                }
+                
+                document.querySelector('.modal').remove();
+            }
+            
+            submitReport() {
+                this.showModal('Submit Report', `
+                    <div class="empty-state">
+                        <i class="bi bi-clipboard-check"></i>
+                        <h5>Submit Report</h5>
+                        <p>This feature allows you to submit crew reports.</p>
+                        <p class="text-muted">Report functionality will be available soon.</p>
+                    </div>
+                `);
+            }
+            
+            refreshDashboard() {
+                this.updateStats();
+                this.updateBadges();
+                this.showToast('Dashboard refreshed!', 'success');
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                const dateOptions = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const timeOptions = { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                
+                document.getElementById('currentDate').textContent = 
+                    now.toLocaleDateString('en-US', dateOptions);
+                document.getElementById('currentTime').textContent = 
+                    now.toLocaleTimeString('en-US', timeOptions);
+                
+                this.dateTimeInterval = setTimeout(() => this.updateDateTime(), 1000);
+            }
+            
+            showNotifications() {
+                const unreadNotifications = this.data.notifications.filter(n => !n.read);
+                const readNotifications = this.data.notifications.filter(n => n.read);
+                
+                this.showModal('Notifications', `
+                    <div class="notifications-list">
+                        ${unreadNotifications.length > 0 ? `
+                            <div class="mb-4">
+                                <h6>Unread Notifications</h6>
+                                ${unreadNotifications.map(notification => `
+                                    <div class="alert alert-info d-flex align-items-center mb-2">
+                                        <i class="bi bi-bell me-3"></i>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0">${notification.message}</p>
+                                            <small class="text-muted">${notification.time}</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-secondary" 
+                                                onclick="dashboard.markNotificationAsRead('${notification.id}')">
+                                            Mark Read
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${readNotifications.length > 0 ? `
+                            <div>
+                                <h6>Read Notifications</h6>
+                                ${readNotifications.map(notification => `
+                                    <div class="alert alert-secondary d-flex align-items-center mb-2 opacity-75">
+                                        <i class="bi bi-bell me-3"></i>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0">${notification.message}</p>
+                                            <small class="text-muted">${notification.time}</small>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${this.data.notifications.length === 0 ? `
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                No notifications at this time.
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${unreadNotifications.length > 0 ? `
+                        <div class="mt-3">
+                            <button class="btn btn-sm btn-link" onclick="dashboard.markAllNotificationsAsRead()">
+                                Mark All as Read
+                            </button>
+                        </div>
+                    ` : ''}
+                `);
+            }
+            
+            markNotificationAsRead(notificationId) {
+                const notification = this.data.notifications.find(n => n.id === notificationId);
+                if (notification) {
+                    notification.read = true;
+                    this.saveUserHistory();
+                    this.showNotifications(); // Refresh the modal
+                    this.updateBadges(); // Update badge count
+                    this.showToast('Notification marked as read', 'success');
+                }
+            }
+            
+            markAllNotificationsAsRead() {
+                this.data.notifications.forEach(n => n.read = true);
+                this.saveUserHistory();
+                this.showNotifications(); // Refresh the modal
+                this.updateBadges(); // Update badge count
+                this.showToast('All notifications marked as read', 'success');
+            }
+            
+          logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        // Clear user session data but keep history
+        const userData = localStorage.getItem('crewUserData');
+        if (userData) {
+            const parsed = JSON.parse(userData);
+            parsed.isNew = false;
+            parsed.lastLogout = new Date().toISOString();
+            localStorage.setItem('crewUserData', JSON.stringify(parsed));
+        }
+        
+        // Show logout toast
+        this.showToast('Logged out successfully', 'success');
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+            // Change 'login.html' to your actual login page filename
+            window.location.href = 'login.html';
+        }, 1000);
+    }
+}
+            
+            showModal(title, content) {
+                const modal = document.createElement('div');
+                modal.className = 'modal fade show';
+                modal.style.cssText = `
+                    display: block;
+                    background-color: rgba(0,0,0,0.5);
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 9999;
+                `;
+                
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${title}</h5>
+                                <button type="button" class="btn-close close-modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    modal.remove();
+                });
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+            
+            showToast(message, type = 'info') {
+                const toastId = 'toast-' + Date.now();
+                const toastHtml = `
+                    <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header bg-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : type === 'error' ? 'danger' : 'info'} text-white">
+                            <strong class="me-auto">${type.charAt(0).toUpperCase() + type.slice(1)}</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                        </div>
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                
+                const toastContainer = document.getElementById('toastContainer');
+                toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+                const toastElement = document.getElementById(toastId);
+                const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+                toast.show();
+                
+                toastElement.addEventListener('hidden.bs.toast', function () {
+                    this.remove();
+                });
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboard = new CrewDashboard();
+            dashboard.init();
+            window.dashboard = dashboard;
+        });
+    </script>
+</body>
+</html>
