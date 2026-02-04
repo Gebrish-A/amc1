@@ -141,9 +141,59 @@ class LanguageService {
                 'nextMonth': 'Next Month',
                 'thisYear': 'This Year',
                 'lastYear': 'Last Year',
-                'nextYear': 'Next Year'
+                'nextYear': 'Next Year',
+                // Add these inside the 'en' object:
+                'butAccountIs': 'but your account is',
+                'selectCorrectRole': 'Please select the correct role.',
+                'signingIn': 'Signing In...',
+                'redirectingAdmin': 'Redirecting to Admin Dashboard...',
+                'redirectingReporter': 'Redirecting to Reporter Dashboard...',
+                'redirectingRequester': 'Redirecting to Requester Dashboard...',
+                'redirectingEditor': 'Redirecting to Editor Dashboard...',
+                'redirectingCrew': 'Redirecting to Crew Dashboard...',
+                // Registration Page
+                'registerTitle': 'Create Your Account',
+                'fullName': 'Full Name',
+                'fullNamePlaceholder': 'Enter your full name',
+                'fullNameHint': 'Enter your complete name as it appears officially',
+                'phoneLabel': 'Phone Number',
+                'phonePlaceholder': '+251XXXXXXXXX',
+                'phoneHint': 'Ethiopian format: +251 followed by 9 digits',
+                'confirmPassword': 'Confirm Password',
+                'confirmPasswordPlaceholder': 'Confirm your password',
+                'termsAgreement': 'I agree to the Terms of Service and Privacy Policy',
+                'createAccount': 'Create Account',
+                'haveAccount': 'Already have an account?',
+                'loginHere': 'Login here',
+
             },
             am: {
+                //langu
+                // Add these inside the 'am' object:
+                'butAccountIs': 'ግን አካውንትዎ',
+                'selectCorrectRole': 'እባክዎ ትክክለኛውን ሚና ይምረጡ።',
+                'signingIn': 'እየገባ...',
+                'redirectingAdmin': 'ወደ አስተዳዳሪ ዳሽቦርድ በመዞር ላይ...',
+                'redirectingReporter': 'ወደ ሪፖርተር ዳሽቦርድ በመዞር ላይ...',
+                'redirectingRequester': 'ወደ ጠያቂ ዳሽቦርድ በመዞር ላይ...',
+                'redirectingEditor': 'ወደ አርታዒ ዳሽቦርድ በመዞር ላይ...',
+                'redirectingCrew': 'ወደ ቡድን ዳሽቦርድ በመዞር ላይ...',
+                // Dashboard - Amharic
+                // Registration Page - Amharic
+                'registerTitle': 'አካውንትዎን ይፍጠሩ',
+                'fullName': 'ሙሉ ስም',
+                'fullNamePlaceholder': 'ሙሉ ስምዎን ያስገቡ',
+                'fullNameHint': 'በመደበኛነት የሚታየውን ሙሉ ስምዎን ያስገቡ',
+                'phoneLabel': 'ስልክ ቁጥር',
+                'phonePlaceholder': '+251XXXXXXXXX',
+                'phoneHint': 'ኢትዮጵያዊ ቅርፅ: +251 ተከትሎ 9 አሃዞች',
+                'confirmPassword': 'የይለፍ ቃል አረጋግጥ',
+                'confirmPasswordPlaceholder': 'የይለፍ ቃልዎን አረጋግጥ',
+                'termsAgreement': 'የአገልግሎት ውሎችን እና የግላዊነት ፖሊሲውን እቀበላለሁ',
+                'createAccount': 'አካውንት ፍጠር',
+                'haveAccount': 'ቀድሞውኑ አካውንት አለዎት?',
+                'loginHere': 'እዚህ ይግቡ',
+                // Dashboard - Amharic
                 // Login Page - Amharic
                 'companyName': 'አማራ ሚዲያ ኮርፖሬሽን',
                 'tagline': 'የይዘት አስተዳደር ስርዓት',

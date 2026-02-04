@@ -11,6 +11,59 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         /* Modern CSS Variables */
+        /* =========================================== */
+        /* LANGUAGE SELECTOR STYLES - ADD THIS SECTION */
+        /* =========================================== */
+
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .lang-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-btn:hover {
+            transform: scale(1.1);
+            background: white;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        /* =========================================== */
+        /* EXISTING CSS CONTINUES BELOW */
+        /* =========================================== */
+
+        /* Modern CSS Variables */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
         :root {
             --primary-color: #3498db;
             --secondary-color: #2c3e50;
@@ -843,6 +896,9 @@
 </head>
 
 <body>
+    <div class="language-selector">
+        <button class="lang-btn" onclick="toggleLanguage()">EN</button>
+    </div>
     <div class="register-container">
         <div class="glass-card">
             <!-- Logo Section -->
@@ -850,8 +906,8 @@
                 <div class="logo-icon">
                     <i class="bi bi-person-plus"></i>
                 </div>
-                <h1 class="company-name">Amhara Media</h1>
-                <p class="tagline">Create Your Account</p>
+                <h1 class="company-name" data-translate="companyName">Amhara Media</h1>
+                <p class="tagline" data-translate="registerTitle">Create Your Account</p>
             </div>
 
             <!-- Form Section -->
@@ -861,11 +917,11 @@
                     <div class="mb-4">
                         <label for="name" class="form-label">
                             <i class="bi bi-person"></i>
-                            Full Name
+                            <span data-translate="fullName">Full Name</span>
                         </label>
-                        <input type="text" class="form-control" id="name" placeholder="Enter your full name" required
-                            autocomplete="name">
-                        <div class="form-text">
+                        <input type="text" class="form-control" id="name" placeholder="Enter your full name"
+                            data-translate-placeholder="fullNamePlaceholder" required autocomplete="name">
+                        <div class="form-text" data-translate="fullNameHint">
                             Enter your complete name as it appears officially
                         </div>
                     </div>
@@ -874,11 +930,11 @@
                     <div class="mb-4">
                         <label for="email" class="form-label">
                             <i class="bi bi-envelope"></i>
-                            Email Address
+                            <span data-translate="emailLabel">Email Address</span>
                         </label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required
-                            autocomplete="email">
-                        <div class="form-text">
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email"
+                            data-translate-placeholder="emailPlaceholder" required autocomplete="email">
+                        <div class="form-text" data-translate="emailHint">
                             We'll never share your email with anyone else
                         </div>
                     </div>
@@ -887,33 +943,32 @@
                     <div class="mb-4">
                         <label for="phone" class="form-label">
                             <i class="bi bi-phone"></i>
-                            Phone Number
+                            <span data-translate="phoneLabel">Phone Number</span>
                         </label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+251XXXXXXXXX" required
-                            autocomplete="tel">
-                        <div class="form-text">
+                        <input type="tel" class="form-control" id="phone" placeholder="+251XXXXXXXXX"
+                            data-translate-placeholder="phonePlaceholder" required autocomplete="tel">
+                        <div class="form-text" data-translate="phoneHint">
                             Ethiopian format: +251 followed by 9 digits
                         </div>
                     </div>
-
-
 
                     <!-- Password -->
                     <div class="mb-4">
                         <label for="password" class="form-label">
                             <i class="bi bi-lock"></i>
-                            Password
+                            <span data-translate="passwordLabel">Password</span>
                         </label>
                         <div class="password-input-group">
                             <input type="password" class="form-control" id="password"
-                                placeholder="Enter password (minimum 6 characters)" required minlength="6"
+                                placeholder="Enter password (minimum 6 characters)"
+                                data-translate-placeholder="passwordPlaceholder" required minlength="6"
                                 autocomplete="new-password">
                             <button type="button" class="toggle-password-btn"
                                 onclick="togglePasswordVisibility('password')" aria-label="Toggle password visibility">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
-                        <div class="form-text">
+                        <div class="form-text" data-translate="passwordHint">
                             Password must be at least 6 characters long
                         </div>
                     </div>
@@ -922,11 +977,13 @@
                     <div class="mb-4">
                         <label for="confirmPassword" class="form-label">
                             <i class="bi bi-lock-fill"></i>
-                            Confirm Password
+                            <span data-translate="confirmPassword">Confirm Password</span>
                         </label>
                         <div class="password-input-group">
                             <input type="password" class="form-control" id="confirmPassword"
-                                placeholder="Confirm your password" required minlength="6" autocomplete="new-password">
+                                placeholder="Confirm your password"
+                                data-translate-placeholder="confirmPasswordPlaceholder" required minlength="6"
+                                autocomplete="new-password">
                             <button type="button" class="toggle-password-btn"
                                 onclick="togglePasswordVisibility('confirmPassword')"
                                 aria-label="Toggle password visibility">
@@ -935,13 +992,11 @@
                         </div>
                     </div>
 
-
-
                     <!-- Terms Agreement -->
                     <div class="mb-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="termsAgreement" required>
-                            <label class="form-check-label" for="termsAgreement">
+                            <label class="form-check-label" for="termsAgreement" data-translate="termsAgreement">
                                 I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of
                                     Service</a> and <a href="#" data-bs-toggle="modal"
                                     data-bs-target="#termsModal">Privacy Policy</a>
@@ -950,16 +1005,16 @@
                     </div>
 
                     <!-- Register Button -->
-                    <button type="submit" class="register-btn" id="registerBtn">
+                    <button type="submit" class="register-btn" id="registerBtn" data-translate="createAccount">
                         <i class="bi bi-person-plus"></i>
-                        Create Account
+                        <span data-translate="createAccount">Create Account</span>
                     </button>
 
                     <!-- Login Link -->
                     <div class="auth-links">
                         <p>
-                            Already have an account?
-                            <a href="login.html" class="login-link">Login here</a>
+                            <span data-translate="haveAccount">Already have an account?</span>
+                            <a href="login.html" class="login-link" data-translate="loginHere">Login here</a>
                         </p>
                     </div>
                 </form>
@@ -1043,18 +1098,91 @@
     <!-- Add Bootstrap JS Bundle Here -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/language-service.js"></script>
-    <script>
-        // ===========================================
-        // FLOATING NOTIFICATION BUBBLES - COMPLETE VERSION
-        // ===========================================
-        const API_BASE_URL = 'http://localhost:5001/api';
+<script>
+    // ===========================================
+    // LANGUAGE FUNCTIONS
+    // ===========================================
+    
+    function toggleLanguage() {
+        const newLang = window.LanguageService.toggleLanguage();
+        const message = newLang === 'en' ? 'Language switched to English' : 'ቋንቋ ወደ አማርኛ ተቀይሯል';
+        showToast(message, 'info');
+    }
 
-        let toastCount = 0;
+    // ===========================================
+    // SETUP ALL EVENT LISTENERS
+    // ===========================================
+    function setupEventListeners() {
+        // Form submission
+        const form = document.getElementById('registerForm');
+        form.addEventListener('submit', handleRegistration);
 
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Registration page initialized');
-            createToastContainer();
-            setupEventListeners();
+        // Real-time validation
+        document.getElementById('email').addEventListener('blur', validateEmail);
+        document.getElementById('phone').addEventListener('input', formatPhoneNumber);
+        document.getElementById('phone').addEventListener('blur', validatePhone);
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePasswordMatch);
+
+        // Real-time email availability check
+        document.getElementById('email').addEventListener('blur', checkEmailAvailability);
+
+        // Terms agreement toggle
+        document.getElementById('termsAgreement').addEventListener('change', function () {
+            console.log('Terms agreed:', this.checked);
+        });
+
+        // Language change event
+        document.addEventListener('languageChanged', function(e) {
+            console.log('Language changed to:', e.detail.language);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function (e) {
+            // Ctrl+Enter to submit form
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('registerForm').dispatchEvent(new Event('submit'));
+            }
+
+            // Ctrl+D to demo toasts
+            if (e.ctrlKey && e.key.toLowerCase() === 'd') {
+                e.preventDefault();
+                showDemo();
+            }
+
+            // Ctrl+L to toggle language
+            if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+                e.preventDefault();
+                toggleLanguage();
+            }
+        });
+    }
+
+    // ===========================================
+    // FLOATING NOTIFICATION BUBBLES - COMPLETE VERSION
+    // ===========================================
+    const API_BASE_URL = 'http://localhost:5001/api';
+
+    let toastCount = 0;
+
+    // ===========================================
+    // INITIALIZATION
+    // ===========================================
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Registration page initialized');
+        
+        // Initialize Language Service
+        window.LanguageService.init();
+        
+        // Set initial language button text
+        const langBtn = document.querySelector('.lang-btn');
+        if (langBtn) {
+            langBtn.textContent = window.LanguageService.getCurrentLanguage().toUpperCase();
+        }
+        
+        createToastContainer();
+        setupEventListeners();
 
             // Add terms modal handler
             const acceptTermsBtn = document.getElementById('acceptTermsBtn');
@@ -1667,7 +1795,7 @@
             console.log('💡 Press Ctrl+Enter to submit form');
         }, 2000);
     </script>
-    
+
 </body>
 
 </html>
