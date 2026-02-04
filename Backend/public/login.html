@@ -1120,7 +1120,11 @@
         // ===========================================
         async function handleLogin(event) {
             event.preventDefault();
-
+            // Prevent double submission
+            if (loginBtn.disabled) {
+                console.log('⚠️ Login already in progress');
+                return;
+            }
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
@@ -1173,21 +1177,27 @@
                 console.log('📧 User email:', user.email);
 
                 // Store user session
+                // Store user session - ALWAYS use localStorage
                 const sessionData = {
                     isLoggedIn: true,
                     email: user.email,
                     role: user.role,
                     name: user.name,
+                    _id: user._id || user.userId, // ADD THIS LINE
+                    userId: user._id || user.userId, // ADD THIS LINE
                     department: user.department || 'General',
                     loginTime: new Date().toISOString(),
-                    token: token
+                    token: token,
+                    jwtToken: token,
+                    accessToken: token
                 };
 
-                // Use appropriate storage based on remember me
-                const storage = rememberMe ? localStorage : sessionStorage;
-                storage.setItem('userSession', JSON.stringify(sessionData));
-                storage.setItem('authToken', token);
+                // ALWAYS save to localStorage
+                localStorage.setItem('userSession', JSON.stringify(sessionData));
+                localStorage.setItem('authToken', token);
+                localStorage.setItem('crewUserId', user._id || user.userId); // ADD THIS
 
+                console.log('💾 Session saved:', sessionData);
                 // Remember email if requested
                 if (rememberMe) {
                     localStorage.setItem('rememberedEmail', email);
