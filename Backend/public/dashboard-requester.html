@@ -11,17 +11,19 @@
         :root {
             --primary-color: #3498db;
             --primary-dark: #2980b9;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fb;
+            background-color: #f8fafc;
             min-height: 100vh;
         }
 
         /* Sidebar */
         .sidebar {
-            background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+            background: linear-gradient(180deg, var(--secondary-color) 0%, #1a1a2e 100%);
             color: white;
             height: 100vh;
             position: fixed;
@@ -29,7 +31,7 @@
             top: 0;
             width: 260px;
             padding: 0;
-            box-shadow: 3px 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 3px 0 20px rgba(0, 0, 0, 0.15);
             z-index: 1000;
         }
 
@@ -37,6 +39,16 @@
             padding: 1.5rem;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar .logo h3 {
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
         }
 
         .sidebar-menu {
@@ -46,26 +58,30 @@
         }
 
         .sidebar-menu .nav-link {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
             padding: 0.85rem 1.5rem;
             margin: 0.25rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
+            font-weight: 500;
         }
 
         .sidebar-menu .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(142, 68, 173, 0.2));
             color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-menu .nav-link.active {
-            background: rgba(255, 255, 255, 0.15);
+            background: linear-gradient(135deg, #3498db, #8e44ad);
             color: white;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
 
         .user-profile {
@@ -74,19 +90,21 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .avatar-initials {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3498db, #8e44ad);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
         }
 
         /* Main Content */
@@ -94,29 +112,32 @@
             margin-left: 260px;
             min-height: 100vh;
             transition: margin-left 0.3s ease;
+            background: #f8fafc;
         }
 
         .navbar-top {
             background: white;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.5rem;
             border-bottom: 1px solid #e9ecef;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .content-wrapper {
-            padding: 2rem;
+            padding: 2.5rem;
         }
 
         /* Stats Cards */
         .stats-card {
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 20px;
             color: white;
             text-align: center;
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             height: 100%;
             min-height: 180px;
@@ -124,65 +145,166 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .stats-card:hover::before {
+            transform: rotate(45deg) translate(50%, 50%);
         }
 
         .stats-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.3);
         }
 
         .stats-card i {
             font-size: 2.5rem;
             margin-bottom: 1rem;
             opacity: 0.9;
+            position: relative;
+            z-index: 1;
         }
 
         .stats-card .count {
             font-size: 2.5rem;
-            font-weight: 700;
+            font-weight: 800;
             line-height: 1;
             margin: 0.5rem 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
         }
 
         /* Dashboard Cards */
         .dashboard-card {
-            border-radius: 15px;
+            border-radius: 20px;
             border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 2rem;
             background: white;
+            overflow: hidden;
         }
 
         .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card .card-header {
+            background: linear-gradient(135deg, #f8fafc, #e9ecef);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 2rem;
+            border-radius: 20px 20px 0 0 !important;
+        }
+
+        .dashboard-card .card-header h5 {
+            margin: 0;
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 1.25rem;
         }
 
         /* Status badges */
         .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
+            padding: 0.35rem 1rem;
+            border-radius: 25px;
+            font-size: 0.8rem;
             font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
         }
 
-        .status-pending { background-color: #fff3cd; color: #856404; }
-        .status-approved { background-color: #d4edda; color: #155724; }
-        .status-rejected { background-color: #f8d7da; color: #721c24; }
-        .status-in-progress { background-color: #d1ecf1; color: #0c5460; }
-        .status-completed { background-color: #d4edda; color: #155724; }
-        .status-draft { background-color: #e2e3e5; color: #383d41; }
+        .status-pending { 
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7); 
+            color: #856404;
+            border-color: #ffc107;
+        }
+        .status-approved { 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); 
+            color: #155724;
+            border-color: #28a745;
+        }
+        .status-rejected { 
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb); 
+            color: #721c24;
+            border-color: #dc3545;
+        }
+        .status-in-progress { 
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb); 
+            color: #0c5460;
+            border-color: #17a2b8;
+        }
+        .status-completed { 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); 
+            color: #155724;
+            border-color: #20c997;
+        }
+        .status-draft { 
+            background: linear-gradient(135deg, #e2e3e5, #d6d8db); 
+            color: #383d41;
+            border-color: #6c757d;
+        }
 
         /* Welcome Banner */
         .welcome-banner {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, var(--primary-color), #8e44ad);
             color: white;
-            border-radius: 15px;
-            padding: 2rem;
+            border-radius: 25px;
+            padding: 1.5rem 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 15px 35px rgba(52, 152, 219, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100"><path fill="rgba(255,255,255,0.05)" d="M0,0L1000,100V0H0Z"/></svg>');
+            background-size: cover;
+        }
+
+        .welcome-banner h1 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .welcome-banner p {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            max-width: 600px;
+            margin-bottom: 0;
         }
 
         /* Empty State */
@@ -195,17 +317,20 @@
             font-size: 4rem;
             color: #dee2e6;
             margin-bottom: 1.5rem;
+            opacity: 0.5;
         }
 
         .empty-state h4 {
-            color: #6c757d;
+            color: var(--secondary-color);
             margin-bottom: 1rem;
+            font-weight: 700;
         }
 
         .empty-state p {
-            color: #adb5bd;
+            color: #6c757d;
             max-width: 400px;
             margin: 0 auto 2rem;
+            font-size: 1rem;
         }
 
         /* Mobile Menu Toggle */
@@ -213,8 +338,14 @@
             display: none;
             background: none;
             border: none;
-            font-size: 1.5rem;
-            color: #333;
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
         }
 
         /* Responsive */
@@ -226,7 +357,7 @@
             .sidebar {
                 transform: translateX(-100%);
                 width: 280px;
-                transition: transform 0.3s ease;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .sidebar.active {
@@ -239,221 +370,504 @@
             }
             
             .content-wrapper {
+                padding: 1.5rem;
+            }
+            
+            .welcome-banner h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-card {
+                min-height: 160px;
                 padding: 1rem;
+            }
+            
+            .stats-card .count {
+                font-size: 2rem;
             }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         .fade-in {
-            animation: fadeIn 0.5s ease forwards;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             opacity: 0;
         }
 
         /* Get Started Section */
         .get-started-section {
             background: white;
-            border-radius: 15px;
-            padding: 2.5rem;
+            border-radius: 25px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .get-started-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), #8e44ad);
         }
 
         .feature-card {
             text-align: center;
             padding: 2rem 1rem;
-            border-radius: 10px;
-            background: #f8f9fa;
-            transition: all 0.3s;
+            border-radius: 20px;
+            background: #f8fafc;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             height: 100%;
+            position: relative;
+            border: 2px solid transparent;
+            overflow: hidden;
         }
 
         .feature-card:hover {
-            background: #e9ecef;
-            transform: translateY(-5px);
+            background: white;
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
         }
 
         .feature-card i {
-            font-size: 2.5rem;
-            color: #3498db;
+            font-size: 3rem;
+            color: var(--primary-color);
             margin-bottom: 1rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
         }
 
-        /* Analytics specific styles */
-        .analytics-card {
+        .feature-card h5 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            color: #6c757d;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        /* Form Styles */
+        .form-section {
             background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 25px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
         }
 
-        .analytics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-container {
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
             position: relative;
-            height: 250px;
-            width: 100%;
         }
 
-        .progress-container {
-            margin-top: 1rem;
+        .form-header h2 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #8e44ad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .progress-label {
+        .form-header p {
+            color: #6c757d;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.25rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        /* View Requests specific styles */
-        .requests-filter {
+        .form-label.required::after {
+            content: '*';
+            color: var(--accent-color);
+            margin-left: 0.25rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
             background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
 
+        .form-control-lg {
+            padding: 0.875rem 1.25rem;
+            font-size: 1rem;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: rgba(52, 152, 219, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .file-upload-area.drag-over {
+            border-color: var(--primary-color);
+            background: rgba(52, 152, 219, 0.1);
+            transform: scale(1.02);
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .file-upload-text h5 {
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .file-upload-text p {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .file-preview {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1rem;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .file-preview:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), #8e44ad);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+            font-size: 0.9rem;
+        }
+
+        .file-size {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .file-remove {
+            color: var(--accent-color);
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .file-remove:hover {
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f1f3f5;
+        }
+
+        /* Request card styles */
         .request-card {
             background: white;
-            border-radius: 10px;
-            padding: 1.25rem;
+            border-radius: 20px;
+            padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s;
-            border-left: 4px solid #3498db;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 6px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .request-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), #8e44ad);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .request-card:hover::before {
+            opacity: 1;
         }
 
         .request-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
         }
 
         .request-card.pending { border-left-color: #ffc107; }
         .request-card.approved { border-left-color: #28a745; }
         .request-card.rejected { border-left-color: #dc3545; }
         .request-card.in-progress { border-left-color: #17a2b8; }
-        .request-card.completed { border-left-color: #28a745; }
+        .request-card.completed { border-left-color: #20c997; }
         .request-card.draft { border-left-color: #6c757d; }
 
-        .request-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .detail-item {
+        /* Progress Steps */
+        .progress-steps {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            margin: 2rem 0;
         }
 
-        .detail-label {
-            font-size: 0.75rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+            z-index: 1;
         }
 
-        .detail-value {
-            font-weight: 600;
-            color: #212529;
-        }
-
-        /* Summary Cards for Analytics */
-        .summary-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
+        .progress-step {
+            position: relative;
+            z-index: 2;
             text-align: center;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            height: 100%;
+            flex: 1;
         }
 
-        .summary-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #3498db;
-            margin: 0.5rem 0;
-        }
-
-        .summary-label {
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 4px solid #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 1.2rem;
             color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.3s;
         }
 
-        .trend-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.75rem;
+        .step-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .progress-step.active .step-icon {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .progress-step.active .step-label {
+            color: var(--primary-color);
+        }
+
+        /* Other Category Input */
+        .other-category-container {
+            display: none;
             margin-top: 0.5rem;
         }
 
-        .trend-up {
-            background-color: #d4edda;
-            color: #155724;
+        /* Custom Category Chip */
+        .custom-category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.25rem;
         }
 
-        .trend-down {
-            background-color: #f8d7da;
-            color: #721c24;
+        .custom-category-chip i {
+            cursor: pointer;
         }
 
-        .trend-neutral {
-            background-color: #e2e3e5;
-            color: #383d41;
+        /* My Requests Layout Improvements */
+        .request-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .request-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .request-meta-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .request-meta-value {
+            font-size: 0.95rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        /* Filter Section */
+        .requests-filter {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
         }
     </style>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Login to AMC Dashboard</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="loginEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="loginName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userAvatarInput" class="form-label">Avatar Initials (2 letters)</label>
-                            <input type="text" class="form-control" id="userAvatarInput" maxlength="2" required>
-                        </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="dashboard.loginAsDefault()">
-                                Continue as Guest
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Request Details Modal -->
     <div class="modal fade" id="requestDetailsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -476,7 +890,7 @@
     <div class="sidebar" id="sidebar">
         <div class="logo">
             <h3>AMC</h3>
-            <span class="badge" id="userRoleBadge">Requester</span>
+            <span class="badge bg-light text-dark mt-2" id="userRoleBadge">Requester</span>
         </div>
         
         <div class="sidebar-menu">
@@ -500,12 +914,6 @@
                         <span class="badge bg-info ms-auto" id="requestsBadge">0</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="analyticsLink">
-                        <i class="bi bi-bar-chart"></i>
-                        <span>My Analytics</span>
-                    </a>
-                </li>
             </ul>
         </div>
         
@@ -516,7 +924,7 @@
                 </div>
                 <div class="user-details">
                     <h6 class="mb-0" id="userName">Content Requester</h6>
-                    <small class="text-white-50" id="userEmail">requester@ameco.et</small>
+                    <small class="text-white-50" id="userEmail">requester@amc.et</small>
                 </div>
                 <button class="btn btn-sm btn-outline-light ms-auto" id="logoutBtn">
                     <i class="bi bi-box-arrow-right"></i>
@@ -548,9 +956,6 @@
                             </span>
                         </button>
                     </div>
-                    <button class="btn btn-outline-primary btn-sm" id="switchUserBtn">
-                        <i class="bi bi-person-switch"></i> Switch User
-                    </button>
                 </div>
             </div>
         </nav>
@@ -567,7 +972,7 @@
                             <p>Get started by creating your first content request. The system is ready for you to begin.</p>
                         </div>
                         <div class="col-md-4 text-end">
-                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                            <div class="bg-white text-dark rounded-pill px-3 py-2 d-inline-block">
                                 <i class="bi bi-calendar-check me-2"></i>
                                 <span id="currentTime"></span>
                             </div>
@@ -578,10 +983,10 @@
                 <!-- Get Started Section -->
                 <div class="get-started-section fade-in">
                     <h3 class="text-center mb-4">Let's Get Started</h3>
-                    <p class="text-center text-muted mb-5">Follow these simple steps to begin using the AMC Content System</p>
+                    <p class="text-center text-muted mb-4">Follow these simple steps to begin using the AMC Content System</p>
                     
-                    <div class="row g-4">
-                        <div class="col-md-4">
+                    <div class="row g-4 justify-content-center">
+                        <div class="col-md-6">
                             <div class="feature-card">
                                 <i class="bi bi-plus-circle"></i>
                                 <h5>Create Your First Request</h5>
@@ -589,20 +994,12 @@
                                 <a href="#" class="btn btn-primary mt-3 show-new-request">New Request</a>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="feature-card">
                                 <i class="bi bi-file-earmark-text"></i>
                                 <h5>Track Your Requests</h5>
                                 <p class="text-muted">Monitor the status of your requests and see updates in real-time.</p>
                                 <a href="#" class="btn btn-outline-primary mt-3 view-my-requests">View Requests</a>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="feature-card">
-                                <i class="bi bi-bar-chart"></i>
-                                <h5>Analyze Performance</h5>
-                                <p class="text-muted">Once you have requests, view analytics on your content performance.</p>
-                                <button class="btn btn-outline-secondary mt-3" disabled>Analytics</button>
                             </div>
                         </div>
                     </div>
@@ -641,12 +1038,12 @@
                 <!-- Welcome Banner -->
                 <div class="welcome-banner fade-in">
                     <div class="row align-items-center">
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <h1 id="welcomeMessage">Welcome back!</h1>
                             <p>You have <strong id="pendingRequestsCount">0 pending requests</strong> and <strong id="dueTodayCount">0 requests due today</strong>.</p>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <div class="bg-white text-dark rounded-pill px-4 py-2 d-inline-block">
+                        <div class="col-md-6 text-end">
+                            <div class="bg-white text-dark rounded-pill px-3 py-2 d-inline-block">
                                 <i class="bi bi-calendar-check me-2"></i>
                                 <span id="currentTime2"></span>
                             </div>
@@ -656,28 +1053,28 @@
 
                 <!-- Stats Cards -->
                 <div class="row mb-4">
-                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="col-lg-3 col-md-6 mb-3 fade-in">
                         <div class="stats-card" id="totalRequestsCard">
                             <i class="bi bi-file-earmark-text"></i>
                             <h3 class="count" id="totalRequestsCount">0</h3>
                             <p class="label">Total Requests</p>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="col-lg-3 col-md-6 mb-3 fade-in">
                         <div class="stats-card" id="pendingCard">
                             <i class="bi bi-hourglass-split"></i>
                             <h3 class="count" id="pendingCount">0</h3>
                             <p class="label">Pending</p>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="col-lg-3 col-md-6 mb-3 fade-in">
                         <div class="stats-card" id="approvedCard">
                             <i class="bi bi-check-circle"></i>
                             <h3 class="count" id="approvedCount">0</h3>
                             <p class="label">Approved</p>
                         </div>
                     </div>
-                    <div class="col-xl-3 col-md-6 mb-4 fade-in">
+                    <div class="col-lg-3 col-md-6 mb-3 fade-in">
                         <div class="stats-card" id="rejectedCard">
                             <i class="bi bi-x-circle"></i>
                             <h3 class="count" id="rejectedCount">0</h3>
@@ -688,12 +1085,12 @@
 
                 <div class="row">
                     <!-- Recent Requests -->
-                    <div class="col-lg-7 mb-4 fade-in">
+                    <div class="col-lg-8 mb-4 fade-in">
                         <div class="dashboard-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">My Recent Requests</h5>
                                 <a href="#" class="btn btn-sm btn-primary view-my-requests">
-                                    View All My Requests
+                                    View All
                                 </a>
                             </div>
                             <div class="card-body">
@@ -705,13 +1102,13 @@
                     </div>
 
                     <!-- Quick Stats -->
-                    <div class="col-lg-5 mb-4 fade-in">
+                    <div class="col-lg-4 mb-4 fade-in">
                         <div class="dashboard-card">
                             <div class="card-header">
-                                <h5 class="mb-0">My Request Statistics</h5>
+                                <h5 class="mb-0">Request Statistics</h5>
                             </div>
                             <div class="card-body">
-                                <div class="chart-container">
+                                <div class="chart-container" style="height: 250px;">
                                     <canvas id="dashboardChart"></canvas>
                                 </div>
                             </div>
@@ -736,10 +1133,6 @@
                                         <i class="bi bi-list-check me-2"></i>
                                         View My Requests
                                     </a>
-                                    <a href="#" class="btn btn-outline-success view-analytics">
-                                        <i class="bi bi-bar-chart me-2"></i>
-                                        View Analytics
-                                    </a>
                                     <button class="btn btn-outline-secondary" id="refreshDashboardBtn2">
                                         <i class="bi bi-arrow-clockwise me-2"></i>
                                         Refresh Dashboard
@@ -761,7 +1154,7 @@
                         </div>
                         <div class="col-md-4 text-end">
                             <div class="d-flex gap-2 justify-content-end">
-                                <button class="btn btn-primary back-to-dashboard">
+                                <button class="btn btn-primary back-to-dashboard-btn">
                                     <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
                                 </button>
                             </div>
@@ -771,7 +1164,7 @@
 
                 <!-- Filters -->
                 <div class="requests-filter fade-in">
-                    <div class="row align-items-center">
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">Status</label>
                             <select class="form-select" id="statusFilter">
@@ -796,6 +1189,7 @@
                                 <option value="business">Business</option>
                                 <option value="health">Health</option>
                                 <option value="education">Education</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -828,185 +1222,243 @@
                 </div>
             </div>
 
-            <!-- Analytics View -->
-            <div id="analyticsView" style="display: none;">
-                <div class="welcome-banner fade-in">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1>My Analytics</h1>
-                            <p>Detailed insights and performance metrics for your content requests</p>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="d-flex gap-2 justify-content-end">
-                                <button class="btn btn-primary back-to-dashboard">
-                                    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
-                                </button>
-                                <button class="btn btn-outline-primary" id="exportAnalyticsBtn">
-                                    <i class="bi bi-download me-2"></i> Export Data
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Summary Stats -->
-                <div class="row mb-4 fade-in">
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <div class="summary-label">Total Requests</div>
-                            <div class="summary-value" id="analyticsTotal">0</div>
-                            <div class="trend-badge trend-neutral" id="totalTrend">All time</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <div class="summary-label">Approval Rate</div>
-                            <div class="summary-value" id="approvalRate">0%</div>
-                            <div class="progress mt-2" style="height: 6px;">
-                                <div class="progress-bar bg-success" id="approvalProgressBar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <div class="summary-label">Avg. Response Time</div>
-                            <div class="summary-value" id="avgResponseTime">0 days</div>
-                            <div class="trend-badge trend-neutral" id="responseTrend">From submission</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="summary-card">
-                            <div class="summary-label">Total Budget</div>
-                            <div class="summary-value" id="totalBudget">$0</div>
-                            <div class="summary-label">Avg: <span id="avgBudget">$0</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts Row -->
-                <div class="row mb-4 fade-in">
-                    <div class="col-lg-6">
-                        <div class="analytics-card">
-                            <div class="analytics-header">
-                                <h5 class="mb-0">Requests by Status</h5>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="statusChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="analytics-card">
-                            <div class="analytics-header">
-                                <h5 class="mb-0">Requests by Category</h5>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="categoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Timeline Chart -->
-                <div class="row mb-4 fade-in">
-                    <div class="col-lg-12">
-                        <div class="analytics-card">
-                            <div class="analytics-header">
-                                <h5 class="mb-0">Monthly Request Trends</h5>
-                                <div class="d-flex gap-2">
-                                    <select class="form-select form-select-sm w-auto" id="timePeriodSelect">
-                                        <option value="3">Last 3 Months</option>
-                                        <option value="6" selected>Last 6 Months</option>
-                                        <option value="12">Last 12 Months</option>
-                                    </select>
-                                    <button class="btn btn-sm btn-outline-primary" id="refreshAnalyticsBtn">
-                                        <i class="bi bi-arrow-clockwise"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="timelineChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed Statistics -->
-                <div class="row fade-in">
-                    <div class="col-lg-6">
-                        <div class="analytics-card">
-                            <div class="analytics-header">
-                                <h5 class="mb-0">Performance Metrics</h5>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Metric</th>
-                                            <th class="text-end">Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Pending Requests</td>
-                                            <td class="text-end" id="metricPending">0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>In Progress</td>
-                                            <td class="text-end" id="metricInProgress">0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Completed</td>
-                                            <td class="text-end" id="metricCompleted">0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Approved</td>
-                                            <td class="text-end" id="metricApproved">0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rejected</td>
-                                            <td class="text-end" id="metricRejected">0</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Drafts</td>
-                                            <td class="text-end" id="metricDrafts">0</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="analytics-card">
-                            <div class="analytics-header">
-                                <h5 class="mb-0">Recent Activity</h5>
-                            </div>
-                            <div id="recentActivityList" style="max-height: 300px; overflow-y: auto;">
-                                <!-- Activity will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- New Request Form -->
             <div id="newRequestView" style="display: none;">
-                <div class="welcome-banner fade-in">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1>New Coverage Request</h1>
-                            <p>Create a new media coverage request</p>
+                <!-- Progress Steps -->
+                <div class="progress-steps fade-in">
+                    <div class="progress-step active">
+                        <div class="step-icon">
+                            <i class="bi bi-info-circle"></i>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <button class="btn btn-primary back-to-dashboard">
-                                <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
-                            </button>
+                        <div class="step-label">Basic Information</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-icon">
+                            <i class="bi bi-calendar"></i>
                         </div>
+                        <div class="step-label">Schedule & Details</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-icon">
+                            <i class="bi bi-upload"></i>
+                        </div>
+                        <div class="step-label">Upload Documents</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="step-label">Review & Submit</div>
                     </div>
                 </div>
-                
-                <!-- The form from new-request.html will be loaded here -->
-                <div id="newRequestFormContainer"></div>
+
+                <div class="form-section fade-in">
+                    <div class="form-header">
+                        <h2>Create New Coverage Request</h2>
+                        <p>Fill in the details below to request media coverage for your event or story</p>
+                    </div>
+
+                    <form id="coverageRequestForm">
+                        <!-- Step 1: Basic Information -->
+                        <div class="mb-4">
+                            <h4 class="mb-3" style="color: var(--secondary-color);">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="requestTitle" class="form-label required">
+                                            <i class="bi bi-card-heading"></i>Request Title
+                                        </label>
+                                        <input type="text" class="form-control" id="requestTitle" 
+                                               placeholder="Enter a descriptive title" required>
+                                        <small class="text-muted mt-1 d-block">Briefly describe what you need coverage for</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="requestCategory" class="form-label required">
+                                            <i class="bi bi-tags"></i>Category
+                                        </label>
+                                        <select class="form-select" id="requestCategory" required>
+                                            <option value="">Select Category</option>
+                                            <option value="breaking_news">Breaking News</option>
+                                            <option value="sports">Sports</option>
+                                            <option value="politics">Politics</option>
+                                            <option value="culture">Culture</option>
+                                            <option value="entertainment">Entertainment</option>
+                                            <option value="business">Business</option>
+                                            <option value="health">Health</option>
+                                            <option value="education">Education</option>
+                                            <option value="other">Other (Please specify)</option>
+                                        </select>
+                                        <div id="otherCategoryContainer" class="other-category-container">
+                                            <input type="text" class="form-control mt-2" id="otherCategoryInput" 
+                                                   placeholder="Enter your custom category">
+                                            <small class="text-muted mt-1 d-block">Enter a custom category if not listed above</small>
+                                        </div>
+                                        <div id="selectedCategories" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="requestDescription" class="form-label required">
+                                    <i class="bi bi-text-paragraph"></i>Description
+                                </label>
+                                <textarea class="form-control" id="requestDescription" 
+                                          rows="4" placeholder="Describe your coverage request in detail..." required></textarea>
+                                <small class="text-muted mt-1 d-block">Provide comprehensive details about what needs coverage</small>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Schedule & Details -->
+                        <div class="mb-4">
+                            <h4 class="mb-3" style="color: var(--secondary-color);">
+                                <i class="bi bi-calendar me-2"></i>Schedule & Details
+                            </h4>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="coverageDate" class="form-label required">
+                                            <i class="bi bi-calendar-date"></i>Coverage Date
+                                        </label>
+                                        <input type="date" class="form-control" id="coverageDate" required>
+                                        <small class="text-muted mt-1 d-block">When do you need the coverage?</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="requestPriority" class="form-label">
+                                            <i class="bi bi-flag"></i>Priority
+                                        </label>
+                                        <select class="form-select" id="requestPriority">
+                                            <option value="low">Low Priority</option>
+                                            <option value="medium" selected>Medium Priority</option>
+                                            <option value="high">High Priority</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">
+                                    <i class="bi bi-geo-alt"></i>Location
+                                </label>
+                                <input type="text" class="form-control" id="location" 
+                                       placeholder="Enter coverage location or venue">
+                                <small class="text-muted mt-1 d-block">Where will the coverage take place?</small>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Upload Documents -->
+                        <div class="mb-4">
+                            <h4 class="mb-3" style="color: var(--secondary-color);">
+                                <i class="bi bi-upload me-2"></i>Required Documents
+                            </h4>
+                            <p class="text-muted mb-3">Please upload the required documents for verification</p>
+                            
+                            <div class="row g-3">
+                                <!-- National ID Upload -->
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label required">
+                                            <i class="bi bi-person-badge"></i>National ID
+                                        </label>
+                                        <div class="file-upload-area" id="nationalIdArea">
+                                            <div class="file-upload-icon">
+                                                <i class="bi bi-cloud-arrow-up"></i>
+                                            </div>
+                                            <div class="file-upload-text">
+                                                <h5>Upload National ID</h5>
+                                                <p>PDF, JPG, PNG (Max: 10MB)</p>
+                                            </div>
+                                            <input type="file" class="d-none" id="nationalIdFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('nationalIdFile').click()">
+                                                <i class="bi bi-upload me-1"></i>Browse
+                                            </button>
+                                        </div>
+                                        <div id="nationalIdPreview" class="file-preview" style="display: none;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Trading License Upload -->
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label required">
+                                            <i class="bi bi-file-earmark-text"></i>Trading License
+                                        </label>
+                                        <div class="file-upload-area" id="tradingLicenseArea">
+                                            <div class="file-upload-icon">
+                                                <i class="bi bi-cloud-arrow-up"></i>
+                                            </div>
+                                            <div class="file-upload-text">
+                                                <h5>Upload Trading License</h5>
+                                                <p>PDF, JPG, PNG (Max: 10MB)</p>
+                                            </div>
+                                            <input type="file" class="d-none" id="tradingLicenseFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('tradingLicenseFile').click()">
+                                                <i class="bi bi-upload me-1"></i>Browse
+                                            </button>
+                                        </div>
+                                        <div id="tradingLicensePreview" class="file-preview" style="display: none;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Proposal Document Upload -->
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label required">
+                                            <i class="bi bi-file-earmark-ppt"></i>Proposal Document
+                                        </label>
+                                        <div class="file-upload-area" id="proposalArea">
+                                            <div class="file-upload-icon">
+                                                <i class="bi bi-cloud-arrow-up"></i>
+                                            </div>
+                                            <div class="file-upload-text">
+                                                <h5>Upload Proposal</h5>
+                                                <p>PDF, DOC, DOCX (Max: 20MB)</p>
+                                            </div>
+                                            <input type="file" class="d-none" id="proposalFile" accept=".pdf,.doc,.docx" required>
+                                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="document.getElementById('proposalFile').click()">
+                                                <i class="bi bi-upload me-1"></i>Browse
+                                            </button>
+                                        </div>
+                                        <div id="proposalPreview" class="file-preview" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Additional Information -->
+                        <div class="mb-4">
+                            <h4 class="mb-3" style="color: var(--secondary-color);">
+                                <i class="bi bi-chat-left-text me-2"></i>Additional Information
+                            </h4>
+                            
+                            <div class="mb-3">
+                                <label for="additionalNotes" class="form-label">
+                                    <i class="bi bi-sticky"></i>Additional Notes
+                                </label>
+                                <textarea class="form-control" id="additionalNotes" 
+                                          rows="3" placeholder="Any additional information or special requirements..."></textarea>
+                                <small class="text-muted mt-1 d-block">Add any extra details that might help us understand your request better</small>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-secondary cancel-btn">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary ms-auto">
+                                <i class="bi bi-check-circle me-2"></i>Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -1029,27 +1481,38 @@
                     sort: 'newest'
                 };
                 this.charts = {
-                    dashboard: null,
-                    status: null,
-                    category: null,
-                    timeline: null
+                    dashboard: null
                 };
+                this.sessionTimeout = null;
+                this.sessionWarningTimeout = null;
+                this.currentStep = 1;
+                this.customCategories = [];
             }
             
             init() {
-                this.showLoginModal();
+                // Auto login as default user
+                this.loginAsDefault();
                 this.setupEventListeners();
                 this.updateDateTime();
+                this.setupFileUploads();
+                this.setupForm();
+                this.setupCategoryHandling();
             }
             
-            login(userData) {
-                this.data.user = {
-                    ...userData,
+            loginAsDefault() {
+                // Create default user data
+                const defaultUser = {
+                    name: 'Content Requester',
+                    email: 'requester@amc.et',
+                    avatar: 'RQ',
                     role: 'requester'
                 };
                 
+                // Set user data
+                this.data.user = defaultUser;
+                
                 // Save user to localStorage
-                localStorage.setItem('currentUser', JSON.stringify(this.data.user));
+                localStorage.setItem('currentUser', JSON.stringify(defaultUser));
                 
                 // Load user's requests
                 this.loadUserRequests();
@@ -1057,25 +1520,35 @@
                 // Update UI
                 this.updateUserUI();
                 
-                // Close login modal
-                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                if (loginModal) {
-                    loginModal.hide();
-                }
-                
                 // Determine view based on requests
                 this.determineUserView();
                 
                 // Show dashboard
                 this.showView('dashboard');
+                
+                // Start session timer
+                this.startSessionTimer();
             }
             
-            loginAsDefault() {
-                this.login({
-                    name: 'Content Requester',
-                    email: 'requester@ameco.et',
-                    avatar: 'RQ'
-                });
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    // Clear all user data
+                    localStorage.removeItem('currentUser');
+                    
+                    // Clear session timers
+                    if (this.sessionTimeout) {
+                        clearTimeout(this.sessionTimeout);
+                    }
+                    if (this.sessionWarningTimeout) {
+                        clearTimeout(this.sessionWarningTimeout);
+                    }
+                    
+                    // Show logout message
+                    alert('You have been logged out successfully.');
+                    
+                    // Redirect to same page (refresh)
+                    window.location.reload();
+                }
             }
             
             loadUserRequests() {
@@ -1090,8 +1563,6 @@
                 } else {
                     this.data.requests = [];
                 }
-                
-                console.log('Loaded requests for user:', this.data.user?.email, 'Count:', this.data.requests.length);
                 
                 // Convert string dates to Date objects
                 this.data.requests.forEach(request => {
@@ -1130,28 +1601,6 @@
                 
                 // Save back to localStorage
                 localStorage.setItem('coverageRequests', JSON.stringify(updatedRequests));
-            }
-            
-            showLoginModal() {
-                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'), {
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                loginModal.show();
-                
-                // Setup login form
-                const loginForm = document.getElementById('loginForm');
-                if (loginForm) {
-                    loginForm.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        
-                        const email = document.getElementById('loginEmail').value;
-                        const name = document.getElementById('loginName').value;
-                        const avatar = document.getElementById('userAvatarInput').value.toUpperCase().substring(0, 2);
-                        
-                        this.login({ name, email, avatar });
-                    });
-                }
             }
             
             determineUserView() {
@@ -1205,7 +1654,6 @@
                 const pending = this.data.requests.filter(r => r.status === 'pending').length;
                 const approved = this.data.requests.filter(r => r.status === 'approved').length;
                 const rejected = this.data.requests.filter(r => r.status === 'rejected').length;
-                const drafts = this.data.requests.filter(r => r.status === 'draft').length;
                 
                 // Count requests due today
                 const today = new Date();
@@ -1260,7 +1708,7 @@
                 
                 let tableHTML = `
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>Title</th>
@@ -1297,7 +1745,7 @@
                                 <span class="status-badge ${statusClass}">${statusText}</span>
                             </td>
                             <td>
-                                <small>${dateStr}</small>
+                                <small class="text-muted">${dateStr}</small>
                             </td>
                             <td>
                                 <button class="btn btn-sm btn-outline-primary view-request-btn" data-id="${request.id}">
@@ -1374,9 +1822,12 @@
                             legend: {
                                 position: 'bottom',
                                 labels: {
-                                    padding: 20,
+                                    padding: 10,
                                     usePointStyle: true,
-                                    pointStyle: 'circle'
+                                    pointStyle: 'circle',
+                                    font: {
+                                        size: 10
+                                    }
                                 }
                             }
                         },
@@ -1404,15 +1855,12 @@
                     return;
                 }
                 
-                const modalTitle = document.getElementById('requestModalTitle');
                 const modalBody = document.getElementById('requestModalBody');
                 
-                if (!modalTitle || !modalBody) {
+                if (!modalBody) {
                     console.error('Modal elements not found');
                     return;
                 }
-                
-                modalTitle.textContent = request.title || 'Request Details';
                 
                 const statusClass = `status-${request.status || 'pending'}`;
                 const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
@@ -1425,12 +1873,62 @@
                         day: 'numeric'
                     }) : 'Not submitted';
                 
+                // Show uploaded files if available
+                let filesHTML = '';
+                if (request.files) {
+                    filesHTML = `
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6>Uploaded Documents</h6>
+                                <div class="file-preview">
+                                    ${request.files.nationalId ? 
+                                        `<div class="file-item">
+                                            <div class="file-info">
+                                                <div class="file-icon">
+                                                    <i class="bi bi-person-badge"></i>
+                                                </div>
+                                                <div class="file-details">
+                                                    <div class="file-name">National ID</div>
+                                                    <div class="file-size">${request.files.nationalId}</div>
+                                                </div>
+                                            </div>
+                                        </div>` : ''}
+                                    ${request.files.tradingLicense ? 
+                                        `<div class="file-item">
+                                            <div class="file-info">
+                                                <div class="file-icon">
+                                                    <i class="bi bi-file-earmark-text"></i>
+                                                </div>
+                                                <div class="file-details">
+                                                    <div class="file-name">Trading License</div>
+                                                    <div class="file-size">${request.files.tradingLicense}</div>
+                                                </div>
+                                            </div>
+                                        </div>` : ''}
+                                    ${request.files.proposal ? 
+                                        `<div class="file-item">
+                                            <div class="file-info">
+                                                <div class="file-icon">
+                                                    <i class="bi bi-file-earmark-ppt"></i>
+                                                </div>
+                                                <div class="file-details">
+                                                    <div class="file-name">Proposal Document</div>
+                                                    <div class="file-size">${request.files.proposal}</div>
+                                                </div>
+                                            </div>
+                                        </div>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
                 modalBody.innerHTML = `
                     <div class="row">
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <h6>Description</h6>
-                                <p>${request.description || 'No description provided'}</p>
+                                <p class="p-3 bg-light rounded">${request.description || 'No description provided'}</p>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -1449,8 +1947,8 @@
                                     <span class="detail-value">${request.priority || 'Medium'}</span>
                                 </div>
                                 <div class="detail-item mb-2">
-                                    <span class="detail-label">Budget</span>
-                                    <span class="detail-value">${request.budget ? 'Birr ' + request.budget : 'Not specified'}</span>
+                                    <span class="detail-label">Location</span>
+                                    <span class="detail-value">${request.location || 'Not specified'}</span>
                                 </div>
                             </div>
                         </div>
@@ -1474,11 +1972,12 @@
                         <div class="col-12">
                             <div class="mb-3">
                                 <h6>Additional Notes</h6>
-                                <p>${request.notes}</p>
+                                <p class="p-3 bg-light rounded">${request.notes}</p>
                             </div>
                         </div>
                     </div>
                     ` : ''}
+                    ${filesHTML}
                 `;
                 
                 const modal = new bootstrap.Modal(document.getElementById('requestDetailsModal'));
@@ -1489,7 +1988,7 @@
                 this.currentView = viewName;
                 
                 // Hide all views
-                ['newUserView', 'existingUserView', 'myRequestsView', 'analyticsView', 'newRequestView'].forEach(viewId => {
+                ['newUserView', 'existingUserView', 'myRequestsView', 'newRequestView'].forEach(viewId => {
                     document.getElementById(viewId).style.display = 'none';
                 });
                 
@@ -1497,7 +1996,6 @@
                 const titles = {
                     'dashboard': 'Content Requester Dashboard',
                     'myRequests': 'My Requests',
-                    'analytics': 'My Analytics',
                     'newRequest': 'New Coverage Request'
                 };
                 
@@ -1517,18 +2015,23 @@
                         document.getElementById('myRequestsView').style.display = 'block';
                         this.renderMyRequests();
                         break;
-                    case 'analytics':
-                        document.getElementById('analyticsView').style.display = 'block';
-                        this.renderAnalytics();
-                        break;
                     case 'newRequest':
                         document.getElementById('newRequestView').style.display = 'block';
-                        this.loadNewRequestForm();
+                        // Set today's date as default
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('coverageDate').value = today;
+                        // Reset form
+                        this.resetForm();
+                        // Update progress steps
+                        this.updateProgressSteps();
                         break;
                 }
                 
                 // Update sidebar active state
                 this.updateSidebarActiveState(viewName);
+                
+                // Reset session timer on user activity
+                this.resetSessionTimer();
                 
                 // Trigger fade-in animations
                 setTimeout(() => {
@@ -1537,6 +2040,17 @@
                         el.style.animationDelay = `${index * 0.1}s`;
                     });
                 }, 100);
+            }
+            
+            updateProgressSteps() {
+                const steps = document.querySelectorAll('.progress-step');
+                steps.forEach((step, index) => {
+                    if (index < this.currentStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
             }
             
             updateSidebarActiveState(viewName) {
@@ -1550,13 +2064,394 @@
                     case 'myRequests':
                         document.getElementById('myRequestsLink').classList.add('active');
                         break;
-                    case 'analytics':
-                        document.getElementById('analyticsLink').classList.add('active');
-                        break;
                     case 'newRequest':
                         document.getElementById('newRequestLink').classList.add('active');
                         break;
                 }
+            }
+            
+            // Category handling
+            setupCategoryHandling() {
+                const categorySelect = document.getElementById('requestCategory');
+                const otherCategoryContainer = document.getElementById('otherCategoryContainer');
+                const otherCategoryInput = document.getElementById('otherCategoryInput');
+                const selectedCategoriesContainer = document.getElementById('selectedCategories');
+                
+                if (categorySelect) {
+                    categorySelect.addEventListener('change', (e) => {
+                        if (e.target.value === 'other') {
+                            otherCategoryContainer.style.display = 'block';
+                            otherCategoryInput.focus();
+                        } else {
+                            otherCategoryContainer.style.display = 'none';
+                        }
+                    });
+                }
+                
+                if (otherCategoryInput) {
+                    otherCategoryInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.addCustomCategory();
+                        }
+                    });
+                    
+                    otherCategoryInput.addEventListener('blur', () => {
+                        this.addCustomCategory();
+                    });
+                }
+            }
+            
+            addCustomCategory() {
+                const otherCategoryInput = document.getElementById('otherCategoryInput');
+                const selectedCategoriesContainer = document.getElementById('selectedCategories');
+                const categorySelect = document.getElementById('requestCategory');
+                
+                if (otherCategoryInput.value.trim()) {
+                    const category = otherCategoryInput.value.trim();
+                    
+                    // Add to custom categories array if not already present
+                    if (!this.customCategories.includes(category)) {
+                        this.customCategories.push(category);
+                    }
+                    
+                    // Update selected categories display
+                    this.updateSelectedCategories();
+                    
+                    // Reset input
+                    otherCategoryInput.value = '';
+                    categorySelect.value = '';
+                }
+            }
+            
+            removeCustomCategory(category) {
+                const index = this.customCategories.indexOf(category);
+                if (index > -1) {
+                    this.customCategories.splice(index, 1);
+                    this.updateSelectedCategories();
+                }
+            }
+            
+            updateSelectedCategories() {
+                const selectedCategoriesContainer = document.getElementById('selectedCategories');
+                
+                if (this.customCategories.length > 0) {
+                    let html = '<div class="d-flex flex-wrap gap-1 mb-2">';
+                    this.customCategories.forEach(category => {
+                        html += `
+                            <span class="custom-category-chip">
+                                ${category}
+                                <i class="bi bi-x" onclick="dashboard.removeCustomCategory('${category}')"></i>
+                            </span>
+                        `;
+                    });
+                    html += '</div>';
+                    selectedCategoriesContainer.innerHTML = html;
+                } else {
+                    selectedCategoriesContainer.innerHTML = '';
+                }
+            }
+            
+            // File upload setup
+            setupFileUploads() {
+                // Setup drag and drop for file upload areas
+                const uploadAreas = ['nationalIdArea', 'tradingLicenseArea', 'proposalArea'];
+                
+                uploadAreas.forEach(areaId => {
+                    const area = document.getElementById(areaId);
+                    if (!area) return;
+                    
+                    const fileInput = area.querySelector('input[type="file"]');
+                    const previewId = areaId.replace('Area', 'Preview');
+                    
+                    // Click handler
+                    area.addEventListener('click', (e) => {
+                        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                            fileInput.click();
+                        }
+                    });
+                    
+                    // File change handler
+                    fileInput.addEventListener('change', (e) => {
+                        this.previewFile(e.target, previewId);
+                    });
+                    
+                    // Drag and drop handlers
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        area.addEventListener(eventName, (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        });
+                    });
+                    
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        area.addEventListener(eventName, () => {
+                            area.classList.add('drag-over');
+                        });
+                    });
+                    
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        area.addEventListener(eventName, () => {
+                            area.classList.remove('drag-over');
+                        });
+                    });
+                    
+                    // Drop handler
+                    area.addEventListener('drop', (e) => {
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            fileInput.files = files;
+                            this.previewFile(fileInput, previewId);
+                        }
+                    });
+                });
+            }
+            
+            previewFile(input, previewId) {
+                const files = input.files;
+                const preview = document.getElementById(previewId);
+                
+                if (files.length > 0) {
+                    let previewHTML = '';
+                    
+                    Array.from(files).forEach((file, index) => {
+                        const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+                        const fileName = file.name;
+                        const fileType = file.type;
+                        
+                        // Determine icon based on file type
+                        let icon = 'bi-file-earmark';
+                        if (fileType.includes('image')) icon = 'bi-file-image';
+                        else if (fileType.includes('pdf')) icon = 'bi-file-pdf';
+                        else if (fileType.includes('word') || fileType.includes('document')) icon = 'bi-file-word';
+                        
+                        previewHTML += `
+                            <div class="file-item" data-index="${index}">
+                                <div class="file-info">
+                                    <div class="file-icon">
+                                        <i class="bi ${icon}"></i>
+                                    </div>
+                                    <div class="file-details">
+                                        <div class="file-name">${fileName}</div>
+                                        <div class="file-size">${fileSize} MB</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="file-remove" onclick="dashboard.removeFile('${previewId}', ${index}, '${input.id}')">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                    
+                    preview.innerHTML = previewHTML;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+            }
+            
+            removeFile(previewId, index, inputId) {
+                const preview = document.getElementById(previewId);
+                const fileItem = preview.querySelector(`[data-index="${index}"]`);
+                const input = document.getElementById(inputId);
+                
+                if (fileItem) {
+                    fileItem.remove();
+                }
+                
+                // Remove file from input
+                const dt = new DataTransfer();
+                const files = Array.from(input.files);
+                files.splice(index, 1);
+                
+                files.forEach(file => {
+                    dt.items.add(file);
+                });
+                
+                input.files = dt.files;
+                
+                // Hide preview if no files left
+                if (files.length === 0) {
+                    preview.style.display = 'none';
+                }
+            }
+            
+            // Form setup
+            setupForm() {
+                const form = document.getElementById('coverageRequestForm');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.submitNewRequest();
+                    });
+                }
+            }
+            
+            resetForm() {
+                const form = document.getElementById('coverageRequestForm');
+                if (form) {
+                    form.reset();
+                }
+                
+                // Clear file previews
+                ['nationalIdPreview', 'tradingLicensePreview', 'proposalPreview'].forEach(previewId => {
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        preview.style.display = 'none';
+                        preview.innerHTML = '';
+                    }
+                });
+                
+                // Reset file inputs
+                ['nationalIdFile', 'tradingLicenseFile', 'proposalFile'].forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.value = '';
+                    }
+                });
+                
+                // Reset custom categories
+                this.customCategories = [];
+                this.updateSelectedCategories();
+                
+                // Hide other category input
+                document.getElementById('otherCategoryContainer').style.display = 'none';
+                
+                // Reset progress steps
+                this.currentStep = 1;
+                this.updateProgressSteps();
+            }
+            
+            submitNewRequest() {
+                // Get form values
+                const title = document.getElementById('requestTitle').value;
+                const categorySelect = document.getElementById('requestCategory');
+                const otherCategory = document.getElementById('otherCategoryInput').value;
+                const description = document.getElementById('requestDescription').value;
+                const date = document.getElementById('coverageDate').value;
+                const priority = document.getElementById('requestPriority').value;
+                const location = document.getElementById('location').value;
+                const additionalNotes = document.getElementById('additionalNotes').value;
+                
+                // Determine category
+                let category = categorySelect.value;
+                if (category === 'other' && otherCategory) {
+                    category = otherCategory;
+                } else if (this.customCategories.length > 0 && category === '') {
+                    category = this.customCategories[0];
+                }
+                
+                if (!category) {
+                    alert('Please select or enter a category');
+                    return;
+                }
+                
+                // Get files
+                const nationalIdFile = document.getElementById('nationalIdFile').files[0];
+                const tradingLicenseFile = document.getElementById('tradingLicenseFile').files[0];
+                const proposalFile = document.getElementById('proposalFile').files[0];
+                
+                // Validate required files
+                if (!nationalIdFile || !tradingLicenseFile || !proposalFile) {
+                    alert('Please upload all required files: National ID, Trading License, and Proposal Document');
+                    return;
+                }
+                
+                // Create new request object
+                const newRequest = {
+                    id: 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    title,
+                    category,
+                    description,
+                    date: new Date(date),
+                    priority,
+                    location,
+                    notes: additionalNotes,
+                    status: 'pending',
+                    submitterEmail: this.data.user.email,
+                    submitterName: this.data.user.name,
+                    submittedAt: new Date(),
+                    createdAt: new Date(),
+                    files: {
+                        nationalId: nationalIdFile.name,
+                        tradingLicense: tradingLicenseFile.name,
+                        proposal: proposalFile.name
+                    }
+                };
+                
+                // Add to requests
+                this.data.requests.push(newRequest);
+                
+                // Save to localStorage
+                this.saveUserRequests();
+                
+                // Update dashboard
+                this.isNewUser = false;
+                this.loadDashboardData();
+                
+                // Show success message with animation
+                this.showSuccessMessage();
+                
+                // Reset form
+                this.resetForm();
+                
+                // Go back to dashboard after delay
+                setTimeout(() => {
+                    this.showView('dashboard');
+                }, 2000);
+            }
+            
+            showSuccessMessage() {
+                // Create success overlay
+                const successOverlay = document.createElement('div');
+                successOverlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    opacity: 0;
+                    animation: fadeIn 0.5s ease forwards;
+                `;
+                
+                successOverlay.innerHTML = `
+                    <div class="text-center text-white" style="animation: scaleIn 0.5s ease 0.3s both;">
+                        <div class="mb-4" style="animation: float 2s ease-in-out infinite;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #28a745;"></i>
+                        </div>
+                        <h2 class="mb-3" style="font-size: 1.8rem;">Request Submitted Successfully!</h2>
+                        <p class="mb-4" style="font-size: 1.1rem; opacity: 0.9;">
+                            Your coverage request has been submitted and is now under review.
+                        </p>
+                        <div class="spinner-border text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Redirecting to dashboard...</p>
+                    </div>
+                `;
+                
+                document.body.appendChild(successOverlay);
+                
+                // Add animation styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes scaleIn {
+                        from { transform: scale(0.8); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Remove overlay after animation
+                setTimeout(() => {
+                    successOverlay.remove();
+                    style.remove();
+                }, 2500);
             }
             
             renderMyRequests() {
@@ -1566,8 +2461,8 @@
                     container.innerHTML = `
                         <div class="empty-state">
                             <i class="bi bi-file-earmark-text"></i>
-                            <h4>No Requests Found</h4>
-                            <p>You haven't created any content requests yet.</p>
+                            <h4>No Requests Yet</h4>
+                            <p>You haven't created any content requests yet. Start by creating your first request!</p>
                             <a href="#" class="btn btn-primary show-new-request">
                                 <i class="bi bi-plus-circle me-2"></i>
                                 Create Your First Request
@@ -1577,112 +2472,90 @@
                     return;
                 }
                 
-                // Apply filters
+                // Filter requests
                 let filteredRequests = [...this.data.requests];
                 
                 if (this.filters.status !== 'all') {
-                    filteredRequests = filteredRequests.filter(r => r.status === this.filters.status);
+                    filteredRequests = filteredRequests.filter(request => request.status === this.filters.status);
                 }
                 
                 if (this.filters.category !== 'all') {
-                    filteredRequests = filteredRequests.filter(r => r.category === this.filters.category);
+                    filteredRequests = filteredRequests.filter(request => request.category === this.filters.category);
                 }
                 
-                // Apply sorting
+                // Sort requests
                 switch(this.filters.sort) {
                     case 'newest':
-                        filteredRequests.sort((a, b) => {
-                            const dateA = a.submittedAt || a.createdAt || new Date(0);
-                            const dateB = b.submittedAt || b.createdAt || new Date(0);
-                            return new Date(dateB) - new Date(dateA);
-                        });
+                        filteredRequests.sort((a, b) => new Date(b.submittedAt || b.createdAt) - new Date(a.submittedAt || a.createdAt));
                         break;
                     case 'oldest':
-                        filteredRequests.sort((a, b) => {
-                            const dateA = a.submittedAt || a.createdAt || new Date(0);
-                            const dateB = b.submittedAt || b.createdAt || new Date(0);
-                            return new Date(dateA) - new Date(dateB);
-                        });
+                        filteredRequests.sort((a, b) => new Date(a.submittedAt || a.createdAt) - new Date(b.submittedAt || b.createdAt));
                         break;
                     case 'date':
-                        filteredRequests.sort((a, b) => {
-                            const dateA = a.date || new Date(0);
-                            const dateB = b.date || new Date(0);
-                            return new Date(dateA) - new Date(dateB);
-                        });
+                        filteredRequests.sort((a, b) => new Date(a.date) - new Date(b.date));
                         break;
                     case 'priority':
-                        const priorityOrder = { 'high': 1, 'medium': 2, 'low': 3 };
-                        filteredRequests.sort((a, b) => {
-                            return (priorityOrder[a.priority] || 4) - (priorityOrder[b.priority] || 4);
-                        });
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        filteredRequests.sort((a, b) => priorityOrder[b.priority || 'medium'] - priorityOrder[a.priority || 'medium']);
                         break;
                 }
                 
-                // Display filtered requests
+                // Render requests
                 let requestsHTML = '';
                 
-                if (filteredRequests.length === 0) {
-                    requestsHTML = `
-                        <div class="empty-state">
-                            <i class="bi bi-search"></i>
-                            <h4>No Matching Requests</h4>
-                            <p>No requests match your current filters. Try adjusting your criteria.</p>
-                            <button class="btn btn-outline-primary" onclick="document.getElementById('clearFiltersBtn').click()">
-                                Clear Filters
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    requestsHTML = '<div class="row">';
-                    
-                    filteredRequests.forEach(request => {
-                        const date = request.submittedAt || request.createdAt || new Date();
-                        const dateStr = date.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                        });
-                        const statusClass = `status-${request.status || 'pending'}`;
-                        const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
-                                         (request.status || 'pending').slice(1).replace('_', ' ');
-                        
-                        requestsHTML += `
-                            <div class="col-lg-6 mb-3">
-                                <div class="request-card ${request.status || 'pending'}">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">${request.title || 'Untitled Request'}</h6>
-                                            <small class="text-muted">${request.category || 'Uncategorized'} • ${dateStr}</small>
-                                        </div>
-                                        <span class="status-badge ${statusClass}">${statusText}</span>
-                                    </div>
-                                    <div class="request-details">
-                                        <div class="detail-item">
-                                            <span class="detail-label">Priority</span>
-                                            <span class="detail-value">${request.priority || 'Medium'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Budget</span>
-                                            <span class="detail-value">${request.budget ? 'Birr ' + request.budget : 'Not specified'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Date</span>
-                                            <span class="detail-value">${request.date ? new Date(request.date).toLocaleDateString() : 'Not specified'}</span>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <button class="btn btn-sm btn-outline-primary view-request-btn" data-id="${request.id}">
-                                            <i class="bi bi-eye me-1"></i> View Details
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                filteredRequests.forEach(request => {
+                    const date = request.submittedAt || request.createdAt || new Date();
+                    const dateStr = date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
                     });
                     
-                    requestsHTML += '</div>';
-                }
+                    const statusClass = `status-${request.status || 'pending'}`;
+                    const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
+                                     (request.status || 'pending').slice(1).replace('_', ' ');
+                    
+                    requestsHTML += `
+                        <div class="request-card ${statusClass}">
+                            <div class="request-details-grid">
+                                <div class="request-meta-item">
+                                    <span class="request-meta-label">Title</span>
+                                    <span class="request-meta-value">${request.title || 'Untitled Request'}</span>
+                                </div>
+                                <div class="request-meta-item">
+                                    <span class="request-meta-label">Category</span>
+                                    <span class="request-meta-value">
+                                        <span class="badge bg-light text-dark">${request.category || 'Uncategorized'}</span>
+                                    </span>
+                                </div>
+                                <div class="request-meta-item">
+                                    <span class="request-meta-label">Status</span>
+                                    <span class="request-meta-value">
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </span>
+                                </div>
+                                <div class="request-meta-item">
+                                    <span class="request-meta-label">Date</span>
+                                    <span class="request-meta-value">
+                                        <i class="bi bi-calendar me-1"></i>${dateStr}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="text-truncate" style="max-width: 60%;">
+                                    <small class="text-muted">
+                                        ${request.description ? request.description.substring(0, 100) + '...' : 'No description'}
+                                    </small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm view-request-btn" data-id="${request.id}">
+                                        <i class="bi bi-eye me-1"></i>View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
                 
                 container.innerHTML = requestsHTML;
                 
@@ -1695,413 +2568,77 @@
                 });
             }
             
-            renderAnalytics() {
-                if (this.data.requests.length === 0) {
-                    this.showEmptyAnalyticsState();
-                    return;
-                }
-                
-                // Calculate analytics
-                this.calculateAnalyticsData();
-                
-                // Initialize charts
-                this.initStatusChart();
-                this.initCategoryChart();
-                this.initTimelineChart();
-                
-                // Render recent activity
-                this.renderRecentActivity();
-            }
-            
-            showEmptyAnalyticsState() {
-                const analyticsView = document.getElementById('analyticsView');
-                analyticsView.innerHTML = `
-                    <div class="welcome-banner fade-in">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h1>My Analytics</h1>
-                                <p>Detailed insights and performance metrics for your content requests</p>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <button class="btn btn-primary back-to-dashboard">
-                                    <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="empty-state">
-                        <i class="bi bi-bar-chart"></i>
-                        <h4>No Analytics Data Yet</h4>
-                        <p>Create some requests to see your analytics and performance metrics.</p>
-                        <a href="#" class="btn btn-primary show-new-request">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            Create Your First Request
-                        </a>
-                    </div>
-                `;
-                
-                // Re-attach event listeners
-                document.querySelector('.back-to-dashboard').addEventListener('click', () => {
-                    this.showView('dashboard');
-                });
-                
-                document.querySelector('.show-new-request').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showView('newRequest');
-                });
-            }
-            
-            calculateAnalyticsData() {
-                const requests = this.data.requests;
-                const total = requests.length;
-                
-                // Calculate status counts
-                const statusCounts = {
-                    pending: requests.filter(r => r.status === 'pending').length,
-                    approved: requests.filter(r => r.status === 'approved').length,
-                    rejected: requests.filter(r => r.status === 'rejected').length,
-                    'in-progress': requests.filter(r => r.status === 'in-progress').length,
-                    completed: requests.filter(r => r.status === 'completed').length,
-                    draft: requests.filter(r => r.status === 'draft').length
-                };
-                
-                // Calculate category counts
-                const categoryCounts = {};
-                requests.forEach(request => {
-                    const category = request.category || 'Uncategorized';
-                    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-                });
-                
-                // Calculate approval rate (excluding drafts)
-                const nonDraftRequests = requests.filter(r => r.status !== 'draft');
-                const approvedCount = statusCounts.approved;
-                const approvalRate = nonDraftRequests.length > 0 ? 
-                    Math.round((approvedCount / nonDraftRequests.length) * 100) : 0;
-                
-                // Calculate average response time for non-pending requests
-                const respondedRequests = requests.filter(r => 
-                    r.status !== 'pending' && r.status !== 'draft' && r.submittedAt
-                );
-                let totalResponseDays = 0;
-                respondedRequests.forEach(request => {
-                    if (request.submittedAt) {
-                        const submittedDate = new Date(request.submittedAt);
-                        const now = new Date();
-                        const responseTime = (now - submittedDate) / (1000 * 60 * 60 * 24);
-                        totalResponseDays += responseTime;
-                    }
-                });
-                const avgResponseTime = respondedRequests.length > 0 ? 
-                    Math.round(totalResponseDays / respondedRequests.length) : 0;
-                
-                // Calculate budget metrics
-                const budgetRequests = requests.filter(r => r.budget);
-                const totalBudget = budgetRequests.reduce((sum, request) => {
-                    const budget = parseFloat(request.budget) || 0;
-                    return sum + budget;
-                }, 0);
-                const avgBudget = budgetRequests.length > 0 ? 
-                    Math.round(totalBudget / budgetRequests.length) : 0;
-                
-                // Update UI
-                document.getElementById('analyticsTotal').textContent = total;
-                document.getElementById('approvalRate').textContent = `${approvalRate}%`;
-                document.getElementById('approvalProgressBar').style.width = `${approvalRate}%`;
-                document.getElementById('avgResponseTime').textContent = `${avgResponseTime} days`;
-                document.getElementById('totalBudget').textContent = `Birr ${Math.round(totalBudget)}`;
-                document.getElementById('avgBudget').textContent = `Birr ${avgBudget}`;
-                
-                // Update metrics table
-                document.getElementById('metricPending').textContent = statusCounts.pending;
-                document.getElementById('metricInProgress').textContent = statusCounts['in-progress'];
-                document.getElementById('metricCompleted').textContent = statusCounts.completed;
-                document.getElementById('metricApproved').textContent = statusCounts.approved;
-                document.getElementById('metricRejected').textContent = statusCounts.rejected;
-                document.getElementById('metricDrafts').textContent = statusCounts.draft;
-                
-                return {
-                    statusCounts,
-                    categoryCounts,
-                    approvalRate,
-                    avgResponseTime,
-                    totalBudget,
-                    avgBudget
-                };
-            }
-            
-            initStatusChart() {
-                const ctx = document.getElementById('statusChart');
-                if (!ctx) return;
-                
-                // Destroy existing chart
-                if (this.charts.status) {
-                    this.charts.status.destroy();
-                }
-                
-                const analyticsData = this.calculateAnalyticsData();
-                const statusCounts = analyticsData.statusCounts;
-                
-                const labels = Object.keys(statusCounts).map(key => {
-                    return key.charAt(0).toUpperCase() + key.slice(1).replace('-', ' ');
-                });
-                
-                const data = Object.values(statusCounts);
-                const backgroundColors = Object.keys(statusCounts).map(key => this.getStatusColor(key));
-                
-                this.charts.status = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Number of Requests',
-                            data: data,
-                            backgroundColor: backgroundColors,
-                            borderColor: backgroundColors.map(color => color.replace('0.8', '1')),
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            initCategoryChart() {
-                const ctx = document.getElementById('categoryChart');
-                if (!ctx) return;
-                
-                // Destroy existing chart
-                if (this.charts.category) {
-                    this.charts.category.destroy();
-                }
-                
-                const analyticsData = this.calculateAnalyticsData();
-                const categoryCounts = analyticsData.categoryCounts;
-                
-                const labels = Object.keys(categoryCounts);
-                const data = Object.values(categoryCounts);
-                const colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e', '#95a5a6'];
-                
-                this.charts.category = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: data,
-                            backgroundColor: colors.slice(0, labels.length)
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'right'
-                            }
-                        }
-                    }
-                });
-            }
-            
-            initTimelineChart() {
-                const ctx = document.getElementById('timelineChart');
-                if (!ctx) return;
-                
-                // Destroy existing chart
-                if (this.charts.timeline) {
-                    this.charts.timeline.destroy();
-                }
-                
-                const monthsCount = parseInt(document.getElementById('timePeriodSelect').value) || 6;
-                const monthlyData = this.getMonthlyData(monthsCount);
-                
-                this.charts.timeline = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: monthlyData.labels,
-                        datasets: [{
-                            label: 'Requests Created',
-                            data: monthlyData.data,
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            borderColor: '#3498db',
-                            borderWidth: 2,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#3498db',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-            
-            getMonthlyData(monthsCount) {
-                const months = [];
-                const now = new Date();
-                
-                // Generate labels for the last N months
-                for (let i = monthsCount - 1; i >= 0; i--) {
-                    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                    const label = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-                    months.push({
-                        label: label,
-                        month: date.getMonth(),
-                        year: date.getFullYear()
+            updateDateTime() {
+                const updateTime = () => {
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                     });
+                    const timeStr = now.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    
+                    document.getElementById('currentDate').textContent = dateStr;
+                    document.getElementById('currentTime').textContent = timeStr;
+                    document.getElementById('currentTime2').textContent = timeStr;
+                };
+                
+                updateTime();
+                this.dateTimeInterval = setInterval(updateTime, 60000); // Update every minute
+            }
+            
+            // Session management
+            startSessionTimer() {
+                // Clear existing timeout
+                if (this.sessionTimeout) {
+                    clearTimeout(this.sessionTimeout);
                 }
                 
-                // Count requests per month
-                const data = months.map(month => {
-                    return this.data.requests.filter(request => {
-                        const requestDate = request.submittedAt || request.createdAt;
-                        if (!requestDate) return false;
-                        
-                        const date = new Date(requestDate);
-                        return date.getMonth() === month.month && 
-                               date.getFullYear() === month.year;
-                    }).length;
+                // Set new timeout for 30 minutes
+                this.sessionTimeout = setTimeout(() => {
+                    this.showSessionWarning();
+                }, 25 * 60 * 1000); // 25 minutes (warning after 25)
+            }
+            
+            showSessionWarning() {
+                // Create warning div
+                const warningDiv = document.createElement('div');
+                warningDiv.className = 'session-warning';
+                warningDiv.innerHTML = `
+                    <strong><i class="bi bi-exclamation-triangle"></i> Session Expiring Soon!</strong>
+                    <p class="mb-2">Your session will expire in 5 minutes. Please save your work.</p>
+                    <button class="btn btn-sm btn-warning" id="extendSessionBtn">
+                        Extend Session
+                    </button>
+                `;
+                document.body.appendChild(warningDiv);
+                
+                // Add event listener to extend button
+                document.getElementById('extendSessionBtn').addEventListener('click', () => {
+                    warningDiv.remove();
+                    this.resetSessionTimer();
                 });
                 
-                return {
-                    labels: months.map(m => m.label),
-                    data: data
-                };
+                // Set final timeout for 5 more minutes
+                this.sessionWarningTimeout = setTimeout(() => {
+                    warningDiv.remove();
+                    alert('Your session has expired. You will be logged out.');
+                    this.logout();
+                }, 5 * 60 * 1000); // 5 minutes
             }
             
-            renderRecentActivity() {
-                const container = document.getElementById('recentActivityList');
-                if (!container) return;
-                
-                // Get recent requests (last 5)
-                const recentRequests = [...this.data.requests]
-                    .sort((a, b) => {
-                        const dateA = a.submittedAt || a.createdAt || new Date(0);
-                        const dateB = b.submittedAt || b.createdAt || new Date(0);
-                        return new Date(dateB) - new Date(dateA);
-                    })
-                    .slice(0, 5);
-                
-                let activityHTML = '';
-                
-                if (recentRequests.length === 0) {
-                    activityHTML = '<p class="text-muted text-center py-3">No recent activity</p>';
-                } else {
-                    recentRequests.forEach(request => {
-                        const date = request.submittedAt || request.createdAt || new Date();
-                        const timeAgo = this.getTimeAgo(date);
-                        const statusClass = `status-${request.status || 'pending'}`;
-                        const statusText = (request.status || 'pending').charAt(0).toUpperCase() + 
-                                         (request.status || 'pending').slice(1).replace('_', ' ');
-                        
-                        activityHTML += `
-                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                                <div class="flex-shrink-0">
-                                    <div class="avatar-initials bg-light text-dark" style="width: 36px; height: 36px; font-size: 0.9rem;">
-                                        ${this.data.user?.avatar?.charAt(0) || 'R'}
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong class="d-block">${request.title || 'Untitled Request'}</strong>
-                                            <small class="text-muted">${request.category || 'Uncategorized'}</small>
-                                        </div>
-                                        <span class="status-badge ${statusClass}">${statusText}</span>
-                                    </div>
-                                    <small class="text-muted d-block mt-1">
-                                        <i class="bi bi-clock me-1"></i>${timeAgo}
-                                    </small>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-                
-                container.innerHTML = activityHTML;
-            }
-            
-            getTimeAgo(date) {
-                if (!date) return 'Unknown time';
-                
-                const now = new Date();
-                const dateObj = new Date(date);
-                const diffInSeconds = Math.floor((now - dateObj) / 1000);
-                
-                if (diffInSeconds < 60) return 'Just now';
-                if (diffInSeconds < 3600) {
-                    const minutes = Math.floor(diffInSeconds / 60);
-                    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
-                }
-                if (diffInSeconds < 86400) {
-                    const hours = Math.floor(diffInSeconds / 3600);
-                    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
-                }
-                if (diffInSeconds < 2592000) {
-                    const days = Math.floor(diffInSeconds / 86400);
-                    return `${days} day${days !== 1 ? 's' : ''} ago`;
-                }
-                if (diffInSeconds < 31536000) {
-                    const months = Math.floor(diffInSeconds / 2592000);
-                    return `${months} month${months !== 1 ? 's' : ''} ago`;
-                }
-                const years = Math.floor(diffInSeconds / 31536000);
-                return `${years} year${years !== 1 ? 's' : ''} ago`;
-            }
-            
-            loadNewRequestForm() {
-                const container = document.getElementById('newRequestFormContainer');
-                container.innerHTML = `
-                    <div class="dashboard-card">
-                        <div class="card-body">
-                            <p class="text-center">Redirecting to new request form...</p>
-                            <div class="text-center">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Redirect to the new request page
-                setTimeout(() => {
-                    window.location.href = 'new-request.html';
-                }, 1000);
+            resetSessionTimer() {
+                this.startSessionTimer();
             }
             
             setupEventListeners() {
+                const self = this;
+                
                 // Mobile menu toggle
                 document.getElementById('mobileMenuToggle').addEventListener('click', () => {
                     document.getElementById('sidebar').classList.toggle('active');
@@ -2124,50 +2661,55 @@
                 // Navigation links
                 document.getElementById('dashboardLink').addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.showView('dashboard');
-                });
-                
-                document.getElementById('myRequestsLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showView('myRequests');
-                });
-                
-                document.getElementById('analyticsLink').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showView('analytics');
+                    self.showView('dashboard');
                 });
                 
                 document.getElementById('newRequestLink').addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.showView('newRequest');
+                    self.showView('newRequest');
                 });
                 
-                // Quick action buttons
+                document.getElementById('myRequestsLink').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    self.showView('myRequests');
+                });
+                
+                // Event delegation for dynamically created buttons
                 document.addEventListener('click', (e) => {
+                    // Show new request buttons
                     if (e.target.closest('.show-new-request')) {
                         e.preventDefault();
-                        this.showView('newRequest');
+                        self.showView('newRequest');
                     }
                     
+                    // View my requests buttons
                     if (e.target.closest('.view-my-requests')) {
                         e.preventDefault();
-                        this.showView('myRequests');
+                        self.showView('myRequests');
                     }
                     
-                    if (e.target.closest('.view-analytics')) {
+                    // Back to dashboard button in My Requests
+                    if (e.target.closest('.back-to-dashboard-btn')) {
                         e.preventDefault();
-                        this.showView('analytics');
+                        self.showView('dashboard');
                     }
                     
-                    if (e.target.closest('.back-to-dashboard')) {
+                    // Cancel button in new request form
+                    if (e.target.closest('.cancel-btn')) {
                         e.preventDefault();
-                        this.showView('dashboard');
+                        self.showView('dashboard');
+                    }
+                    
+                    // Logout button
+                    if (e.target.closest('#logoutBtn')) {
+                        e.preventDefault();
+                        self.logout();
                     }
                 });
                 
                 // Notifications button
                 document.getElementById('notificationsBtn').addEventListener('click', () => {
-                    const pendingCount = this.data.requests.filter(r => r.status === 'pending').length;
+                    const pendingCount = self.data.requests.filter(r => r.status === 'pending').length;
                     if (pendingCount === 0) {
                         alert('No pending notifications!');
                     } else {
@@ -2175,29 +2717,12 @@
                     }
                 });
                 
-                // Switch user button
-                document.getElementById('switchUserBtn').addEventListener('click', () => {
-                    if (confirm('Switch to a different user?')) {
-                        localStorage.removeItem('currentUser');
-                        this.showLoginModal();
-                    }
-                });
-                
-                // Logout button
-                document.getElementById('logoutBtn').addEventListener('click', () => {
-                    if (confirm('Are you sure you want to logout?')) {
-                        localStorage.removeItem('currentUser');
-                    }
-                      // Redirect to login page
-        window.location.href = 'login.html';
-                });
-                
                 // Refresh dashboard buttons
                 const refreshDashboard = () => {
-                    this.loadUserRequests();
-                    this.determineUserView();
-                    if (!this.isNewUser) {
-                        this.loadDashboardData();
+                    self.loadUserRequests();
+                    self.determineUserView();
+                    if (!self.isNewUser) {
+                        self.loadDashboardData();
                     }
                     
                     // Show feedback
@@ -2221,163 +2746,40 @@
                 
                 // Request filters
                 document.getElementById('applyFiltersBtn')?.addEventListener('click', () => {
-                    this.filters.status = document.getElementById('statusFilter').value;
-                    this.filters.category = document.getElementById('categoryFilter').value;
-                    this.filters.sort = document.getElementById('sortFilter').value;
-                    this.renderMyRequests();
+                    self.filters.status = document.getElementById('statusFilter').value;
+                    self.filters.category = document.getElementById('categoryFilter').value;
+                    self.filters.sort = document.getElementById('sortFilter').value;
+                    self.renderMyRequests();
                 });
                 
                 document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
                     document.getElementById('statusFilter').value = 'all';
                     document.getElementById('categoryFilter').value = 'all';
                     document.getElementById('sortFilter').value = 'newest';
-                    this.filters = { status: 'all', category: 'all', sort: 'newest' };
-                    this.renderMyRequests();
-                });
-                
-                // Analytics time period
-                document.getElementById('timePeriodSelect')?.addEventListener('change', () => {
-                    if (this.currentView === 'analytics') {
-                        this.initTimelineChart();
-                    }
-                });
-                
-                // Refresh analytics button
-                document.getElementById('refreshAnalyticsBtn')?.addEventListener('click', () => {
-                    if (this.currentView === 'analytics') {
-                        this.renderAnalytics();
-                        
-                        // Show feedback
-                        const btn = document.getElementById('refreshAnalyticsBtn');
-                        const originalHTML = btn.innerHTML;
-                        btn.innerHTML = '<i class="bi bi-check2"></i>';
-                        btn.classList.add('btn-success');
-                        btn.classList.remove('btn-outline-primary');
-                        
-                        setTimeout(() => {
-                            btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
-                            btn.classList.remove('btn-success');
-                            btn.classList.add('btn-outline-primary');
-                        }, 1000);
-                    }
-                });
-                
-                // Export analytics button
-                document.getElementById('exportAnalyticsBtn')?.addEventListener('click', () => {
-                    this.exportAnalytics();
+                    self.filters = { status: 'all', category: 'all', sort: 'newest' };
+                    self.renderMyRequests();
                 });
                 
                 // Tour button for new users
                 document.getElementById('tourBtn')?.addEventListener('click', () => {
-                    alert('Welcome to AMC Content System!\n\n1. Click "New Request" to create content requests\n2. Track your requests in "My Requests"\n3. View analytics in "My Analytics"\n\nLet\'s get started!');
+                    alert('Welcome to AMC Content System!\n\n1. Click "New Request" to create content requests\n2. Track your requests in "My Requests"\n\nLet\'s get started!');
                 });
                 
                 // Initialize filters if they exist
                 if (document.getElementById('statusFilter')) {
-                    document.getElementById('statusFilter').value = this.filters.status;
+                    document.getElementById('statusFilter').value = self.filters.status;
                 }
                 if (document.getElementById('categoryFilter')) {
-                    document.getElementById('categoryFilter').value = this.filters.category;
+                    document.getElementById('categoryFilter').value = self.filters.category;
                 }
                 if (document.getElementById('sortFilter')) {
-                    document.getElementById('sortFilter').value = this.filters.sort;
-                }
-            }
-            
-            exportAnalytics() {
-                if (this.data.requests.length === 0) {
-                    alert('No data to export');
-                    return;
+                    document.getElementById('sortFilter').value = self.filters.sort;
                 }
                 
-                const analyticsData = this.calculateAnalyticsData();
-                
-                // Create CSV content
-                let csvContent = "data:text/csv;charset=utf-8,";
-                
-                // Add header
-                csvContent += "Metric,Value\n";
-                
-                // Add summary data
-                csvContent += `Total Requests,${this.data.requests.length}\n`;
-                csvContent += `Approval Rate,${analyticsData.approvalRate}%\n`;
-                csvContent += `Average Response Time,${analyticsData.avgResponseTime} days\n`;
-                csvContent += `Total Budget,Birr ${Math.round(analyticsData.totalBudget)}\n`;
-                csvContent += `Average Budget,Birr ${analyticsData.avgBudget}\n\n`;
-                
-                // Add status breakdown
-                csvContent += "Status,Count\n";
-                Object.entries(analyticsData.statusCounts).forEach(([status, count]) => {
-                    csvContent += `${status},${count}\n`;
-                });
-                
-                csvContent += "\n";
-                
-                // Add category breakdown
-                csvContent += "Category,Count\n";
-                Object.entries(analyticsData.categoryCounts).forEach(([category, count]) => {
-                    csvContent += `${category},${count}\n`;
-                });
-                
-                csvContent += "\n";
-                
-                // Add recent requests
-                csvContent += "Recent Requests\n";
-                csvContent += "Title,Category,Status,Date,Budget\n";
-                const recentRequests = [...this.data.requests]
-                    .sort((a, b) => {
-                        const dateA = a.submittedAt || a.createdAt || new Date(0);
-                        const dateB = b.submittedAt || b.createdAt || new Date(0);
-                        return new Date(dateB) - new Date(dateA);
-                    })
-                    .slice(0, 10);
-                
-                recentRequests.forEach(request => {
-                    const date = request.submittedAt || request.createdAt || new Date();
-                    csvContent += `"${request.title || 'Untitled'}",${request.category || 'Uncategorized'},${request.status || 'pending'},${date.toLocaleDateString()},${request.budget || '0'}\n`;
-                });
-                
-                // Create download link
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                const fileName = `amc_analytics_${this.data.user?.name?.replace(/\s+/g, '_') || 'user'}_${new Date().toISOString().split('T')[0]}.csv`;
-                link.setAttribute("download", fileName);
-                document.body.appendChild(link);
-                
-                // Trigger download
-                link.click();
-                document.body.removeChild(link);
-                
-                alert('Analytics data exported successfully!');
-            }
-            
-            updateDateTime() {
-                const now = new Date();
-                const dateOptions = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                const timeOptions = { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true
-                };
-                
-                const dateStr = now.toLocaleDateString('en-US', dateOptions);
-                const timeStr = now.toLocaleTimeString('en-US', timeOptions);
-                
-                document.getElementById('currentDate').textContent = dateStr;
-                document.getElementById('currentTime').textContent = timeStr;
-                if (document.getElementById('currentTime2')) {
-                    document.getElementById('currentTime2').textContent = timeStr;
-                }
-                
-                // Update every minute for better performance
-                clearTimeout(this.dateTimeInterval);
-                this.dateTimeInterval = setTimeout(() => this.updateDateTime(), 60000);
+                // Reset session timer on user activity
+                document.addEventListener('click', () => self.resetSessionTimer());
+                document.addEventListener('keypress', () => self.resetSessionTimer());
+                document.addEventListener('mousemove', () => self.resetSessionTimer());
             }
         }
 
