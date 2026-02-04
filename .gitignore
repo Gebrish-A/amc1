@@ -1,6 +1,32 @@
+# Node.js dependencies
 node_modules/
-Backend/.env
-node_modules/
-Backend/node_modules/
-mongosh-2.5.10-win32-x64/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment files
 .env
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# MongoDB binaries / big files
+mongosh-2.5.10-win32-x64/
+*.exe
+*.zip
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / temp folders
+dist/
+build/
+tmp/
+temp/
