@@ -1,17 +1,21 @@
 @echo off
-REM Pull latest changes first
-git pull origin master
+:: Change to your repo folder
+cd "C:\Users\NehZewd\Documents\hanii\Amediaa coverage final\Amediaa coverage final\Amediaa coverage final"
 
-REM Ask for a commit message
-set /p commitmsg=Enter commit message: 
+:: Ask for commit message
+set /p msg="Enter commit message: "
 
-REM Stage all changes
+:: Stage all changes
 git add .
 
-REM Commit with your message
-git commit -m "%commitmsg%"
+:: Commit with the message
+git commit -m "%msg%"
 
-REM Push to GitHub master branch
-git push origin master
+:: Pull first to avoid conflicts
+git pull origin main --rebase
 
-pause
+:: Push to main
+git push origin main
+
+echo Done! Press any key to exit.
+pause >nul
