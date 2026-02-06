@@ -1120,15 +1120,17 @@
         // ===========================================
         async function handleLogin(event) {
             event.preventDefault();
-            // Prevent double submission
+
+            // PREVENT DOUBLE SUBMISSION - FIX 1
+            const loginBtn = document.getElementById('loginBtn');
             if (loginBtn.disabled) {
                 console.log('⚠️ Login already in progress');
                 return;
             }
+
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
-            const loginBtn = document.getElementById('loginBtn');
 
             // Basic validation
             if (!email || !password) {
@@ -1177,7 +1179,6 @@
                 console.log('📧 User email:', user.email);
 
                 // Store user session
-                // Store user session - ALWAYS use localStorage
                 const sessionData = {
                     isLoggedIn: true,
                     email: user.email,
@@ -1191,6 +1192,11 @@
                     jwtToken: token,
                     accessToken: token
                 };
+
+                // CLEAR OLD SESSIONS FIRST - FIX 2
+                localStorage.removeItem('userSession');
+                localStorage.removeItem('authToken');
+                sessionStorage.clear();
 
                 // ALWAYS save to localStorage
                 localStorage.setItem('userSession', JSON.stringify(sessionData));
@@ -1313,10 +1319,8 @@
 
                 console.log('📍 Final redirect path:', redirectPath);
 
-                // Wait 1.5 seconds then redirect
-                setTimeout(() => {
-                    window.location.href = redirectPath;
-                }, 1500);
+                // IMMEDIATE REDIRECT - FIX 3 (Remove setTimeout)
+                window.location.href = redirectPath;
 
             } catch (error) {
                 console.error('❌ Login error:', error);

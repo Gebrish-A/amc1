@@ -556,6 +556,7 @@
 
     <script>
         // ADD THIS RIGHT AFTER <script> TAG STARTS
+        // ADD THIS RIGHT AFTER <script> TAG STARTS
         console.log('🔍 === DASHBOARD LOAD DEBUG ===');
         console.log('URL:', window.location.href);
         console.log('Referrer:', document.referrer);
@@ -586,16 +587,40 @@
         } else if (document.referrer.includes('dashboard')) {
             console.warn('⚠️ Redirect loop detected!');
         }
+        // ===========================================
+        // STEP 13: SIMPLE REDIRECT LOGGING
+        // ===========================================
+        console.log('🔍 Simple redirect tracking enabled');
 
-        // TEMPORARY: If no session but came from login, refresh once
-        if (!userSession && document.referrer.includes('login')) {
-            console.log('🔄 No session found, refreshing...');
-            setTimeout(() => location.reload(), 500);
-        }
+        // Log when page tries to unload (redirect)
+        window.addEventListener('beforeunload', function (event) {
+            console.log('🔄 Page unloading (redirecting)...');
+            console.trace('Unload stack trace:');
 
+            // Check where we're going
+            const session = localStorage.getItem('userSession');
+            console.log('Session at unload:', session ? 'EXISTS' : 'MISSING');
 
+            if (!session) {
+                console.error('❌ NO SESSION during unload!');
+            }
+        });
 
-        // ... rest of your code
+        // Also log any setTimeout/setInterval that might cause redirect
+        const originalSetTimeout = window.setTimeout;
+        window.setTimeout = function (fn, delay) {
+            // Check if the function contains redirect code
+            const fnString = fn.toString();
+            if (fnString.includes('location.href') || fnString.includes('login.html')) {
+                console.warn('⚠️ Suspicious setTimeout detected:', fnString);
+                console.trace('setTimeout stack trace:');
+            }
+            return originalSetTimeout.apply(this, arguments);
+        };
+
+        console.log('✅ Simple tracking ready');
+
+        // CONTINUE WITH YOUR EXISTING CLASS CODE
         class CrewDashboard {
             constructor() {
                 console.log('🔨 Dashboard constructor called');
@@ -690,21 +715,23 @@
                 console.log('🎉 Dashboard fully loaded!');
             }
             async loadUserData() {
-                console.log('🔐 loadUserData() called');
+                console.log('🔐 === loadUserData() START ===');
+                console.trace('Called from:');
+
+                // Get session from localStorage
+                const sessionStr = localStorage.getItem('userSession');
+                console.log('Session string:', sessionStr);
+
+                if (!sessionStr) {
+                    console.error('❌ loadUserData: No userSession found');
+                    console.log('Redirecting to login...');
+                    window.location.href = 'login.html?mode=login';
+                    throw new Error('No user session'); // This stops further execution
+                }
 
                 try {
-                    // Get userSession from localStorage
-                    const userSessionStr = localStorage.getItem('userSession');
-                    console.log('📦 userSession exists:', !!userSessionStr);
-
-                    if (!userSessionStr) {
-                        console.error('❌ No userSession found, redirecting to login');
-                        window.location.href = 'login.html?mode=login';
-                        return;
-                    }
-
-                    const session = JSON.parse(userSessionStr);
-                    console.log('👤 Session user:', session.name, session._id);
+                    const session = JSON.parse(sessionStr);
+                    console.log('✅ Session parsed:', session.name, session._id);
 
                     // Set user data
                     this.data.user = {
@@ -720,15 +747,32 @@
                     console.log('✅ User ID set:', this.config.userId);
 
                     this.updateUserUI();
-                    console.log('✅ loadUserData completed successfully');
+                    console.log('✅ loadUserData() COMPLETED SUCCESSFULLY');
 
                 } catch (error) {
-                    console.error('❌ Error in loadUserData:', error);
-                    this.showToast('Session error. Please login again.', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'login.html?mode=login';
-                    }, 1500);
+                    console.error('❌ loadUserData ERROR:', error);
+                    console.log('Would redirect to login here');
+                    // window.location.href = 'login.html?mode=login'; // COMMENT THIS OUT TEMPORARILY
                 }
+
+                console.log('🔐 === loadUserData() END ===');
+
+            }
+            getAuthToken() {
+                console.log('🔑 getAuthToken() called');
+                const sessionStr = localStorage.getItem('userSession');
+                if (sessionStr) {
+                    try {
+                        const session = JSON.parse(sessionStr);
+                        console.log('✅ Token found in session');
+                        return session.token || session.jwtToken || session.accessToken;
+                    } catch (e) {
+                        console.error('❌ Error parsing session for token');
+                        return null;
+                    }
+                }
+                console.log('⚠️ No session found, checking authToken directly');
+                return localStorage.getItem('authToken');
             }
 
 
@@ -773,18 +817,11 @@
                 }
 
                 // If still no token or it's a mock token
-                if (!token || token.includes('mock-jwt-token')) {
-                    window.location.href = 'login.html?mode=login';
-                    return;
+                if (!token) {
+                    console.log('⚠️ No token available');
+                    return; // Don't redirect, just skip
                 }
-                // Remove mock tokens
-                if (token && token.includes('mock-jwt-token')) {
-                    // Clear the mock token
-                    localStorage.removeItem('authToken');
-                    // Redirect to login for real authentication
-                    window.location.href = 'login.html?mode=login';
-                    return;
-                }
+
                 try {
                     const response = await fetch(`${this.config.apiBaseUrl}/crew`);
 
@@ -804,7 +841,21 @@
 
                 } catch (error) {
                     console.error('Error loading crew data:', error);
-                    this.showToast(`Failed to load crew data: ${error.message}`, 'error');
+
+                    // If it's a 401 error (mock token), use mock data instead
+                    if (error.message.includes('401')) {
+                        console.log('⚠️ Using mock crew data (401 error)');
+                        // Load mock crew data
+                        this.data.crewMembers = [
+                            { id: '1', name: 'John Doe', status: 'available', type: 'Camera Operator' },
+                            { id: '2', name: 'Jane Smith', status: 'on_field', type: 'Sound Engineer' },
+                            { id: '3', name: 'Mike Johnson', status: 'available', type: 'Producer' }
+                        ];
+                        this.renderCrewOverview();
+                        this.updateCrewStats();
+                    } else {
+                        this.showToast(`Failed to load crew data: ${error.message}`, 'error');
+                    }
                 }
             }
 
@@ -937,31 +988,63 @@
                     }
 
                     // If still no token or it's a mock token
-                    if (!token || token.includes('mock-jwt-token')) {
-                        window.location.href = 'login.html?mode=login';
-                        return;
+                    if (!token) {
+                        console.log('⚠️ No token available');
+                        return; // Don't redirect, just skip
                     }
                     const response = await fetch(`${this.config.apiBaseUrl}/requests/crew/${this.config.userId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            this.data.myAssignments = result.data || [];
+            this.renderMyAssignments();
+            this.updateCrewStats();
+            this.updateBadges();
+        }
+
+    } catch (error) {
+        console.error('Error loading assignments:', error);
+        
+        // Add mock data handling for 401 errors
+        if (error.message.includes('401') || error.message.includes('404')) {
+            console.log('⚠️ Using mock assignments data');
+            this.data.myAssignments = [
+                {
+                    _id: '1',
+                    title: 'Morning News Coverage',
+                    status: 'assigned',
+                    date: new Date().toISOString(),
+                    priority: 'high',
+                    category: 'News',
+                    address: 'Main Studio',
+                    startTime: '09:00 AM',
+                    description: 'Cover morning news segment'
+                },
+                {
+                    _id: '2',
+                    title: 'Sports Event Recording',
+                    status: 'in_progress',
+                    date: new Date().toISOString(),
+                    priority: 'medium',
+                    category: 'Sports',
+                    address: 'City Stadium',
+                    startTime: '02:00 PM',
+                    description: 'Record football match highlights'
+                }
+            ];
+            this.renderMyAssignments();
+            this.updateCrewStats();
+            this.updateBadges();
                     }
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        this.data.myAssignments = result.data || [];
-                        this.renderMyAssignments();
-                        this.updateCrewStats();
-                        this.updateBadges();
-                    }
-
-                } catch (error) {
-                    console.error('Error loading assignments:', error);
                 }
             }
 
@@ -1085,6 +1168,7 @@
                     this.data.equipment = [];
                     this.renderEquipmentStatus();
                 }
+
             }
             renderEquipmentStatus() {
                 const container = document.getElementById('equipmentStatus');
@@ -1154,9 +1238,9 @@
                     }
 
                     // If still no token or it's a mock token
-                    if (!token || token.includes('mock-jwt-token')) {
-                        window.location.href = 'login.html?mode=login';
-                        return;
+                    if (!token) {
+                        console.log('⚠️ No token available');
+                        return; // Don't redirect, just skip
                     }
                     const response = await fetch(`${this.config.apiBaseUrl}/notifications/crew/${this.config.userId}`, {
                         headers: {

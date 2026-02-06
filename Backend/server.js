@@ -11,6 +11,12 @@ const registertRoutes = require('./src/routes/registertRoutes');
 const requestRoutes = require('./src/routes/requestRoutes');
 const app = express();
 
+// Add this line AFTER const app = express();
+// AFTER const app = express();
+// ADD THIS LINE:
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Also make sure you have the 'uploads' folder in your project root
 // ==================== JWT CONFIGURATION ====================
 const JWT_SECRET = process.env.JWT_SECRET || 'ameco-super-secret-jwt-key-2024';
 const JWT_EXPIRES_IN = '7d';
@@ -18,14 +24,118 @@ const JWT_EXPIRES_IN = '7d';
 
 // ==================== MIDDLEWARE ====================
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:5001'],
-  credentials: true
+  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:5001', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(morgan("dev"));
+app.use(express.json()); // For JSON data
+app.use(express.urlencoded({ extended: true })); // For URL-encoded data 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/auth', registertRoutes);
+//app.use('/api/auth', registertRoutes);
+const authRoutes = require('./src/routes/auth');  // ✅ Add this
+app.use('/api/auth', authRoutes);  // ✅ Use the correct auth routes
 app.use('/api/requests', requestRoutes);
+// ✅ Add file serving route directly in server.js
+// ==================== REPORTERS API ENDPOINT ====================
+// ==================== REPORTERS API ENDPOINT (FIXED) ====================
+// ==================== SIMPLE REPORTERS API ENDPOINT ====================
+// ==================== REPORTERS API - SIMPLE SOLUTION ====================
+// ==================== REPORTERS API - FIXED VERSION ====================
+app.get("/api/reporters", async (req, res) => {
+  try {
+    console.log("🔍 Fetching ALL users for reporters list...");
+    
+    // Get ALL users except admins
+    const users = await User.find({ 
+      role: { $ne: "admin" }
+    })
+    .select('_id name email role department phone')
+    .sort({ name: 1 });
+
+    console.log(`✅ Found ${users.length} users`);
+
+    res.json({
+      success: true,
+      data: users.map(user => ({
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        department: user.department || 'General',
+        phone: user.phone || '',
+        status: 'available',  // ← ALWAYS SET TO 'available'
+        isActive: true        // ← ALWAYS SET TO TRUE
+      })),
+      count: users.length
+    });
+    
+  } catch (error) {
+    console.error("🔥 Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/requests/file/:requestId/:docType', async (req, res) => {
+    try {
+        console.log(`📥 Serving file: ${req.params.docType} for request ${req.params.requestId}`);
+        
+        const Request = getRequestModel(); // Use your existing function
+        
+        const request = await Request.findById(req.params.requestId);
+        
+        if (!request) {
+            console.log('❌ Request not found');
+            return res.status(404).json({
+                success: false,
+                message: 'Request not found'
+            });
+        }
+        
+        const docType = req.params.docType; // 'nationalId', 'tradingLicense', or 'proposal'
+        const document = request.documents[docType];
+        
+        if (!document || !document.data) {
+            console.log(`❌ Document ${docType} not found or has no data`);
+            return res.status(404).json({
+                success: false,
+                message: `Document ${docType} not found`
+            });
+        }
+        
+        console.log(`✅ Serving ${docType}: ${document.filename} (${document.contentType}, ${document.data.length} bytes)`);
+        
+        // Set headers and send file buffer
+        res.set({
+            'Content-Type': document.contentType,
+            'Content-Disposition': `inline; filename="${document.filename}"`,
+            'Content-Length': document.data.length
+        });
+        
+        res.send(document.data);
+        
+    } catch (error) {
+        console.error('🔥 Error serving file:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to serve file'
+        });
+    }
+});
+app.use((req, res, next) => {
+  if (req.headers['content-type'] && req.headers['content-type'].startsWith('multipart/form-data')) {
+    // Let multer handle it - don't parse body here
+    next();
+  } else {
+    // Use normal body parsing for other content types
+    express.json()(req, res, next);
+  }
+});
 // ==================== STATIC FILES ====================
 app.use(express.static("public", {
   setHeaders: (res, path) => {
@@ -62,8 +172,32 @@ const authMiddleware = {
         });
       }
 
-      // Verify token
+      // ✅ ADD THIS MOCK TOKEN ACCEPTANCE HERE:
+      if (token.includes('mock-jwt-token')) {
+        console.log('🎭 DEMO MODE: Accepting mock token');
+
+        // Extract user ID from mock token format: mock-jwt-token-timestamp-userid
+        const userId = token.split('-').pop();
+        console.log('Extracted User ID:', userId);
+
+        // Find user by ID (from User model)
+        const user = await User.findById(userId);
+        if (!user) {
+          console.error('❌ User not found for mock token');
+          return res.status(401).json({
+            success: false,
+            error: "User not found for mock token"
+          });
+        }
+
+        console.log(`✅ Demo user authenticated: ${user.name} (${user.role})`);
+        req.user = user;
+        return next(); // Skip JWT verification
+      }
+
+      // Verify token (real JWT)
       const decoded = jwt.verify(token, JWT_SECRET);
+
 
       // Get user from token
       const user = await User.findById(decoded.id).select('-password');
@@ -75,12 +209,14 @@ const authMiddleware = {
         });
       }
 
-      if (!user.isActive) {
-        return res.status(401).json({
-          success: false,
-          error: "User account is deactivated"
-        });
-      }
+      // FIX: Handle both boolean true and string "true"
+const isUserActive = user.isActive === true || user.isActive === "true";
+if (!isUserActive) {
+    return res.status(401).json({
+        success: false,
+        error: "User account is deactivated"
+    });
+}
 
       req.user = user;
       next();
@@ -114,6 +250,43 @@ const authMiddleware = {
     };
   }
 };
+// ==================== GET USER'S OWN REQUESTS ====================
+app.get("/api/requests/my-requests", authMiddleware.protect, async (req, res) => {
+  try {
+    console.log('📥 Fetching requests for user:', req.user.email);
+    
+    const Request = getRequestModel();
+    if (!Request) {
+      return res.status(500).json({
+        success: false,
+        message: 'Database model not ready'
+      });
+    }
+
+    // Get requests submitted by this user
+    const userRequests = await Request.find({
+      submitterEmail: req.user.email.toLowerCase()
+    })
+    .sort({ createdAt: -1 })
+    .limit(100);
+
+    console.log(`✅ Found ${userRequests.length} requests for ${req.user.email}`);
+
+    res.json({
+      success: true,
+      count: userRequests.length,
+      data: userRequests
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching user requests:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch requests',
+      error: error.message
+    });
+  }
+});
 
 // ==================== DATABASE CONNECTION ====================
 console.log("🔗 Connecting to MongoDB...");
@@ -184,6 +357,8 @@ UserSchema.methods.comparePassword = async function (password) {
 };
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
 UserSchema.methods.generateAuthToken = function () {
+  // Make sure jwt is imported/defined
+  const jwt = require('jsonwebtoken');  // ← ADD THIS LINE
   return jwt.sign(
     {
       id: this._id,
@@ -253,9 +428,9 @@ const Notification = mongoose.model("Notification", NotificationSchema);
 // User registration
 app.post("/api/auth/register", async (req, res) => {
   try {
-    const { name, email, password, role = "requester", department = "General", phone } = req.body;
+    const { name, email, password, role = "requester", phone } = req.body;
 
-    // Validate required fields
+    // Validate required fields - REMOVE department
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -272,13 +447,13 @@ app.post("/api/auth/register", async (req, res) => {
       });
     }
 
-    // Create user
+    // Create user WITHOUT requiring department
     const user = await User.create({
       name,
       email,
       password,
       role,
-      department,
+      department: "General", // Default value
       phone: phone || ""
     });
 
@@ -351,12 +526,14 @@ app.post("/api/auth/login", async (req, res) => {
     }
 
     // Check if user is active
-    if (!user.isActive) {
-      return res.status(403).json({
-        success: false,
-        error: "Account is deactivated. Please contact administrator."
-      });
-    }
+    // FIX: Check isActive properly (handle both string "true" and boolean true)
+const isUserActive = user.isActive === true || user.isActive === "true";
+if (!isUserActive) {
+  return res.status(403).json({
+    success: false,
+    error: "Account is deactivated. Please contact administrator."
+  });
+}
 
     // Update last login
     user.lastLogin = new Date();
@@ -478,6 +655,12 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Event", EventSchema);
 
 // ==================== API ROUTES ====================
+// ==================== API ROUTES ====================
+
+// TEST: Simple crew endpoint
+
+
+// The rest of your existing API routes...
 
 // Root endpoint
 app.get("/api", (req, res) => {
@@ -522,6 +705,358 @@ app.get("/api/users", authMiddleware.protect, async (req, res) => {
       data: users
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+// ==================== USER MANAGEMENT ROUTES ====================
+
+//Get all users with optional filters
+app.get("/api/admin/users", authMiddleware.protect, async (req, res) => {
+  try {
+    const { role, status, search, page = 1, limit = 20 } = req.query;
+    let query = {};
+
+    // Filter by role
+    if (role && role !== 'all') {
+      query.role = role;
+    }
+
+    // Filter by status
+    if (status === 'active') {
+      query.isActive = true;
+    } else if (status === 'inactive') {
+      query.isActive = false;
+    }
+
+    // Search functionality
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), 'i');
+      query.$or = [
+        { name: searchRegex },
+        { email: searchRegex },
+        { department: searchRegex }
+      ];
+    }
+
+    // Pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const [users, total] = await Promise.all([
+      User.find(query)
+        .select('-password')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+      User.countDocuments(query)
+    ]);
+
+    res.json({
+      success: true,
+      data: users,
+      pagination: {
+        total,
+        page: parseInt(page),
+        limit: parseInt(limit),
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// 2. Create new user (admin only)
+app.post("/api/admin/users", authMiddleware.protect, async (req, res) => {
+  try {
+    const { name, email, password, role, department, phone, permissions } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !role || !department) {
+      return res.status(400).json({
+        success: false,
+        error: "Name, email, role, and department are required"
+      });
+    }
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: "User with this email already exists"
+      });
+    }
+
+    // Create user
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      password: password || "Default@123", // Default password
+      role,
+      department,
+      phone: phone || "",
+      permissions: permissions || {
+        canCreateRequest: true,
+        canApproveRequest: role === 'admin' || role === 'editor',
+        canAssignResources: role === 'admin' || role === 'editor',
+        canUploadMedia: role !== 'requester',
+        canGenerateReports: role === 'admin' || role === 'manager'
+      }
+    });
+
+    // Generate token for immediate use (optional)
+    const token = user.generateAuthToken();
+
+    // Prepare response
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    res.status(201).json({
+      success: true,
+      data: {
+        user: userResponse,
+        token
+      },
+      message: "User created successfully"
+    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Update user
+app.put("/api/admin/users/:id", authMiddleware.protect, async (req, res) => {  try {
+    const { id } = req.params;
+    const { name, email, role, department, phone, isActive, permissions } = req.body;
+
+    // Find user
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+
+    // Check email uniqueness if changed
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          error: "Email already in use"
+        });
+      }
+    }
+
+    // Update user
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email.toLowerCase();
+    if (role) updateData.role = role;
+    if (department) updateData.department = department;
+    if (phone !== undefined) updateData.phone = phone;
+    if (isActive !== undefined) updateData.isActive = isActive;
+    if (permissions) updateData.permissions = permissions;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    res.json({
+      success: true,
+      data: updatedUser,
+      message: "User updated successfully"
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Delete user
+// DELETE user - FIX THIS LINE!
+app.delete("/api/admin/users/:id", authMiddleware.protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Don't allow deleting your own account
+    if (id === req.user._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        error: "Cannot delete your own account"
+      });
+    }
+
+    const user = await User.findByIdAndDelete(id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User deleted successfully"
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// GET user by ID - FIX THIS LINE!
+app.get("/api/admin/users/:id", authMiddleware.protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const user = await User.findById(id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+// Reset user password
+app.post("/api/admin/users/:id/reset-password", authMiddleware.protect, authMiddleware.authorize('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: "Password must be at least 6 characters long"
+      });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found"
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Password reset successfully"
+    });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get user statistics
+app.get("/api/admin/users/stats", authMiddleware.protect, authMiddleware.authorize('admin', 'manager'), async (req, res) => {
+  try {
+    const stats = await User.aggregate([
+      {
+        $group: {
+          _id: "$role",
+          count: { $sum: 1 },
+          active: {
+            $sum: { $cond: [{ $eq: ["$isActive", true] }, 1, 0] }
+          }
+        }
+      },
+      {
+        $project: {
+          role: "$_id",
+          count: 1,
+          active: 1,
+          inactive: { $subtract: ["$count", "$active"] }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Get department distribution
+    const departments = await User.aggregate([
+      { $match: { department: { $ne: null, $ne: "" } } },
+      {
+        $group: {
+          _id: "$department",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // Get growth over time
+    const growth = await User.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+      { $limit: 12 }
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        byRole: stats,
+        byDepartment: departments,
+        growth: growth,
+        total: await User.countDocuments(),
+        active: await User.countDocuments({ isActive: true }),
+        today: await User.countDocuments({
+          createdAt: { $gte: new Date().setHours(0, 0, 0, 0) }
+        })
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching user stats:", error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -1007,54 +1542,7 @@ app.get("/api/requests/with-crew", authMiddleware.protect, async (req, res) => {
   }
 });
 
-// Get crew assignments
-app.get("/api/requests/crew/:id", authMiddleware.protect, async (req, res) => {
-  try {
-    const Request = getRequestModel();
-    if (!Request) {
-      return res.status(500).json({
-        success: false,
-        message: 'Database model not ready'
-      });
-    }
 
-    const { id } = req.params;
-
-    // Find requests where this crew member is assigned
-    const assignments = await Request.find({
-      assignedCrew: id,
-      $or: [
-        { status: "assigned" },
-        { status: "in_progress" }
-      ]
-    })
-      .sort({ updatedAt: -1 })
-      .limit(20);
-
-    // Find completed assignments
-    const completed = await Request.find({
-      assignedCrew: id,
-      status: "completed"
-    })
-      .sort({ updatedAt: -1 })
-      .limit(10);
-
-    res.json({
-      success: true,
-      data: {
-        active: assignments,
-        completed: completed,
-        activeCount: assignments.length,
-        completedCount: completed.length
-      }
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
 
 // Update crew status for assignment
 app.put("/api/requests/:id/crew-status", authMiddleware.protect, async (req, res) => {
@@ -1224,6 +1712,7 @@ pages.forEach(page => {
 
 
 // ==================== REQUEST MANAGEMENT ENDPOINTS ====================
+// ==================== REQUEST MODEL ====================
 
 // Helper to get Request model safely
 const getRequestModel = () => {
@@ -1308,6 +1797,46 @@ app.get('/api/requests/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch request',
+      error: error.message
+    });
+  }
+});
+app.get("/api/requests/crew/:id", authMiddleware.protect, async (req, res) => {
+  try {
+    console.log('📋 Getting crew assignments for:', req.params.id);
+    
+    const Request = getRequestModel();
+    if (!Request) {
+      return res.status(500).json({
+        success: false,
+        message: 'Database model not ready'
+      });
+    }
+
+    const { id } = req.params;
+
+    // Find requests where this crew member is assigned
+    const assignments = await Request.find({
+      "assignedCrew": id,
+      status: { $in: ["assigned", "in_progress"] }
+    })
+      .sort({ updatedAt: -1 })
+      .limit(20);
+
+    console.log(`✅ Found ${assignments.length} assignments for crew ${id}`);
+
+    res.json({
+      success: true,
+      data: assignments,
+      count: assignments.length,
+      message: assignments.length > 0 
+        ? `Found ${assignments.length} assignments` 
+        : "No active assignments"
+    });
+  } catch (error) {
+    console.error('❌ Error getting crew assignments:', error);
+    res.status(500).json({
+      success: false,
       error: error.message
     });
   }
@@ -1687,6 +2216,32 @@ app.get("/api/crew/:id", authMiddleware.protect, async (req, res) => {
     });
   }
 });
+
+// ==================== ADD TEST ENDPOINT HERE ====================
+app.get("/api/test-crew", async (req, res) => {
+  console.log('🎯 TEST: Simple crew endpoint called');
+  res.json({ 
+    success: true, 
+    message: "Simple endpoint works",
+    timestamp: new Date().toISOString()
+  });
+});
+// Add this route after your other routes
+app.get('/api/debug/latest-request', async (req, res) => {
+    try {
+        const Request = getRequestModel();
+        const latestRequest = await Request.findOne().sort({ createdAt: -1 });
+        
+        res.json({
+            success: true,
+            data: latestRequest,
+            fields: latestRequest ? Object.keys(latestRequest.toObject()) : []
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Handle 404 for API routes
 app.use("/api/*", (req, res) => {
   res.status(404).json({
@@ -1862,6 +2417,33 @@ app.put('/api/requests/:id/status', async (req, res) => {
 
 // ==================== START SERVER ====================
 const PORT = process.env.PORT || 5001;
+// DEBUG: List all routes
+app.get("/api/debug/routes", (req, res) => {
+  const routes = [];
+  
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      routes.push({
+        path: middleware.route.path,
+        method: Object.keys(middleware.route.methods)[0].toUpperCase()
+      });
+    } else if (middleware.name === 'router') {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          routes.push({
+            path: handler.route.path,
+            method: Object.keys(handler.route.methods)[0].toUpperCase()
+          });
+        }
+      });
+    }
+  });
+  
+  res.json({
+    success: true,
+    routes: routes.filter(r => r.path.includes('/api/admin'))
+  });
+});
 app.listen(PORT, () => {
   console.log(`
 🚀 AMECO CMS Server running on http://localhost:${PORT}

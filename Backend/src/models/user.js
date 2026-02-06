@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
+// Add these lines after your imports in user.js
+const JWT_SECRET = process.env.JWT_SECRET || 'your-fallback-secret';
+const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d';
 
 const UserSchema = new mongoose.Schema({
   userId: {

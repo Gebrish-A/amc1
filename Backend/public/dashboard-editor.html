@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +17,75 @@
             --editor-success: #27ae60;
             --sidebar-width: 250px;
         }
+/* Add this to your style section */
+#assignReporterBody .list-group {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
 
+#assignReporterBody .reporter-item {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#assignReporterBody .reporter-item:last-child {
+    border-bottom: none;
+}
+
+#assignReporterBody .avatar-initials {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.9rem;
+}
+
+#assignReporterBody .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+/* Approval Notes Section Styling */
+#assignReporterBody .card {
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#assignReporterBody textarea {
+    resize: vertical;
+    min-height: 100px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+#assignReporterBody textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+#assignReporterBody .form-check {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+#assignReporterBody .form-check:last-child {
+    border-bottom: none;
+}
+
+#assignReporterBody .form-check-input:checked {
+    background-color: #3498db;
+    border-color: #3498db;
+}
         * {
             margin: 0;
             padding: 0;
@@ -191,8 +260,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Stats Cards */
@@ -279,8 +355,15 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .dashboard-card:hover {
@@ -334,39 +417,39 @@
                 transform: translateX(-100%);
                 width: 250px;
             }
-            
+
             .sidebar.active {
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
                 width: 100%;
             }
-            
+
             .main-content.expanded {
                 margin-left: 0;
                 width: 100%;
             }
-            
+
             .content-wrapper {
                 padding: 1rem;
             }
-            
+
             .welcome-banner h1 {
                 font-size: 1.5rem;
             }
-            
+
             .navbar-top {
                 padding: 1rem;
                 flex-wrap: wrap;
                 gap: 1rem;
             }
-            
+
             .mobile-menu-toggle {
                 display: block;
             }
-            
+
             .search-container .input-group {
                 width: 200px !important;
             }
@@ -377,42 +460,42 @@
                 min-height: 110px;
                 padding: 1rem;
             }
-            
+
             .stats-card .count {
                 font-size: 1.5rem;
             }
-            
+
             .stats-card i {
                 font-size: 1.5rem;
             }
-            
+
             .welcome-banner {
                 padding: 1.2rem;
             }
-            
+
             .welcome-banner h1 {
                 font-size: 1.3rem;
             }
-            
+
             .content-wrapper {
                 padding: 0.75rem;
             }
-            
+
             .navbar-top {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.75rem;
                 padding: 0.75rem;
             }
-            
+
             .search-container .input-group {
                 width: 100% !important;
             }
-            
+
             .dropdown {
                 width: 100%;
             }
-            
+
             .dropdown-toggle {
                 width: 100%;
             }
@@ -422,15 +505,15 @@
             .sidebar {
                 width: 100%;
             }
-            
+
             .stats-card {
                 min-height: 100px;
             }
-            
+
             .stats-card .count {
                 font-size: 1.3rem;
             }
-            
+
             .dashboard-card .card-body {
                 padding: 1rem;
             }
@@ -514,14 +597,32 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-        .toast-success { border-left-color: #27ae60; }
-        .toast-info { border-left-color: #3498db; }
-        .toast-warning { border-left-color: #f39c12; }
-        .toast-error { border-left-color: #e74c3c; }
+        .toast-success {
+            border-left-color: #27ae60;
+        }
+
+        .toast-info {
+            border-left-color: #3498db;
+        }
+
+        .toast-warning {
+            border-left-color: #f39c12;
+        }
+
+        .toast-error {
+            border-left-color: #e74c3c;
+        }
 
         /* Quick Actions */
         .quick-action-btn {
@@ -588,7 +689,7 @@
             right: 0;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             max-height: 300px;
             overflow-y: auto;
             display: none;
@@ -612,8 +713,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Professional Enhancements */
@@ -623,7 +729,7 @@
             padding: 1.5rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .section-header h1 {
@@ -694,7 +800,7 @@
         .modal-content {
             border-radius: 12px;
             border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
@@ -753,7 +859,7 @@
             font-size: 0.8rem;
         }
 
-        .btn-group-sm > .btn {
+        .btn-group-sm>.btn {
             padding: 0.25rem 0.5rem;
             font-size: 0.8rem;
         }
@@ -762,7 +868,7 @@
         .dropdown-menu {
             border-radius: 8px;
             border: 1px solid #e9ecef;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .dropdown-item {
@@ -809,8 +915,67 @@
             font-size: 0.8rem;
             padding: 0.25rem 0.75rem;
         }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        /* Improved modal styling */
+        .modal-lg .modal-content {
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: none;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        /* Card styling */
+        .card {
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* List group item styling */
+        .list-group-item.active {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-color: #2980b9;
+        }
+
+        /* Badge improvements */
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.8em;
+        }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -823,7 +988,7 @@
             </div>
             <span class="badge bg-light text-dark" id="userRoleBadge">Editor</span>
         </div>
-        
+
         <div class="sidebar-menu">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -836,35 +1001,14 @@
                     <a class="nav-link" href="#" id="contentLink">
                         <i class="bi bi-file-earmark-text"></i>
                         <span>Content Review</span>
-                        <span class="badge bg-warning" id="reviewBadge">3</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="articlesLink">
-                        <i class="bi bi-newspaper"></i>
-                        <span>Articles</span>
-                        <span class="badge bg-info" id="articlesBadge">2</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="writersLink">
-                        <i class="bi bi-pencil"></i>
-                        <span>Writers</span>
-                        <span class="badge bg-success" id="writersBadge">3</span>
+                        <span class="badge bg-warning" id="reviewBadge">0</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" id="requestsLink">
                         <i class="bi bi-inbox"></i>
                         <span>Media Requests</span>
-                        <span class="badge bg-warning" id="requestsBadge">2</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="approvalLink">
-                        <i class="bi bi-clipboard-check"></i>
-                        <span>Approval Workflow</span>
-                        <span class="badge bg-warning" id="approvalBadge">1</span>
+                        <span class="badge bg-warning" id="requestsBadge">0</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -873,15 +1017,9 @@
                         <span>Settings</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="helpLink">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Help & Support</span>
-                    </a>
-                </li>
             </ul>
         </div>
-        
+
         <div class="user-profile">
             <div class="user-info d-flex align-items-center">
                 <div class="avatar-initials" id="userAvatar">EU</div>
@@ -922,21 +1060,22 @@
                 <div class="position-relative">
                     <button class="btn btn-light position-relative" id="notificationsBtn">
                         <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
-                            2
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            id="notificationCount">
+                            0
                         </span>
                     </button>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="quickActionsDropdown" data-bs-toggle="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="quickActionsDropdown"
+                        data-bs-toggle="dropdown">
                         <i class="bi bi-lightning"></i> Quick Actions
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" id="quickNewArticle"><i class="bi bi-plus-circle"></i> New Article</a></li>
-                        <li><a class="dropdown-item" href="#" id="quickAssignWriter"><i class="bi bi-person-plus"></i> Assign Writer</a></li>
-                        <li><a class="dropdown-item" href="#" id="quickStartApproval"><i class="bi bi-clipboard-check"></i> Start Approval</a></li>
-                        <li><a class="dropdown-item" href="#" id="quickReviewPending"><i class="bi bi-clock-history"></i> Review Pending</a></li>
-                        <li><a class="dropdown-item" href="#" id="quickReviewMediaRequests"><i class="bi bi-inbox"></i> Review Media Requests</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickReviewMediaRequests"><i class="bi bi-inbox"></i>
+                                Review Media Requests</a></li>
+                        <li><a class="dropdown-item" href="#" id="quickReviewPending"><i
+                                    class="bi bi-clock-history"></i> Review Pending</a></li>
                     </ul>
                 </div>
             </div>
@@ -949,7 +1088,8 @@
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <h1 id="welcomeMessage">Welcome, Editor User</h1>
-                        <p id="welcomeSubtitle">Today's Priority: <strong id="pendingReviews">3 articles for review</strong>, <strong id="deadlines">2 deadlines approaching</strong>, <strong id="mediaRequests">2 media requests pending</strong>.</p>
+                        <p id="welcomeSubtitle">Today's Priority: <strong id="pendingReviews">0 articles for
+                                review</strong>, <strong id="mediaRequests">0 media requests pending</strong>.</p>
                     </div>
                     <div class="col-md-4 text-md-end text-start mt-2 mt-md-0">
                         <div class="bg-white text-dark rounded-pill px-3 py-1 d-inline-block shadow-sm">
@@ -962,58 +1102,37 @@
 
             <!-- Stats Cards -->
             <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-3">
+                <div class="col-xl-4 col-md-6 mb-3">
                     <div class="stats-card primary" onclick="dashboard.showSection('content')">
                         <i class="bi bi-file-earmark-text"></i>
-                        <h3 class="count" id="reviewCount">3</h3>
+                        <h3 class="count" id="reviewCount">0</h3>
                         <p class="label">For Review</p>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card success" onclick="dashboard.showSection('articles')">
+                <div class="col-xl-4 col-md-6 mb-3">
+                    <div class="stats-card success" onclick="dashboard.showSection('content')">
                         <i class="bi bi-check-circle"></i>
-                        <h3 class="count" id="publishedCount">1</h3>
+                        <h3 class="count" id="publishedCount">0</h3>
                         <p class="label">Published</p>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-3">
-                    <div class="stats-card warning" onclick="dashboard.showSection('writers')">
-                        <i class="bi bi-people"></i>
-                        <h3 class="count" id="writersCount">3</h3>
-                        <p class="label">Writers</p>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-md-6 mb-3">
+                <div class="col-xl-4 col-md-6 mb-3">
                     <div class="stats-card danger" onclick="dashboard.showSection('requests')">
                         <i class="bi bi-inbox"></i>
-                        <h3 class="count" id="requestsCount">2</h3>
+                        <h3 class="count" id="requestsCount">0</h3>
                         <p class="label">Media Requests</p>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <!-- Content Review Queue -->
-                <div class="col-lg-6 mb-4">
-                    <div class="dashboard-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Review Queue</h5>
-                            <button class="btn btn-sm btn-primary" onclick="dashboard.showSection('content')">View All</button>
-                        </div>
-                        <div class="card-body">
-                            <div id="reviewQueue">
-                                <!-- Content will be loaded by JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Recent Activities -->
-                <div class="col-lg-6 mb-4">
+                <div class="col-lg-12 mb-4">
                     <div class="dashboard-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Recent Activities</h5>
-                            <button class="btn btn-sm btn-link" onclick="dashboard.viewAllActivities()">View All</button>
+                            <button class="btn btn-sm btn-link" onclick="dashboard.viewAllActivities()">View
+                                All</button>
                         </div>
                         <div class="card-body">
                             <div class="activity-list" id="activityList">
@@ -1033,32 +1152,25 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <button class="quick-action-btn" onclick="dashboard.createArticle()">
-                                        <i class="bi bi-file-earmark-plus"></i>
-                                        <h6>Create Article</h6>
-                                        <small class="text-muted">Start new content</small>
+                                <div class="col-md-4 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.showSection('content')">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                        <h6>Content Review</h6>
+                                        <small class="text-muted">Review submitted content</small>
                                     </button>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <button class="quick-action-btn" onclick="dashboard.showSection('writers')">
-                                        <i class="bi bi-person-check"></i>
-                                        <h6>Assign Writer</h6>
-                                        <small class="text-muted">Delegate content</small>
-                                    </button>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <button class="quick-action-btn" onclick="dashboard.showSection('approval')">
-                                        <i class="bi bi-clipboard-check"></i>
-                                        <h6>Start Approval</h6>
-                                        <small class="text-muted">Multi-level workflow</small>
-                                    </button>
-                                </div>
-                                <div class="col-md-3 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <button class="quick-action-btn" onclick="dashboard.showSection('requests')">
                                         <i class="bi bi-inbox"></i>
                                         <h6>Media Requests</h6>
                                         <small class="text-muted">Review coverage requests</small>
+                                    </button>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <button class="quick-action-btn" onclick="dashboard.loadSettingsSection()">
+                                        <i class="bi bi-gear"></i>
+                                        <h6>Settings</h6>
+                                        <small class="text-muted">Configure preferences</small>
                                     </button>
                                 </div>
                             </div>
@@ -1089,7 +1201,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-success" id="approveRequestBtn">
-                        <i class="bi bi-check-lg"></i> Approve
+                        <i class="bi bi-check-lg"></i> Approve & Assign
                     </button>
                     <button type="button" class="btn btn-warning" id="requestRevisionBtn">
                         <i class="bi bi-arrow-counterclockwise"></i> Request Revision
@@ -1102,9 +1214,28 @@
         </div>
     </div>
 
+    <!-- Modal for Assigning Reporter -->
+    <div class="modal fade" id="assignReporterModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Reporter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="assignReporterBody">
+                    <!-- Reporter selection will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAssignBtn">Assign Reporter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
         class EditorDashboard {
             constructor() {
@@ -1112,166 +1243,264 @@
                     refreshInterval: 30000,
                     toastDuration: 3000
                 };
-                
+
                 this.data = {
                     user: null,
-                    articles: [],
-                    writers: [],
-                    reviews: [],
-                    approvals: [],
-                    activities: [],
-                    notifications: [],
-                    isNewUser: true,
+                    contentQueue: [],
                     mediaRequests: [],
-                    contentQueue: []
+                    reporters: [],
+                    activities: [],
+                    isNewUser: true
                 };
-                
+
                 this.currentSection = 'dashboard';
                 this.currentMediaRequest = null;
+                this.selectedReporter = null;
                 this.mediaRequestModal = null;
+                this.assignReporterModal = null;
             }
-            
+
             init() {
                 this.loadUserData();
                 this.setupEventListeners();
                 this.updateDateTime();
                 this.startAutoRefresh();
-                
+
                 // Initialize modals
-                const modalElement = document.getElementById('mediaRequestModal');
-                if (modalElement) {
-                    this.mediaRequestModal = new bootstrap.Modal(modalElement);
+                const mediaModalElement = document.getElementById('mediaRequestModal');
+                const assignModalElement = document.getElementById('assignReporterModal');
+
+                if (mediaModalElement) {
+                    this.mediaRequestModal = new bootstrap.Modal(mediaModalElement);
                 }
-                
+
+                if (assignModalElement) {
+                    this.assignReporterModal = new bootstrap.Modal(assignModalElement);
+                }
+
                 // Load initial data
-                this.loadSampleData();
+                this.loadReporters();
                 this.updateDashboardWidgets();
-                this.loadStats();
-                
+
                 if (this.data.isNewUser) {
                     this.initNewUserDashboard();
                 }
             }
-            
+getAssignedReporterDisplay(request) {
+    if (!request.assignedReporter) return '';
+    
+    // Check localStorage first
+    const assignments = JSON.parse(localStorage.getItem('reporterAssignments') || '{}');
+    const localAssignment = assignments[request.id];
+    
+    let reporterName = '';
+    
+    if (localAssignment) {
+        reporterName = localAssignment.reporterName;
+    }
+    // Check if assignedReporter is a full object
+    else if (request.assignedReporter.name) {
+        reporterName = request.assignedReporter.name;
+    }
+    // Check if it's just the status object
+    else if (request.assignedReporter.status === 'accepted') {
+        // Check for separate reporter fields
+        if (request.reporterName) {
+            reporterName = request.reporterName;
+        } else {
+            reporterName = 'Assigned (awaiting details)';
+        }
+    }
+    
+    if (reporterName) {
+        return `<br><small class="text-muted">Assigned to: ${reporterName}</small>`;
+    }
+    
+    return '';
+}
             // ============= DASHBOARD METHODS =============
-            
-            loadSampleData() {
-                // Sample data for testing
-                this.data.contentQueue = [
-                    { id: 'art1', title: 'Economic Growth Report', author: 'John Smith', category: 'Business', submitted: '2 hours ago', status: 'pending', excerpt: 'Analysis of recent economic indicators...' },
-                    { id: 'art2', title: 'Sports Championship Results', author: 'Sarah Johnson', category: 'Sports', submitted: '1 day ago', status: 'pending', excerpt: 'Final results from the national championships...' },
-                    { id: 'art3', title: 'Cultural Heritage Festival', author: 'Mike Wilson', category: 'Culture', submitted: '3 days ago', status: 'pending', excerpt: 'Coverage of the annual cultural festival...' }
-                ];
-                
-                this.data.articles = [
-                    { id: 'a1', title: 'Breaking News: Major Event', author: 'John Smith', status: 'published', views: 1500 },
-                    { id: 'a2', title: 'Economic Analysis', author: 'Sarah Johnson', status: 'draft', views: 0 }
-                ];
-                
-                this.data.writers = [
-                    { id: 'w1', name: 'John Smith', email: 'john@ameco.et', status: 'active', articles: 15 },
-                    { id: 'w2', name: 'Sarah Johnson', email: 'sarah@ameco.et', status: 'active', articles: 8 },
-                    { id: 'w3', name: 'Mike Wilson', email: 'mike@ameco.et', status: 'inactive', articles: 22 }
-                ];
-                
-                this.data.approvals = [
-                    { id: 'app1', title: 'Annual Report', requester: 'Finance Dept', status: 'pending' }
-                ];
-                
-                this.data.notifications = [
-                    { id: 'n1', message: 'New article submitted for review', time: '10 minutes ago', read: false },
-                    { id: 'n2', message: 'Media request approved', time: '1 hour ago', read: true }
-                ];
-                
-                this.data.mediaRequests = [
-                    {
-                        id: 'req1',
-                        title: 'Annual Cultural Festival Coverage',
-                        submittedBy: 'Cultural Affairs Dept',
-                        submitterDepartment: 'Culture',
-                        category: 'culture',
-                        priority: 'high',
-                        status: 'pending',
-                        date: new Date(Date.now() + 86400000 * 2).toISOString(),
-                        startTime: '10:00 AM',
-                        endTime: '4:00 PM',
-                        location: 'City Center Square',
-                        description: 'Coverage of the annual cultural festival featuring traditional dances, music, and food.',
-                        additionalInfo: 'Need 2 camera crews and 1 reporter'
-                    },
-                    {
-                        id: 'req2',
-                        title: 'Breaking News: Road Accident',
-                        submittedBy: 'News Desk',
-                        submitterDepartment: 'News',
-                        category: 'breaking_news',
-                        priority: 'urgent',
-                        status: 'pending',
-                        date: new Date().toISOString(),
-                        startTime: 'Immediate',
-                        endTime: 'ASAP',
-                        location: 'Main Highway',
-                        description: 'Major road accident reported on the main highway. Multiple vehicles involved.'
-                    }
-                ];
+async resendRevisionFeedback(requestId) {
+    const request = this.data.mediaRequests.find(r => r.id === requestId);
+    if (!request) {
+        this.showToast('Request not found', 'danger');
+        return;
+    }
+
+    // You could show the existing feedback and allow editing
+    const existingFeedback = request.editorNotes || 'No feedback provided';
+    const newFeedback = prompt('Current feedback:\n' + existingFeedback + '\n\nUpdate feedback (or keep same):', existingFeedback);
+    
+    if (newFeedback === null) {
+        this.showToast('Cancelled', 'warning');
+        return;
+    }
+
+    await this.updateMediaRequestStatus(requestId, 'in_progress', newFeedback);
+}
+   async loadReporters() {
+    try {
+        console.log('Loading reporters from API...');
+        
+        // Get token from localStorage
+        const sessionStr = localStorage.getItem('userSession');
+        let token = null;
+
+        if (sessionStr) {
+            try {
+                const session = JSON.parse(sessionStr);
+                token = session.token || session.jwtToken;
+                console.log('Token found in session');
+            } catch (e) {
+                console.error('Error parsing session:', e);
             }
+        }
+
+        if (!token) {
+            token = localStorage.getItem('authToken');
+            console.log('Using token from authToken');
+        }
+
+        if (!token) {
+            console.warn('No authentication token found. Using sample reporters.');
+            return this.useSampleReporters();
+        }
+
+        // Try to fetch reporters from API
+        console.log('Fetching from: http://localhost:5001/api/reporters');
+        const response = await fetch('http://localhost:5001/api/reporters', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('Response status:', response.status);
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('API Response:', result);
             
+            if (result.success && result.data && Array.isArray(result.data)) {
+                this.data.reporters = result.data.map(reporter => ({
+                    id: reporter.id || reporter._id,
+                    name: reporter.name || 'Unknown Reporter',
+                    email: reporter.email || 'no-email@example.com',
+                    role: reporter.role || 'reporter',
+                    department: reporter.department || 'Not specified',
+                    phone: reporter.phone || '',
+                    avatar: reporter.avatar || '',
+                    expertise: reporter.expertise || [],
+                    status: reporter.status || 'available',
+                    isActive: reporter.isActive !== false,
+                    lastLogin: reporter.lastLogin
+                }));
+                
+                console.log(`✅ Successfully loaded ${this.data.reporters.length} reporters from API`);
+                console.log('Reporters:', this.data.reporters.map(r => ({ name: r.name, role: r.role, id: r.id })));
+                return;
+            } else {
+                console.warn('API response structure unexpected:', result);
+            }
+        } else {
+            console.warn(`API returned status ${response.status}`);
+            const errorText = await response.text();
+            console.warn('Error response:', errorText);
+        }
+
+        // If API fails, fall back to sample data
+        this.useSampleReporters();
+        
+    } catch (error) {
+        console.error('Error loading reporters from API:', error);
+        this.useSampleReporters();
+    }
+}
+
+useSampleReporters() {
+    console.log('Using sample reporters data');
+    this.data.reporters = [
+        { 
+            id: 'r1', 
+            name: 'John Doe', 
+            email: 'john@ameco.et', 
+            role: 'reporter',
+            department: 'News',
+            status: 'available',
+            phone: '+251 911 000 001',
+            avatar: 'JD'
+        },
+        { 
+            id: 'r2', 
+            name: 'Jane Smith', 
+            email: 'jane@ameco.et', 
+            role: 'cameraman',
+            department: 'Video',
+            status: 'available',
+            phone: '+251 911 000 002',
+            avatar: 'JS'
+        },
+        { 
+            id: 'r3', 
+            name: 'Mike Johnson', 
+            email: 'mike@ameco.et', 
+            role: 'reporter',
+            department: 'Sports',
+            status: 'busy',
+            phone: '+251 911 000 003',
+            avatar: 'MJ'
+        },
+        { 
+            id: 'r4', 
+            name: 'Sarah Williams', 
+            email: 'sarah@ameco.et', 
+            role: 'editor',
+            department: 'Editing',
+            status: 'available',
+            phone: '+251 911 000 004',
+            avatar: 'SW'
+        }
+    ];
+    console.log(`✅ Loaded ${this.data.reporters.length} sample reporters`);
+}
+
             updateDashboardWidgets() {
-                this.renderReviewQueue();
                 this.renderRecentActivities();
+                this.updateStats();
             }
-            
-            loadStats() {
-                // All stats are pre-loaded from sample data
+
+            updateStats() {
+                // Update stats from real data
+                const pendingReviews = this.data.contentQueue.filter(item => item.status === 'pending').length;
+                const publishedCount = this.data.contentQueue.filter(item => item.status === 'published').length;
+                const pendingRequests = this.data.mediaRequests.filter(item => item.status === 'pending').length;
+
+                document.getElementById('reviewCount').textContent = pendingReviews;
+                document.getElementById('publishedCount').textContent = publishedCount;
+                document.getElementById('requestsCount').textContent = pendingRequests;
+                document.getElementById('requestsBadge').textContent = pendingRequests;
+                document.getElementById('reviewBadge').textContent = pendingReviews;
+
+                // Update welcome message
+                document.getElementById('pendingReviews').textContent = `${pendingReviews} articles for review`;
+                document.getElementById('mediaRequests').textContent = `${pendingRequests} media requests pending`;
             }
-            
-            renderReviewQueue() {
-                const container = document.getElementById('reviewQueue');
+
+            renderRecentActivities() {
+                const container = document.getElementById('activityList');
                 if (!container) return;
-                
-                const pendingReviews = this.data.contentQueue
-                    .filter(item => item.status === 'pending')
-                    .slice(0, 5);
-                
-                if (pendingReviews.length === 0) {
+
+                if (this.data.activities.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
-                            <i class="bi bi-check-circle"></i>
-                            <h5>All Caught Up!</h5>
-                            <p>No articles pending review.</p>
+                            <i class="bi bi-clock-history"></i>
+                            <h5>No Recent Activities</h5>
+                            <p class="text-muted">Your activities will appear here.</p>
                         </div>
                     `;
                     return;
                 }
-                
-                container.innerHTML = pendingReviews.map(item => `
-                    <div class="review-item">
-                        <div>
-                            <h6 class="mb-1">${item.title}</h6>
-                            <small class="text-muted">
-                                <i class="bi bi-person"></i> ${item.author} • 
-                                <i class="bi bi-clock"></i> ${item.submitted}
-                            </small>
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary" onclick="dashboard.reviewContent('${item.id}')">
-                            <i class="bi bi-eye"></i> Review
-                        </button>
-                    </div>
-                `).join('');
-            }
-            
-            renderRecentActivities() {
-                const container = document.getElementById('activityList');
-                if (!container) return;
-                
-                const activities = [
-                    { action: 'Approved media request', user: 'You', time: '10 minutes ago', icon: 'bi-check-circle' },
-                    { action: 'Rejected article submission', user: 'John Smith', time: '1 hour ago', icon: 'bi-x-circle' },
-                    { action: 'Assigned writer to new article', user: 'You', time: '2 hours ago', icon: 'bi-person-plus' },
-                    { action: 'Published breaking news', user: 'Sarah Johnson', time: '3 hours ago', icon: 'bi-newspaper' }
-                ];
-                
-                container.innerHTML = activities.map(activity => `
+
+                container.innerHTML = this.data.activities.map(activity => `
                     <div class="activity-item">
                         <div class="d-flex">
                             <div class="flex-shrink-0">
@@ -1279,26 +1508,113 @@
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <strong>${activity.action}</strong>
-                                <div class="text-muted small">By ${activity.user} • ${activity.time}</div>
+                                <div class="text-muted small">${activity.time}</div>
                             </div>
                         </div>
                     </div>
                 `).join('');
             }
-            
+
             // ============= MEDIA REQUESTS METHODS =============
-            
-            async loadMediaRequests() {
-                // Already loaded from sample data
+async loadMediaRequests() {
+    try {
+        const sessionStr = localStorage.getItem('userSession');
+        let token = null;
+
+        if (sessionStr) {
+            try {
+                const session = JSON.parse(sessionStr);
+                token = session.token || session.jwtToken;
+            } catch (e) {
+                console.error('Error parsing session:', e);
+            }
+        }
+
+        if (!token) {
+            token = localStorage.getItem('authToken');
+        }
+
+        if (!token) {
+            this.showToast('Please login again', 'warning');
+            return [];
+        }
+
+        // Fetch real media requests from API
+        const response = await fetch('http://localhost:5001/api/requests/all', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                // Get assignments from localStorage
+                const assignments = JSON.parse(localStorage.getItem('reporterAssignments') || '{}');
+                
+                this.data.mediaRequests = result.data.map(request => {
+                    const requestId = request._id || request.id;
+                    const localAssignment = assignments[requestId];
+                    
+                    // Build the request object
+                    const requestObj = {
+                        id: requestId,
+                        title: request.title || 'Untitled',
+                        submittedBy: request.submitterEmail || request.submittedBy || request.submitterName || 'Unknown',
+                        submitterDepartment: request.submitterDepartment || request.department || 'Not specified',
+                        category: request.category || 'general',
+                        priority: request.priority || 'medium',
+                        status: request.status || 'pending',
+                        date: request.date,
+                        startTime: request.startTime,
+                        endTime: request.endTime,
+                        location: request.location || request.address || 'Not specified',
+                        description: request.description || 'No description',
+                        additionalInfo: request.additionalInfo || request.notes || 'No additional info',
+                        documents: request.documents,
+                        assignedReporter: request.assignedReporter || null
+                    };
+                    
+                    // Merge localStorage assignment if available
+                    if (localAssignment) {
+                        requestObj.assignedReporter = {
+                            id: localAssignment.reporterId,
+                            name: localAssignment.reporterName,
+                            email: localAssignment.reporterEmail,
+                            assignedAt: localAssignment.assignedAt,
+                            status: 'accepted'
+                        };
+                        requestObj.reporterName = localAssignment.reporterName;
+                        requestObj.reporterEmail = localAssignment.reporterEmail;
+                        requestObj.reporterId = localAssignment.reporterId;
+                        requestObj.reporterAssignedAt = localAssignment.assignedAt;
+                    }
+                    
+                    return requestObj;
+                });
+
+                // Update badge counts
+                this.updateRequestBadges();
                 return this.data.mediaRequests;
             }
-            
+        }
+
+        return [];
+
+    } catch (error) {
+        console.error('Error loading media requests:', error);
+        this.showToast('Failed to load requests', 'danger');
+        return [];
+    }
+}
+
             showMediaRequestDetails(request) {
                 this.currentMediaRequest = request;
-                
+
                 const modalBody = document.getElementById('mediaRequestDetails');
                 if (!modalBody || !this.mediaRequestModal) return;
-                
+
                 const requestDate = request.date ? new Date(request.date) : null;
                 const formattedDate = requestDate ? requestDate.toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -1306,26 +1622,64 @@
                     month: 'long',
                     day: 'numeric'
                 }) : 'Not set';
-                
+
+                let assignedReporterDisplay = 'Not assigned';
+                let assignedReporterEmail = '';
+                let assignedReporterId = '';
+
+                if (request.assignedReporter) {
+                    console.log('Assigned reporter data:', request.assignedReporter);
+
+                    // Check if it's the minimal server response
+                    if (request.assignedReporter.status === 'accepted') {
+                        // Server returned minimal data, check if we have reporter info stored locally
+                        if (request.reporterName) {
+                            assignedReporterDisplay = request.reporterName;
+                            assignedReporterEmail = request.reporterEmail || '';
+                            assignedReporterId = request.reporterId || '';
+                        } else {
+                            assignedReporterDisplay = 'Reporter assigned (awaiting confirmation)';
+                        }
+                    }
+                    // Check if it's a full reporter object
+                    else if (request.assignedReporter.name) {
+                        assignedReporterDisplay = request.assignedReporter.name;
+                        assignedReporterEmail = request.assignedReporter.email || '';
+                        assignedReporterId = request.assignedReporter.id || '';
+                    }
+                }
+
+                // Also check for direct reporter fields
+                if (!assignedReporterDisplay && request.reporterName) {
+                    assignedReporterDisplay = request.reporterName;
+                    assignedReporterEmail = request.reporterEmail || '';
+                    assignedReporterId = request.reporterId || '';
+                }
+
                 modalBody.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6>Request Details</h6>
-                            <table class="table table-sm">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i>Requester Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless mb-0">
                                 <tr>
-                                    <td width="40%"><strong>Title:</strong></td>
+                                    <td width="40%" class="fw-bold text-muted">Title:</td>
                                     <td>${request.title}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Requester:</strong></td>
+                                    <td class="fw-bold text-muted">Requester:</td>
                                     <td>${request.submittedBy}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Department:</strong></td>
+                                    <td class="fw-bold text-muted">Department:</td>
                                     <td>${request.submitterDepartment || 'Not specified'}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Category:</strong></td>
+                                    <td class="fw-bold text-muted">Category:</td>
                                     <td>
                                         <span class="badge" style="background-color: ${this.getCategoryColor(request.category)}">
                                             ${request.category || 'Uncategorized'}
@@ -1333,7 +1687,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Priority:</strong></td>
+                                    <td class="fw-bold text-muted">Priority:</td>
                                     <td>
                                         <span class="badge bg-${this.getPriorityBadgeColor(request.priority)}">
                                             ${request.priority}
@@ -1341,79 +1695,652 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Status:</strong></td>
-                                    <td>
-                                        <span class="badge bg-${this.getStatusBadgeColor(request.status)}">
-                                            ${request.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Event Details</h6>
-                            <table class="table table-sm">
+    <td class="fw-bold text-muted">Status:</td>
+    <td>
+        <span class="badge bg-${this.getStatusBadgeColor(request.status)}">
+            ${request.status === 'in_progress' ? 'Revision Requested' : request.status}
+        </span>
+        ${request.status === 'in_progress' && request.editorNotes ? 
+            `<br><small class="text-warning"><i class="bi bi-chat-left-text"></i> Feedback: ${request.editorNotes}</small>` : ''}
+    </td>
+</tr>
                                 <tr>
-                                    <td width="40%"><strong>Date:</strong></td>
-                                    <td>${formattedDate}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Time:</strong></td>
-                                    <td>${request.startTime || 'TBD'} - ${request.endTime || 'TBD'}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Location:</strong></td>
-                                    <td>${request.location || 'Not specified'}</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Request ID:</strong></td>
-                                    <td><code>${request.id}</code></td>
-                                </tr>
+    <td class="fw-bold text-muted">Assigned Reporter:</td>
+    <td>
+        ${assignedReporterDisplay}
+        ${assignedReporterEmail ? `<br><small class="text-muted">${assignedReporterEmail}</small>` : ''}
+        ${request.assignedAt || request.reporterAssignedAt ?
+                        `<br><small class="text-muted">Assigned: ${new Date(request.assignedAt || request.reporterAssignedAt).toLocaleDateString()}</small>` : ''}
+    </td>
+</tr>
                             </table>
                         </div>
                     </div>
-                    
-                    <div class="mt-4">
-                        <h6>Description</h6>
-                        <div class="border rounded p-3 bg-light">
-                            ${request.description || 'No description provided.'}
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4">
-                        <h6>Additional Information</h6>
-                        <div class="border rounded p-3">
-                            ${request.additionalInfo || 'No additional information.'}
-                        </div>
-                    </div>
-                `;
+                </div>
                 
+                <!-- Rest of your existing HTML remains the same... -->
+                ${this.renderDocumentsSection(request)}
+        </div>
+    `;
+
+                // Rest of your modal setup code...
+
+
                 // Setup modal button handlers
                 const approveBtn = document.getElementById('approveRequestBtn');
                 const revisionBtn = document.getElementById('requestRevisionBtn');
                 const rejectBtn = document.getElementById('rejectRequestBtn');
-                
+
                 // Remove existing listeners
                 approveBtn.replaceWith(approveBtn.cloneNode(true));
                 revisionBtn.replaceWith(revisionBtn.cloneNode(true));
                 rejectBtn.replaceWith(rejectBtn.cloneNode(true));
-                
+
                 // Add new listeners
                 document.getElementById('approveRequestBtn').addEventListener('click', () => {
-                    this.approveCurrentRequest();
+                    this.showAssignReporterModal();
                 });
-                
+
                 document.getElementById('requestRevisionBtn').addEventListener('click', () => {
                     this.requestRevisionForCurrentRequest();
                 });
-                
+
                 document.getElementById('rejectRequestBtn').addEventListener('click', () => {
                     this.rejectCurrentRequest();
                 });
-                
+
                 this.mediaRequestModal.show();
             }
-            
+
+
+
+            renderDocumentsSection(request) {
+                if (!request.documents || (!request.documents.nationalId && !request.documents.tradingLicense && !request.documents.proposal)) {
+                    return '<div class="mt-4"><h6>Uploaded Documents</h6><p class="text-muted">No documents uploaded.</p></div>';
+                }
+
+                let html = '<div class="mt-4"><h6>Uploaded Documents</h6><div class="row g-3">';
+
+                const renderDocumentButton = (docType, iconClass, title) => {
+                    const docInfo = request.documents[docType];
+                    if (!docInfo) return '';
+
+                    // Extract filename safely
+                    let filename = '';
+                    if (typeof docInfo === 'string') {
+                        filename = `${docType.charAt(0).toUpperCase() + docType.slice(1)} Document`;
+                    } else if (docInfo && typeof docInfo === 'object') {
+                        filename = docInfo.filename ||
+                            docInfo.originalFilename ||
+                            docInfo.name ||
+                            docInfo.originalname ||
+                            `${docType.charAt(0).toUpperCase() + docType.slice(1)} - ${request.title.substring(0, 20)}...`;
+                    }
+
+                    // Ensure it's a string
+                    filename = String(filename || title);
+
+                    // Get document URL
+                    let docUrl = '';
+                    if (typeof docInfo === 'string') {
+                        docUrl = docInfo;
+                    } else if (docInfo && typeof docInfo === 'object') {
+                        if (docInfo.url) {
+                            docUrl = docInfo.url;
+                        } else if (docInfo._id || request.id) {
+                            const docId = docInfo._id || request.id;
+                            docUrl = `http://localhost:5001/api/requests/file/${docId}/${docType}`;
+                        } else {
+                            docUrl = `http://localhost:5001/api/requests/file/${requestId}/${docType}`;
+                        }
+                    } else {
+                        docUrl = `http://localhost:5001/api/requests/file/${request.id}/${docType}`;
+                    }
+
+                    // CHANGED: Changed from Preview to Download
+                    return `
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="${iconClass}"></i>
+                        <h6 class="mt-2">${title}</h6>
+                        <a href="${docUrl}" 
+                           class="btn btn-sm btn-outline-primary mt-2" 
+                           download="${filename}"
+                           target="_blank">
+                            <i class="bi bi-download"></i> Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+                };
+
+                // Keep the original icon classes and titles
+                html += renderDocumentButton('nationalId', 'bi bi-file-earmark-pdf fs-1 text-danger', 'National ID');
+                html += renderDocumentButton('tradingLicense', 'bi bi-file-earmark-pdf fs-1 text-success', 'Trading License');
+                html += renderDocumentButton('proposal', 'bi bi-file-earmark-ppt fs-1 text-warning', 'Proposal');
+
+                html += '</div></div>';
+                return html;
+            } showAssignReporterModal() {
+                if (!this.currentMediaRequest) return;
+
+                const modalBody = document.getElementById('assignReporterBody');
+                if (!modalBody) return;
+
+                // Filter available reporters
+              const availableReporters = this.data.reporters;
+
+
+                modalBody.innerHTML = `
+        <div class="container-fluid">
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle"></i> You are approving request: <strong>${this.currentMediaRequest.title}</strong>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-3">
+                            <i class="bi bi-person-plus me-2"></i>Select Reporter to Assign
+                        </label>
+                    <div class="list-group" id="reporterList">
+    ${this.data.reporters.length > 0 ?
+        this.data.reporters.map(reporter => `
+            <a href="#" class="list-group-item list-group-item-action border-0 rounded mb-2 reporter-item ${this.selectedReporter === reporter.id ? 'active' : ''}" 
+               data-reporter-id="${reporter.id}"
+               onclick="dashboard.selectReporter('${reporter.id}')">
+                <div class="d-flex align-items-center">
+                    <div class="avatar-initials me-3">
+                        ${reporter.name.charAt(0)}
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${reporter.name}</h6>
+                        <small class="text-muted">${reporter.email} (${reporter.role})</small>
+                    </div>
+                </div>
+            </a>
+        `).join('') :
+        '<div class="alert alert-warning">No reporters found.</div>'
+    }
+</div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="mb-3"><i class="bi bi-chat-left-text me-2"></i>Approval Notes</h6>
+                            <div class="mb-3">
+                                <textarea class="form-control" id="approvalNotes" rows="5" 
+                                          placeholder="Add any notes for the reporter or requester..."></textarea>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="sendNotification" checked>
+                                <label class="form-check-label" for="sendNotification">
+                                    Send notification to reporter
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="notifyRequester" checked>
+                                <label class="form-check-label" for="notifyRequester">
+                                    Notify requester
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+                // Setup confirm button
+                const confirmBtn = document.getElementById('confirmAssignBtn');
+                confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+                document.getElementById('confirmAssignBtn').addEventListener('click', () => {
+                    this.approveAndAssignRequest();
+                });
+
+                this.assignReporterModal.show();
+            }
+            selectReporter(reporterId) {
+                this.selectedReporter = reporterId;
+
+                // Update UI
+                document.querySelectorAll('.reporter-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('data-reporter-id') === reporterId) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+
+
+
+            async approveAndAssignRequest() {
+                if (!this.currentMediaRequest) return;
+
+                const notes = document.getElementById('approvalNotes')?.value || '';
+
+                if (!this.selectedReporter && !confirm('No reporter selected. Approve without assigning?')) {
+                    return;
+                }
+
+                try {
+                    const sessionStr = localStorage.getItem('userSession');
+                    let token = null;
+
+                    if (sessionStr) {
+                        try {
+                            const session = JSON.parse(sessionStr);
+                            token = session.token || session.jwtToken;
+                        } catch (e) {
+                            console.error('Error parsing session:', e);
+                        }
+                    }
+
+                    if (!token) {
+                        token = localStorage.getItem('authToken');
+                    }
+
+                    if (!token) {
+                        this.showToast('Please login again', 'warning');
+                        return;
+                    }
+
+                    // Find selected reporter
+                    const reporter = this.data.reporters.find(r => r.id === this.selectedReporter);
+
+                    // SIMPLIFIED: Try sending only the status first
+
+                    // In approveAndAssignRequest method:
+                    const updateData = {
+                        status: 'approved',
+                        editorNotes: notes,
+                        reviewedAt: new Date().toISOString(),
+                        reviewedBy: this.data.user.name
+                    };
+
+                    // Add reporter assignment data
+                    if (reporter) {
+                        updateData.assignedReporter = {
+                            id: reporter.id,
+                            name: reporter.name,
+                            email: reporter.email,
+                            assignedAt: new Date().toISOString(),
+                            status: 'accepted'  // This matches what the server returns
+                        };
+                    }
+
+                    console.log('Sending assignment data:', updateData);
+
+                    // If there's a reporter, add reporterId field
+                    if (reporter) {
+                        updateData.reporterId = reporter.id;  // Not assignedReporter object
+                        updateData.reporterName = reporter.name;  // Separate fields
+                        updateData.reporterEmail = reporter.email;
+                        updateData.reporterAssignedAt = new Date().toISOString();
+                    }
+
+                    // Add notes if provided
+                    if (notes) {
+                        updateData.notes = notes;
+                    }
+
+                    console.log('Testing with simplified data:', updateData);
+
+                    // Update via API
+                    const response = await fetch(`http://localhost:5001/api/requests/${this.currentMediaRequest.id}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    // Check response
+                    const responseText = await response.text();
+                    console.log('Response status:', response.status);
+                    console.log('Response text:', responseText);
+                    if (response.ok) {
+                        try {
+                            const responseData = JSON.parse(responseText);
+                            console.log('Full response data:', responseData);
+
+                            // Update local data with server response
+                            if (responseData.data) {
+                                // Merge server response with our request
+                                Object.assign(this.currentMediaRequest, responseData.data);
+                            }
+
+                            // Ensure reporter info is preserved
+                            if (reporter) {
+                                // Add reporter info in multiple formats for compatibility
+                                this.currentMediaRequest.assignedReporter = {
+                                    id: reporter.id,
+                                    name: reporter.name,
+                                    email: reporter.email,
+                                    assignedAt: new Date().toISOString(),
+                                    status: 'accepted'
+                                };
+
+                                // Also store as separate fields
+                                this.currentMediaRequest.reporterId = reporter.id;
+                                this.currentMediaRequest.reporterName = reporter.name;
+                                this.currentMediaRequest.reporterEmail = reporter.email;
+                                this.currentMediaRequest.reporterAssignedAt = new Date().toISOString();
+
+                                // Store assignment in localStorage as backup
+                                const assignments = JSON.parse(localStorage.getItem('reporterAssignments') || '{}');
+                                assignments[this.currentMediaRequest.id] = {
+                                    reporterId: reporter.id,
+                                    reporterName: reporter.name,
+                                    reporterEmail: reporter.email,
+                                    assignedAt: new Date().toISOString()
+                                };
+                                localStorage.setItem('reporterAssignments', JSON.stringify(assignments));
+                            }
+
+                            this.showToast(`Request approved and assigned to ${reporter ? reporter.name : 'reporter'}`, 'success');
+
+                            // Add activity
+                            this.addActivity(`Assigned request: ${this.currentMediaRequest.title}${reporter ? ` to ${reporter.name}` : ''}`);
+
+                            // Update dashboard
+                            this.updateRequestBadges();
+                            this.updateDashboardWidgets();
+
+                            // Force a refresh of the modal
+                            setTimeout(() => {
+                                this.assignReporterModal.hide();
+                                this.mediaRequestModal.hide();
+
+                                // Reopen modal with updated data
+                                setTimeout(() => {
+                                    this.showMediaRequestDetails(this.currentMediaRequest);
+                                }, 300);
+                            }, 500);
+
+                            // Refresh section if currently viewing requests
+                            if (this.currentSection === 'requests') {
+                                setTimeout(() => this.loadRequestsSection(), 1000);
+                            }
+                        } catch (parseError) {
+                            console.error('Error parsing response:', parseError);
+                            this.showToast('Request assigned successfully', 'success');
+                        }
+                    }
+
+                    else {
+                        // Try to parse error
+                        let errorMessage = `Status: ${response.status}`;
+                        try {
+                            const errorJson = JSON.parse(responseText);
+                            errorMessage = errorJson.message || errorJson.error || responseText;
+                        } catch (e) {
+                            errorMessage = responseText || `HTTP ${response.status}`;
+                        }
+
+                        this.showToast(`Failed to assign: ${errorMessage}`, 'danger');
+                        console.error('Server error details:', errorMessage);
+                    }
+
+                } catch (error) {
+                    console.error('Error approving request:', error);
+                    this.showToast(`Error: ${error.message}`, 'danger');
+                }
+            }
+            previewDocument(requestId, docType, filename) {
+                event?.preventDefault();
+                event?.stopPropagation();
+
+                const request = this.data.mediaRequests.find(r => r.id === requestId);
+                if (!request) {
+                    this.showToast('Request not found', 'danger');
+                    return false;
+                }
+
+                // Get document info
+                let docInfo = request.documents?.[docType];
+                if (!docInfo) {
+                    this.showToast('Document not available', 'warning');
+                    return false;
+                }
+
+                // Extract filename and URL
+                let docUrl, originalFilename;
+
+                // Handle different possible structures
+                if (typeof docInfo === 'string') {
+                    // Case 1: String URL
+                    docUrl = docInfo;
+                    originalFilename = filename || `${docType} Document`;
+                } else if (docInfo && typeof docInfo === 'object') {
+                    // Case 2: Object structure
+                    // First, try to get filename from the passed parameter or from object
+                    originalFilename = filename ||
+                        docInfo.filename ||
+                        docInfo.originalFilename ||
+                        docInfo.name ||
+                        `${docType} Document`;
+
+                    // Ensure originalFilename is a string
+                    originalFilename = String(originalFilename);
+
+                    // Get URL
+                    if (docInfo.url) {
+                        docUrl = docInfo.url;
+                    } else if (docInfo._id || request.id) {
+                        const docId = docInfo._id || request.id;
+                        docUrl = `http://localhost:5001/api/requests/file/${docId}/${docType}`;
+                    } else {
+                        docUrl = `http://localhost:5001/api/requests/file/${requestId}/${docType}`;
+                    }
+                } else {
+                    // Case 3: Unknown
+                    docUrl = `http://localhost:5001/api/requests/file/${requestId}/${docType}`;
+                    originalFilename = String(filename || `${docType} Document`);
+                }
+
+                console.log('Document info:', docInfo);
+                console.log('Document URL:', docUrl);
+                console.log('Original filename:', originalFilename);
+
+                // Determine file type
+                const filenameLower = originalFilename.toLowerCase();
+                const urlLower = (docUrl || '').toLowerCase();
+                let fileType = 'unknown';
+
+                if (filenameLower.includes('.pdf') || urlLower.includes('.pdf')) {
+                    fileType = 'pdf';
+                } else if (filenameLower.includes('.docx') || urlLower.includes('.docx')) {
+                    fileType = 'docx';
+                } else if (filenameLower.includes('.doc') || urlLower.includes('.doc')) {
+                    fileType = 'doc';
+                } else if (filenameLower.includes('.jpg') || filenameLower.includes('.jpeg') ||
+                    urlLower.includes('.jpg') || urlLower.includes('.jpeg')) {
+                    fileType = 'jpg';
+                } else if (filenameLower.includes('.png') || urlLower.includes('.png')) {
+                    fileType = 'png';
+                } else if (filenameLower.includes('.gif') || urlLower.includes('.gif')) {
+                    fileType = 'gif';
+                }
+
+                // Create or get modal
+                const modalId = 'documentPreviewModal';
+                let modalElement = document.getElementById(modalId);
+
+                if (!modalElement) {
+                    modalElement = document.createElement('div');
+                    modalElement.id = modalId;
+                    modalElement.className = 'modal fade';
+                    modalElement.innerHTML = `
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content" style="height: 90vh;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${originalFilename}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-0" id="documentPreviewContent">
+                        Loading document...
+                    </div>
+                </div>
+            </div>
+        `;
+                    document.body.appendChild(modalElement);
+                }
+
+                // Set modal content
+                const content = document.getElementById('documentPreviewContent');
+                content.innerHTML = `
+        <div style="height: 100%; display: flex; align-items: center; justify-content: center;">
+            <div class="text-center p-5">
+                <i class="bi bi-file-earmark-download fs-1 text-primary"></i>
+                <h5 class="mt-3">${originalFilename}</h5>
+                <p class="text-muted">File type: ${fileType.toUpperCase()}</p>
+                <p class="text-muted small mb-3">Click the button below to download this file</p>
+                <a href="${docUrl}" class="btn btn-primary btn-lg" target="_blank" download="${originalFilename}">
+                    <i class="bi bi-download"></i> Download File
+                </a>
+                <div class="mt-4">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i> Download and open with appropriate application
+                    </small>
+                </div>
+            </div>
+        </div>
+    `;
+
+                // Show modal
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+
+                return false;
+            }
+
+           async requestRevisionForCurrentRequest() {
+    if (!this.currentMediaRequest) return;
+
+    const feedback = prompt('What needs to be revised? Provide specific feedback for the requester:');
+    if (feedback === null || feedback.trim() === '') {
+        this.showToast('Revision request cancelled', 'warning');
+        return;
+    }
+
+    // Use 'in_progress' instead of 'revision' since server doesn't accept 'revision'
+    await this.updateMediaRequestStatus(this.currentMediaRequest.id, 'in_progress', feedback);
+    this.mediaRequestModal.hide();
+}
+
+async handleRequestRevision(requestId) {
+    const request = this.data.mediaRequests.find(r => r.id === requestId);
+    if (!request) {
+        this.showToast('Request not found', 'danger');
+        return;
+    }
+
+    const feedback = prompt('What needs to be revised? Provide specific feedback for the requester:');
+    if (feedback === null || feedback.trim() === '') {
+        this.showToast('Revision request cancelled', 'warning');
+        return;
+    }
+
+    // Use 'in_progress' instead of 'revision'
+    await this.updateMediaRequestStatus(requestId, 'in_progress', feedback);
+}
+
+// Also update the getStatusBadgeColor method to handle 'in_progress'
+getStatusBadgeColor(status) {
+    const colors = {
+        'pending': 'primary',
+        'approved': 'success',
+        'rejected': 'danger',
+        'in_progress': 'warning',  // Changed from 'revision' to 'in_progress'
+        'assigned': 'info',
+        'draft': 'secondary',
+        'completed': 'success'
+    };
+    return colors[status] || 'secondary';
+}
+            async rejectCurrentRequest() {
+                if (!this.currentMediaRequest) return;
+
+                const reason = prompt('Please provide a reason for rejection:');
+                if (reason === null || reason.trim() === '') {
+                    this.showToast('Rejection cancelled', 'warning');
+                    return;
+                }
+
+                await this.updateMediaRequestStatus(this.currentMediaRequest.id, 'rejected', reason);
+                this.mediaRequestModal.hide();
+            }
+
+            async updateMediaRequestStatus(requestId, status, notes = '') {
+                try {
+                    const sessionStr = localStorage.getItem('userSession');
+                    let token = null;
+
+                    if (sessionStr) {
+                        try {
+                            const session = JSON.parse(sessionStr);
+                            token = session.token || session.jwtToken;
+                        } catch (e) {
+                            console.error('Error parsing session:', e);
+                        }
+                    }
+
+                    if (!token) {
+                        token = localStorage.getItem('authToken');
+                    }
+
+                    const request = this.data.mediaRequests.find(r => r.id === requestId);
+                    if (!request) throw new Error('Request not found');
+
+                    const updateData = {
+                    status: status === 'revision' ? 'in_progress' : status, 
+                        editorNotes: notes,
+                        reviewedAt: new Date().toISOString(),
+                        reviewedBy: this.data.user.name
+                    };
+
+                    // Update via API
+                    if (token) {
+                        const response = await fetch(`http://localhost:5001/api/requests/${requestId}/status`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updateData)
+                        });
+
+                        if (response.ok) {
+                            // Update local data
+                            Object.assign(request, updateData);
+
+                            // Add activity
+                            this.addActivity(`${status === 'rejected' ? 'Rejected' : 'Requested revision for'}: ${request.title}`);
+
+                            this.showToast(`Request ${status} successfully`, 'success');
+                            this.updateRequestBadges();
+                            this.updateDashboardWidgets();
+                        }
+                    }
+
+                } catch (error) {
+                    console.error('Error updating request status:', error);
+                    this.showToast('Failed to update request', 'danger');
+                }
+            }
+
+            updateRequestBadges() {
+                const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
+                document.getElementById('requestsBadge').textContent = pendingCount;
+                document.getElementById('requestsCount').textContent = pendingCount;
+            }
+
             getPriorityBadgeColor(priority) {
                 const colors = {
                     'urgent': 'danger',
@@ -1423,17 +2350,18 @@
                 };
                 return colors[priority] || 'info';
             }
-            
+
             getStatusBadgeColor(status) {
                 const colors = {
                     'pending': 'primary',
                     'approved': 'success',
                     'rejected': 'danger',
-                    'revision': 'warning'
+                    'revision': 'warning',
+                    'assigned': 'info'
                 };
                 return colors[status] || 'secondary';
             }
-            
+
             getCategoryColor(categoryName) {
                 const colors = {
                     'breaking_news': '#e74c3c',
@@ -1447,114 +2375,21 @@
                 };
                 return colors[categoryName] || '#6c757d';
             }
-            
-            async handleApproveRequest(requestId) {
-                const request = this.data.mediaRequests.find(r => r.id === requestId);
-                if (!request) {
-                    this.showToast('Request not found', 'danger');
-                    return;
-                }
-                
-                const notes = prompt('Add approval notes (optional):');
-                if (notes === null) return;
-                
-                await this.updateMediaRequestStatus(requestId, 'approved', notes || 'Approved by editor');
-            }
-            
-            async handleRejectRequest(requestId) {
-                const request = this.data.mediaRequests.find(r => r.id === requestId);
-                if (!request) {
-                    this.showToast('Request not found', 'danger');
-                    return;
-                }
-                
-                const reason = prompt('Please provide a reason for rejection:');
-                if (reason === null || reason.trim() === '') {
-                    this.showToast('Rejection cancelled', 'warning');
-                    return;
-                }
-                
-                await this.updateMediaRequestStatus(requestId, 'rejected', reason);
-            }
-            
-            async handleRequestRevision(requestId) {
-                const request = this.data.mediaRequests.find(r => r.id === requestId);
-                if (!request) {
-                    this.showToast('Request not found', 'danger');
-                    return;
-                }
-                
-                const feedback = prompt('What needs to be revised? Provide specific feedback:');
-                if (feedback === null || feedback.trim() === '') {
-                    this.showToast('Revision request cancelled', 'warning');
-                    return;
-                }
-                
-                await this.updateMediaRequestStatus(requestId, 'revision', feedback);
-            }
-            
-            approveCurrentRequest() {
-                if (!this.currentMediaRequest) return;
-                this.handleApproveRequest(this.currentMediaRequest.id);
-                this.mediaRequestModal.hide();
-            }
-            
-            requestRevisionForCurrentRequest() {
-                if (!this.currentMediaRequest) return;
-                this.handleRequestRevision(this.currentMediaRequest.id);
-                this.mediaRequestModal.hide();
-            }
-            
-            rejectCurrentRequest() {
-                if (!this.currentMediaRequest) return;
-                this.handleRejectRequest(this.currentMediaRequest.id);
-                this.mediaRequestModal.hide();
-            }
-            
-            async updateMediaRequestStatus(requestId, status, notes = '') {
-                try {
-                    const request = this.data.mediaRequests.find(r => r.id === requestId);
-                    if (!request) throw new Error('Request not found');
-                    
-                    request.status = status;
-                    request.editorNotes = notes;
-                    request.reviewedAt = new Date().toISOString();
-                    request.reviewedBy = this.data.user.name;
-                    
-                    // Update badge counts
-                    this.updateRequestBadges();
-                    
-                    this.showToast(`Request ${status} successfully`, 'success');
-                    
-                    if (this.currentSection === 'requests') {
-                        this.loadRequestsSection();
-                    }
-                    
-                } catch (error) {
-                    console.error('Error updating request status:', error);
-                    this.showToast('Failed to update request', 'danger');
-                }
-            }
-            
-            updateRequestBadges() {
-                const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
-                document.getElementById('requestsBadge').textContent = pendingCount;
-                document.getElementById('requestsCount').textContent = pendingCount;
-            }
-            
+
             // ============= SECTION LOADING METHODS =============
-            
+
             async loadRequestsSection() {
                 const sectionContent = document.getElementById('sectionContent');
                 if (!sectionContent) return;
-                
+
                 await this.loadMediaRequests();
-                
+
                 const pendingCount = this.data.mediaRequests.filter(r => r.status === 'pending').length;
                 const approvedCount = this.data.mediaRequests.filter(r => r.status === 'approved').length;
                 const revisionCount = this.data.mediaRequests.filter(r => r.status === 'revision').length;
                 const rejectedCount = this.data.mediaRequests.filter(r => r.status === 'rejected').length;
-                
+                const assignedCount = this.data.mediaRequests.filter(r => r.status === 'assigned').length;
+
                 sectionContent.innerHTML = `
                     <div class="section-header">
                         <h1><i class="bi bi-inbox me-2"></i>Media Coverage Requests</h1>
@@ -1562,29 +2397,36 @@
                     </div>
                     
                     <div class="row mb-4">
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card primary">
+                        <div class="col-md-2 mb-3">
+                            <div class="stats-card primary" onclick="dashboard.filterRequests('pending')">
                                 <i class="bi bi-clock"></i>
                                 <h3 class="count">${pendingCount}</h3>
                                 <p class="label">Pending</p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card success">
+                        <div class="col-md-2 mb-3">
+                            <div class="stats-card info" onclick="dashboard.filterRequests('assigned')">
+                                <i class="bi bi-person-check"></i>
+                                <h3 class="count">${assignedCount}</h3>
+                                <p class="label">Assigned</p>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <div class="stats-card success" onclick="dashboard.filterRequests('approved')">
                                 <i class="bi bi-check-circle"></i>
                                 <h3 class="count">${approvedCount}</h3>
                                 <p class="label">Approved</p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card warning">
+                        <div class="col-md-2 mb-3">
+                            <div class="stats-card warning" onclick="dashboard.filterRequests('revision')">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                                 <h3 class="count">${revisionCount}</h3>
                                 <p class="label">Revision</p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card danger">
+                        <div class="col-md-2 mb-3">
+                            <div class="stats-card danger" onclick="dashboard.filterRequests('rejected')">
                                 <i class="bi bi-x-circle"></i>
                                 <h3 class="count">${rejectedCount}</h3>
                                 <p class="label">Rejected</p>
@@ -1609,11 +2451,11 @@
                         </div>
                     </div>
                 `;
-                
+
                 // Reattach event listeners for table buttons
                 setTimeout(() => this.attachTableEventListeners(), 100);
             }
-            
+
             renderRequestsTable() {
                 if (this.data.mediaRequests.length === 0) {
                     return `
@@ -1624,7 +2466,7 @@
                         </div>
                     `;
                 }
-                
+
                 return `
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -1641,16 +2483,16 @@
                             </thead>
                             <tbody>
                                 ${this.data.mediaRequests.map(request => {
-                                    const requestDate = request.date ? new Date(request.date) : null;
-                                    const formattedDate = requestDate ? requestDate.toLocaleDateString() : 'Not set';
-                                    
-                                    return `
+                    const requestDate = request.date ? new Date(request.date) : null;
+                    const formattedDate = requestDate ? requestDate.toLocaleDateString() : 'Not set';
+
+                    return `
                                         <tr>
                                             <td>
-                                                <strong>${request.title}</strong>
-                                                <br>
-                                                <small class="text-muted">${request.description ? request.description.substring(0, 50) + '...' : 'No description'}</small>
-                                            </td>
+                                            <strong>${request.title}</strong>
+<br>
+<small class="text-muted">${request.description ? request.description.substring(0, 50) + '...' : 'No description'}</small>
+${this.getAssignedReporterDisplay(request) ? `<br><small><i class="bi bi-person-check text-success"></i> ${this.getAssignedReporterDisplay(request).replace('Assigned to: ', '')}</small>` : ''}</td>
                                             <td>
                                                 <div>${request.submittedBy}</div>
                                                 <small class="text-muted">${request.submitterDepartment || ''}</small>
@@ -1671,37 +2513,43 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="badge bg-${this.getStatusBadgeColor(request.status)}">
-                                                    ${request.status}
-                                                </span>
-                                            </td>
+    <span class="badge bg-${this.getStatusBadgeColor(request.status)}">
+        ${request.status}
+    </span>
+    ${this.getAssignedReporterDisplay(request)}
+</td>
                                             <td>
-                                                <div class="btn-group btn-group-sm" role="group">
-                                                    <button type="button" class="btn btn-outline-primary view-request-btn" data-request-id="${request.id}">
-                                                        <i class="bi bi-eye"></i>
-                                                    </button>
-                                                    ${request.status === 'pending' ? `
-                                                        <button type="button" class="btn btn-outline-success approve-request-btn" data-request-id="${request.id}">
-                                                            <i class="bi bi-check"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-warning revision-request-btn" data-request-id="${request.id}">
-                                                            <i class="bi bi-arrow-counterclockwise"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger reject-request-btn" data-request-id="${request.id}">
-                                                            <i class="bi bi-x"></i>
-                                                        </button>
-                                                    ` : ''}
-                                                </div>
-                                            </td>
+    <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-outline-primary view-request-btn" data-request-id="${request.id}">
+            <i class="bi bi-eye"></i>
+        </button>
+        ${request.status === 'pending' ? `
+            <button type="button" class="btn btn-outline-success approve-request-btn" data-request-id="${request.id}">
+                <i class="bi bi-check"></i>
+            </button>
+            <button type="button" class="btn btn-outline-warning revision-request-btn" data-request-id="${request.id}">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+            <button type="button" class="btn btn-outline-danger reject-request-btn" data-request-id="${request.id}">
+                <i class="bi bi-x"></i>
+            </button>
+        ` : ''}
+        ${request.status === 'in_progress' ? `
+            <button type="button" class="btn btn-outline-info" onclick="dashboard.resendRevisionFeedback('${request.id}')" title="Resend revision feedback">
+                <i class="bi bi-envelope-arrow-up"></i>
+            </button>
+        ` : ''}
+    </div>
+</td>
                                         </tr>
                                     `;
-                                }).join('')}
+                }).join('')}
                             </tbody>
                         </table>
                     </div>
                 `;
             }
-            
+
             attachTableEventListeners() {
                 // View button
                 document.querySelectorAll('.view-request-btn').forEach(btn => {
@@ -1713,15 +2561,19 @@
                         }
                     });
                 });
-                
+
                 // Approve button
                 document.querySelectorAll('.approve-request-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const requestId = e.currentTarget.getAttribute('data-request-id');
-                        this.handleApproveRequest(requestId);
+                        const request = this.data.mediaRequests.find(r => r.id === requestId);
+                        if (request) {
+                            this.currentMediaRequest = request;
+                            this.showAssignReporterModal();
+                        }
                     });
                 });
-                
+
                 // Revision button
                 document.querySelectorAll('.revision-request-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -1729,7 +2581,7 @@
                         this.handleRequestRevision(requestId);
                     });
                 });
-                
+
                 // Reject button
                 document.querySelectorAll('.reject-request-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -1738,40 +2590,74 @@
                     });
                 });
             }
-            
+
+            handleRequestRevision(requestId) {
+                const request = this.data.mediaRequests.find(r => r.id === requestId);
+                if (!request) {
+                    this.showToast('Request not found', 'danger');
+                    return;
+                }
+
+                const feedback = prompt('What needs to be revised? Provide specific feedback:');
+                if (feedback === null || feedback.trim() === '') {
+                    this.showToast('Revision request cancelled', 'warning');
+                    return;
+                }
+
+                this.updateMediaRequestStatus(requestId, 'revision', feedback);
+            }
+
+            handleRejectRequest(requestId) {
+                const request = this.data.mediaRequests.find(r => r.id === requestId);
+                if (!request) {
+                    this.showToast('Request not found', 'danger');
+                    return;
+                }
+
+                const reason = prompt('Please provide a reason for rejection:');
+                if (reason === null || reason.trim() === '') {
+                    this.showToast('Rejection cancelled', 'warning');
+                    return;
+                }
+
+                this.updateMediaRequestStatus(requestId, 'rejected', reason);
+            }
+
             refreshRequestsSection() {
                 this.showToast('Requests refreshed', 'success');
                 if (this.currentSection === 'requests') {
                     this.loadRequestsSection();
                 }
             }
-            
+
             filterRequests(filter) {
                 this.showToast(`Filtering by: ${filter}`, 'info');
+                // You can implement actual filtering logic here
             }
-            
+
             exportRequests() {
                 // Simple CSV export
-                const headers = ['Title', 'Requester', 'Category', 'Date', 'Priority', 'Status'];
+                const headers = ['Title', 'Requester', 'Category', 'Date', 'Priority', 'Status', 'Assigned Reporter'];
                 const csvData = this.data.mediaRequests.map(req => {
                     const requestDate = req.date ? new Date(req.date) : null;
                     const formattedDate = requestDate ? requestDate.toLocaleDateString() : '';
-                    
+
                     return [
                         req.title,
                         req.submittedBy,
                         req.category,
                         formattedDate,
                         req.priority,
-                        req.status
+                        req.status,
+                        req.assignedReporter?.name || ''
                     ];
                 });
-                
+
                 const csvContent = [
                     headers.join(','),
                     ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
                 ].join('\n');
-                
+
                 const blob = new Blob([csvContent], { type: 'text/csv' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1781,208 +2667,42 @@
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
-                
+
                 this.showToast('Requests exported to CSV', 'success');
             }
-            
-            // ============= OTHER SECTIONS =============
-            
+
             loadContentSection() {
                 const sectionContent = document.getElementById('sectionContent');
                 if (!sectionContent) return;
-                
-                const pendingCount = this.data.contentQueue.filter(item => item.status === 'pending').length;
-                const inReviewCount = this.data.contentQueue.filter(item => item.status === 'review').length;
-                const approvedCount = this.data.contentQueue.filter(item => item.status === 'approved').length;
-                const rejectedCount = this.data.contentQueue.filter(item => item.status === 'rejected').length;
-                
+
                 sectionContent.innerHTML = `
                     <div class="section-header">
                         <h1><i class="bi bi-file-earmark-text me-2"></i>Content Review</h1>
                         <p class="mb-0">Review and manage submitted content</p>
                     </div>
                     
-                    <div class="row mb-4">
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card primary">
-                                <i class="bi bi-clock"></i>
-                                <h3 class="count">${pendingCount}</h3>
-                                <p class="label">Pending</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card warning">
-                                <i class="bi bi-eye"></i>
-                                <h3 class="count">${inReviewCount}</h3>
-                                <p class="label">In Review</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card success">
-                                <i class="bi bi-check-circle"></i>
-                                <h3 class="count">${approvedCount}</h3>
-                                <p class="label">Approved</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="stats-card danger">
-                                <i class="bi bi-x-circle"></i>
-                                <h3 class="count">${rejectedCount}</h3>
-                                <p class="label">Rejected</p>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <div class="dashboard-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">All Content for Review</h5>
+                            <h5 class="mb-0">Content Review</h5>
                             <button class="btn btn-sm btn-primary" onclick="dashboard.refreshContent()">
                                 <i class="bi bi-arrow-clockwise"></i> Refresh
                             </button>
                         </div>
                         <div class="card-body">
-                            ${this.data.contentQueue.length === 0 ? `
-                                <div class="text-center py-5">
-                                    <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; opacity: 0.3;"></i>
-                                    <h5 class="mt-3">No Content for Review</h5>
-                                    <p class="text-muted">When writers submit articles, they will appear here.</p>
-                                </div>
-                            ` : `
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Author</th>
-                                                <th>Category</th>
-                                                <th>Submitted</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${this.data.contentQueue.map(item => `
-                                                <tr>
-                                                    <td>
-                                                        <strong>${item.title}</strong>
-                                                        <br>
-                                                        <small class="text-muted">${item.excerpt || 'No excerpt'}</small>
-                                                    </td>
-                                                    <td>${item.author}</td>
-                                                    <td>
-                                                        <span class="badge bg-info">${item.category || 'General'}</span>
-                                                    </td>
-                                                    <td>${item.submitted}</td>
-                                                    <td>
-                                                        <span class="badge bg-${item.status === 'pending' ? 'warning' : item.status === 'approved' ? 'success' : item.status === 'rejected' ? 'danger' : 'info'}">
-                                                            ${item.status}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group btn-group-sm">
-                                                            <button class="btn btn-outline-primary" onclick="dashboard.reviewContent('${item.id}')">
-                                                                <i class="bi bi-eye"></i> Review
-                                                            </button>
-                                                            ${item.status === 'pending' ? `
-                                                                <button class="btn btn-outline-success" onclick="dashboard.approveContent('${item.id}')">
-                                                                    <i class="bi bi-check"></i>
-                                                                </button>
-                                                                <button class="btn btn-outline-danger" onclick="dashboard.rejectContent('${item.id}')">
-                                                                    <i class="bi bi-x"></i>
-                                                                </button>
-                                                            ` : ''}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            `}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            loadArticlesSection() {
-                const sectionContent = document.getElementById('sectionContent');
-                if (!sectionContent) return;
-                
-                sectionContent.innerHTML = `
-                    <div class="section-header">
-                        <h1><i class="bi bi-newspaper me-2"></i>Articles Management</h1>
-                        <p class="mb-0">Manage all articles</p>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">All Articles</h5>
-                            <button class="btn btn-sm btn-primary" onclick="dashboard.createArticle()">
-                                <i class="bi bi-plus-circle"></i> New Article
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Articles management feature coming soon.
+                            <div class="text-center py-5">
+                                <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                                <h5 class="mt-3">Content Review Coming Soon</h5>
+                                <p class="text-muted">Content review feature will be available in the next update.</p>
                             </div>
                         </div>
                     </div>
                 `;
             }
-            
-            loadWritersSection() {
-                const sectionContent = document.getElementById('sectionContent');
-                if (!sectionContent) return;
-                
-                sectionContent.innerHTML = `
-                    <div class="section-header">
-                        <h1><i class="bi bi-pencil me-2"></i>Writers Management</h1>
-                        <p class="mb-0">Manage writers and assignments</p>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">All Writers</h5>
-                            <button class="btn btn-sm btn-primary" onclick="dashboard.assignWriter()">
-                                <i class="bi bi-person-plus"></i> Assign Writer
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Writers management feature coming soon.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            loadApprovalSection() {
-                const sectionContent = document.getElementById('sectionContent');
-                if (!sectionContent) return;
-                
-                sectionContent.innerHTML = `
-                    <div class="section-header">
-                        <h1><i class="bi bi-clipboard-check me-2"></i>Approval Workflow</h1>
-                        <p class="mb-0">Manage content approval workflows</p>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Workflow Steps</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Approval workflow feature coming soon.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
+
             loadSettingsSection() {
                 const sectionContent = document.getElementById('sectionContent');
                 if (!sectionContent) return;
-                
+
                 sectionContent.innerHTML = `
                     <div class="section-header">
                         <h1><i class="bi bi-gear me-2"></i>Settings</h1>
@@ -1998,29 +2718,9 @@
                     </div>
                 `;
             }
-            
-            loadHelpSection() {
-                const sectionContent = document.getElementById('sectionContent');
-                if (!sectionContent) return;
-                
-                sectionContent.innerHTML = `
-                    <div class="section-header">
-                        <h1><i class="bi bi-question-circle me-2"></i>Help & Support</h1>
-                        <p class="mb-0">Get help and support</p>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Help and support feature coming soon.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            
+
             // ============= HELPER METHODS =============
-            
+
             loadUserData() {
                 try {
                     const userData = localStorage.getItem('editorUserData');
@@ -2033,7 +2733,7 @@
                 } catch (error) {
                     this.initializeNewUser();
                 }
-                
+
                 if (this.data.user) {
                     document.getElementById('userName').textContent = this.data.user.name;
                     document.getElementById('userEmail').textContent = this.data.user.email;
@@ -2041,7 +2741,7 @@
                     document.getElementById('userRoleBadge').textContent = this.data.user.role || 'Editor';
                 }
             }
-            
+
             initializeNewUser() {
                 this.data.user = {
                     id: 'edt' + Date.now(),
@@ -2054,39 +2754,50 @@
                 };
                 localStorage.setItem('editorUserData', JSON.stringify(this.data.user));
             }
-            
+
+            addActivity(message) {
+                const activity = {
+                    action: message,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    icon: 'bi-activity'
+                };
+
+                this.data.activities.unshift(activity);
+                if (this.data.activities.length > 10) {
+                    this.data.activities = this.data.activities.slice(0, 10);
+                }
+
+                this.renderRecentActivities();
+            }
+
             showSection(section) {
                 this.currentSection = section;
-                
+
                 // Update active nav
                 document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
                     link.classList.remove('active');
                 });
-                
+
                 const activeLink = document.getElementById(section + 'Link');
                 if (activeLink) activeLink.classList.add('active');
-                
+
                 // Update page title
                 const titles = {
                     'dashboard': 'Editor Dashboard',
                     'content': 'Content Review',
-                    'articles': 'Articles Management',
-                    'writers': 'Writers Management',
                     'requests': 'Media Coverage Requests',
-                    'approval': 'Approval Workflow',
-                    'settings': 'Editor Settings',
-                    'help': 'Help & Support'
+                    'settings': 'Editor Settings'
                 };
-                
+
                 document.getElementById('pageTitle').textContent = titles[section] || 'Editor Dashboard';
-                
+
                 // Close mobile menu
                 document.getElementById('sidebar').classList.remove('active');
-                
+
                 // Show/hide sections
                 const dashboardSection = document.getElementById('dashboardSection');
                 const sectionContent = document.getElementById('sectionContent');
-                
+
                 if (section === 'dashboard') {
                     dashboardSection.style.display = 'block';
                     sectionContent.style.display = 'none';
@@ -2097,65 +2808,49 @@
                     this.loadSectionContent(section);
                 }
             }
-            
+
             loadSectionContent(section) {
                 const sectionContent = document.getElementById('sectionContent');
                 if (!sectionContent) return;
-                
+
                 sectionContent.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2">Loading...</p></div>';
-                
+
                 setTimeout(() => {
-                    switch(section) {
+                    switch (section) {
                         case 'content':
                             this.loadContentSection();
-                            break;
-                        case 'articles':
-                            this.loadArticlesSection();
-                            break;
-                        case 'writers':
-                            this.loadWritersSection();
                             break;
                         case 'requests':
                             this.loadRequestsSection();
                             break;
-                        case 'approval':
-                            this.loadApprovalSection();
-                            break;
                         case 'settings':
                             this.loadSettingsSection();
-                            break;
-                        case 'help':
-                            this.loadHelpSection();
                             break;
                         default:
                             sectionContent.innerHTML = '<div class="alert alert-danger">Section not found</div>';
                     }
                 }, 500);
             }
-            
+
             setupEventListeners() {
                 // Sidebar toggle
                 document.getElementById('sidebarToggle').addEventListener('click', () => {
                     this.toggleSidebar();
                 });
-                
+
                 // Mobile menu
                 document.getElementById('mobileMenuToggle').addEventListener('click', () => {
                     document.getElementById('sidebar').classList.toggle('active');
                 });
-                
+
                 // Navigation links
                 const navLinks = [
                     { id: 'dashboardLink', section: 'dashboard' },
                     { id: 'contentLink', section: 'content' },
-                    { id: 'articlesLink', section: 'articles' },
-                    { id: 'writersLink', section: 'writers' },
                     { id: 'requestsLink', section: 'requests' },
-                    { id: 'approvalLink', section: 'approval' },
-                    { id: 'settingsLink', section: 'settings' },
-                    { id: 'helpLink', section: 'help' }
+                    { id: 'settingsLink', section: 'settings' }
                 ];
-                
+
                 navLinks.forEach(link => {
                     const element = document.getElementById(link.id);
                     if (element) {
@@ -2165,49 +2860,31 @@
                         });
                     }
                 });
-                
+
                 // Quick actions
-                const quickActions = {
-                    'quickReviewMediaRequests': 'requests',
-                    'quickNewArticle': 'articles',
-                    'quickAssignWriter': 'writers',
-                    'quickStartApproval': 'approval',
-                    'quickReviewPending': 'content'
-                };
-                
-                Object.entries(quickActions).forEach(([id, section]) => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        element.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            this.showSection(section);
-                        });
-                    }
+                document.getElementById('quickReviewMediaRequests').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSection('requests');
                 });
-                
+
+                document.getElementById('quickReviewPending').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showSection('content');
+                });
+
                 // Search
                 document.getElementById('searchBtn').addEventListener('click', () => {
                     this.showToast('Search feature coming soon!', 'info');
                 });
-                
+
                 // Notifications
                 document.getElementById('notificationsBtn').addEventListener('click', () => {
                     this.showToast('No new notifications', 'info');
                 });
-                
+
                 // Logout
                 document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
-                
-                // Quick action buttons
-                document.querySelectorAll('.quick-action-btn').forEach(btn => {
-                    if (!btn.onclick) {
-                        btn.addEventListener('click', () => {
-                            const action = btn.querySelector('h6').textContent;
-                            this.showToast(`${action} feature coming soon!`, 'info');
-                        });
-                    }
-                });
-                
+
                 // Search input
                 document.getElementById('searchInput').addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -2215,15 +2892,15 @@
                     }
                 });
             }
-            
+
             toggleSidebar() {
                 const sidebar = document.getElementById('sidebar');
                 const mainContent = document.getElementById('mainContent');
-                
+
                 sidebar.classList.toggle('collapsed');
                 mainContent.classList.toggle('expanded');
             }
-            
+
             logout() {
                 if (confirm('Are you sure you want to logout?')) {
                     localStorage.removeItem('editorUserData');
@@ -2233,36 +2910,36 @@
                     }, 1500);
                 }
             }
-            
+
             updateDateTime() {
                 const updateTime = () => {
                     const now = new Date();
-                    const dateStr = now.toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                    const dateStr = now.toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                     });
-                    const timeStr = now.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                    const timeStr = now.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
-                    
+
                     document.getElementById('currentDate').textContent = dateStr;
                     document.getElementById('currentTime').textContent = timeStr;
-                    
+
                     const hour = now.getHours();
                     let greeting = 'Good evening';
                     if (hour < 12) greeting = 'Good morning';
                     else if (hour < 18) greeting = 'Good afternoon';
-                    
+
                     document.getElementById('welcomeMessage').textContent = `${greeting}, ${this.data.user?.name || 'Editor'}`;
                 };
-                
+
                 updateTime();
                 setInterval(updateTime, 60000);
             }
-            
+
             startAutoRefresh() {
                 setInterval(() => {
                     if (this.currentSection === 'dashboard') {
@@ -2270,16 +2947,16 @@
                     }
                 }, this.config.refreshInterval);
             }
-            
+
             initNewUserDashboard() {
                 document.querySelector('.welcome-banner').classList.add('onboarding-highlight');
                 this.showToast('Welcome to the Editor Dashboard! Start by reviewing media requests.', 'info');
             }
-            
+
             showToast(message, type = 'info') {
                 const toastContainer = document.getElementById('toastContainer');
                 if (!toastContainer) return;
-                
+
                 const toastId = 'toast-' + Date.now();
                 const toast = document.createElement('div');
                 toast.id = toastId;
@@ -2292,46 +2969,23 @@
                         <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
                     </div>
                 `;
-                
+
                 toastContainer.appendChild(toast);
                 const bsToast = new bootstrap.Toast(toast, { delay: this.config.toastDuration });
                 bsToast.show();
-                
+
                 toast.addEventListener('hidden.bs.toast', function () {
                     toast.remove();
                 });
             }
-            
-            // Placeholder methods for other features
-            createArticle() {
-                this.showToast('Article creation feature coming soon!', 'info');
-            }
-            
-            assignWriter() {
-                this.showToast('Writer assignment feature coming soon!', 'info');
-            }
-            
-            reviewContent(contentId) {
-                this.showToast(`Reviewing content ${contentId}...`, 'info');
-            }
-            
-            approveContent(contentId) {
-                this.showToast(`Content ${contentId} approved!`, 'success');
-            }
-            
-            rejectContent(contentId) {
-                this.showToast(`Content ${contentId} rejected!`, 'warning');
-            }
-            
+
+            // Placeholder methods
             viewAllActivities() {
                 this.showToast('Viewing all activities...', 'info');
             }
-            
+
             refreshContent() {
                 this.showToast('Content refreshed!', 'success');
-                if (this.currentSection === 'content') {
-                    this.loadContentSection();
-                }
             }
         }
 
@@ -2342,4 +2996,5 @@
         });
     </script>
 </body>
+
 </html>

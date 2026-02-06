@@ -134,11 +134,31 @@ const requestSchema = new mongoose.Schema({
     reporterNotes: String,
 
     // Submission Tracking
-    submittedAt: Date,
-    submittedByReporter: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+    
+// In requestModel.js, change the documents schema:
+documents: {
+    nationalId: {
+        filename: String,
+        data: Buffer,          // ✅ Store file data
+        contentType: String,
+        size: Number,
+        uploadedAt: Date
     },
+    tradingLicense: {
+        filename: String,
+        data: Buffer,
+        contentType: String,
+        size: Number,
+        uploadedAt: Date
+    },
+    proposal: {
+        filename: String,
+        data: Buffer,
+        contentType: String,
+        size: Number,
+        uploadedAt: Date
+    }
+},
     // Additional metadata
     budget: Number,
     createdAt: {

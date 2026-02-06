@@ -1,16 +1,46 @@
 const Request = require('../models/request');
+const fs = require('fs');
+const path = require('path');
 
-// Create new request
 exports.createRequest = async (req, res) => {
     try {
-        // Validate request data
-        const { title, category, priority, description, date, address } = req.body;
+        console.log('🟢 CREATE REQUEST - RAW DATA:');
+        console.log('- req.body:', req.body);
+        console.log('- req.files:', req.files);
         
-        if (!title || !category || !priority || !description || !date || !address) {
+        // Use processedData if available, otherwise use req.body
+        const requestData = req.processedData || req.body;
+        
+        // Validate required fields
+        const requiredFields = ['title', 'category', 'priority', 'description', 'date', 'address'];
+        const missingFields = requiredFields.filter(field => !requestData[field]);
+        
+        if (missingFields.length > 0) {
+            console.log('❌ Missing fields:', missingFields);
             return res.status(400).json({
                 success: false,
-                message: 'All required fields must be provided'
+                message: 'All required fields must be provided',
+                missing: missingFields
             });
+        }
+        
+        // ✅ STORE FILES IN MONGODB AS BUFFERS
+        const documents = {};
+        
+        if (req.files && req.files.length > 0) {
+            console.log(`📦 Processing ${req.files.length} files for MongoDB storage`);
+            
+            for (const file of req.files) {
+                console.log(`Processing ${file.fieldname}: ${file.originalname} (${file.mimetype})`);
+                
+                documents[file.fieldname] = {
+                    filename: file.originalname,
+                    data: file.buffer, // ✅ Store the actual file data
+                    contentType: file.mimetype,
+                    size: file.size,
+                    uploadedAt: new Date()
+                };
+            }
         }
         
         // Generate unique request ID
@@ -18,38 +48,63 @@ exports.createRequest = async (req, res) => {
         
         // Create new request
         const newRequest = new Request({
-            ...req.body,
+            title: requestData.title,
+            category: requestData.category,
+            priority: requestData.priority,
+            description: requestData.description,
+            date: requestData.date,
+            address: requestData.address,
+            additionalInfo: requestData.additionalInfo || '',
+            status: 'pending',
             requestId,
-            submittedAt: new Date()
+            submittedBy: requestData.submittedBy || requestData.submitterEmail,
+            submitterEmail: requestData.submitterEmail,
+            submitterDepartment: requestData.submitterDepartment || 'news',
+            submittedAt: new Date(),
+            // ✅ Store files as buffers in MongoDB
+            documents: {
+                nationalId: documents.nationalId || null,
+                tradingLicense: documents.tradingLicense || null,
+                proposal: documents.proposal || null
+            }
         });
         
         await newRequest.save();
         
+        console.log('✅ New request created in MongoDB:', {
+            id: newRequest._id,
+            requestId: newRequest.requestId,
+            title: newRequest.title,
+            hasFiles: {
+                nationalId: !!newRequest.documents.nationalId,
+                tradingLicense: !!newRequest.documents.tradingLicense,
+                proposal: !!newRequest.documents.proposal
+            }
+        });
+        
         res.status(201).json({
             success: true,
-            message: 'Request submitted successfully',
+            message: 'Request submitted successfully with files stored in database',
             data: {
                 requestId: newRequest.requestId,
                 status: newRequest.status,
-                submittedAt: newRequest.submittedAt
+                submittedAt: newRequest.submittedAt,
+                hasFiles: {
+                    nationalId: !!newRequest.documents.nationalId,
+                    tradingLicense: !!newRequest.documents.tradingLicense,
+                    proposal: !!newRequest.documents.proposal
+                }
             }
         });
         
     } catch (error) {
-        console.error('Create request error:', error);
+        console.error('🔥 Create request error:', error);
         
         if (error.name === 'ValidationError') {
             return res.status(400).json({
                 success: false,
                 message: 'Validation error',
                 errors: Object.values(error.errors).map(err => err.message)
-            });
-        }
-        
-        if (error.code === 11000) {
-            return res.status(400).json({
-                success: false,
-                message: 'Duplicate request ID. Please try again.'
             });
         }
         
@@ -290,6 +345,36 @@ exports.getDashboardStats = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to fetch dashboard statistics'
+        });
+    }
+};
+// Get all requests (simple version for editor dashboard)
+exports.getAllRequests = async (req, res) => {
+    try {
+        console.log('📡 getAllRequests called - fetching all requests from database');
+        
+        // Get all requests without complex filtering
+        const requests = await Request.find({})
+            .sort('-submittedAt')
+            .select('-__v');
+
+        // LOG THE RESULTS
+        console.log(`✅ Found ${requests.length} requests in database:`);
+        requests.forEach((req, i) => {
+            console.log(`${i + 1}. ID: ${req._id}, Title: "${req.title}", Status: ${req.status}, Submitter: ${req.submitterEmail}`);
+        });
+
+        res.json({
+            success: true,
+            count: requests.length,
+            data: requests
+        });
+        
+    } catch (error) {
+        console.error('Get all requests error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch requests'
         });
     }
 };

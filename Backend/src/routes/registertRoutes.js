@@ -93,7 +93,7 @@ router.post('/register', async (req, res) => {
     console.log('📝 Registration attempt:', { email, role });
     
     // Validation
-    if (!name || !email || !password || !phone || !department || !role) {
+    if (!name || !email || !password || !phone || !role) {
       return res.status(400).json({
         success: false,
         error: 'All fields are required'
@@ -157,7 +157,7 @@ router.post('/register', async (req, res) => {
       email,
       password, // Stored as plain text (as per your seed data)
       phone,
-      department,
+      department: 'General', 
       role,
       expertise: [],
       status: 'active',

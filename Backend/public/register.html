@@ -1227,9 +1227,9 @@
             document.getElementById('email').addEventListener('blur', checkEmailAvailability);
 
             // Department change
-            document.getElementById('department').addEventListener('change', function () {
-                console.log('Department selected:', this.value);
-            });
+           // document.getElementById('department').addEventListener('change', function () {
+               // console.log('Department selected:', this.value);
+           // });
 
             // Terms agreement toggle
             document.getElementById('termsAgreement').addEventListener('change', function () {
@@ -1636,121 +1636,123 @@
         // ===========================================
         // REGISTRATION HANDLER
         // ===========================================
-        async function handleRegistration(event) {
-            event.preventDefault();
+        // ===========================================
+// REGISTRATION HANDLER - UPDATED VERSION
+// ===========================================
+async function handleRegistration(event) {
+    event.preventDefault();
 
-            console.log('📝 Registration started');
+    console.log('📝 Registration started');
 
-            // Get form values
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const department = document.getElementById('department').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const termsAgreed = document.getElementById('termsAgreement').checked;
+    // Get form values
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const termsAgreed = document.getElementById('termsAgreement').checked;
 
-            // Validation
-            const errors = [];
+    // Validation
+    const errors = [];
 
-            if (!name) errors.push('Name is required');
-            if (!email) errors.push('Email is required');
-            if (!phone) errors.push('Phone number is required');
-            if (!department) errors.push('Department is required');
-            if (!password) errors.push('Password is required');
-            if (!confirmPassword) errors.push('Please confirm your password');
+    if (!name) errors.push('Name is required');
+    if (!email) errors.push('Email is required');
+    if (!phone) errors.push('Phone number is required');
+    if (!password) errors.push('Password is required');
+    if (!confirmPassword) errors.push('Please confirm your password');
+    if (!termsAgreed) errors.push('You must agree to the terms');
 
-            if (!termsAgreed) errors.push('You must agree to the terms');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+        errors.push('Please enter a valid email address');
+    }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (email && !emailRegex.test(email)) {
-                errors.push('Please enter a valid email address');
-            }
+    const ethiopianRegex = /^\+251(9|7)\d{8}$/;
+    if (phone && !ethiopianRegex.test(phone)) {
+        errors.push('Phone must be in Ethiopian format: +251XXXXXXXXX');
+    }
 
-            const ethiopianRegex = /^\+251(9|7)\d{8}$/;
-            if (phone && !ethiopianRegex.test(phone)) {
-                errors.push('Phone must be in Ethiopian format: +251XXXXXXXXX');
-            }
+    if (password && password.length < 6) {
+        errors.push('Password must be at least 6 characters long');
+    }
 
-            if (password && password.length < 6) {
-                errors.push('Password must be at least 6 characters long');
-            }
+    if (password !== confirmPassword) {
+        errors.push('Passwords do not match');
+    }
 
-            if (password !== confirmPassword) {
-                errors.push('Passwords do not match');
-            }
+    if (errors.length > 0) {
+        errors.forEach(error => showToast(error, 'error'));
+        return;
+    }
 
-            if (errors.length > 0) {
-                errors.forEach(error => showToast(error, 'error'));
-                return;
-            }
+    const registerBtn = document.getElementById('registerBtn');
+    const originalText = registerBtn.innerHTML;
+    registerBtn.innerHTML = '<div class="spinner"></div> Creating Account...';
+    registerBtn.disabled = true;
 
-            const registerBtn = document.getElementById('registerBtn');
-            const originalText = registerBtn.innerHTML;
-            registerBtn.innerHTML = '<div class="spinner"></div> Creating Account...';
-            registerBtn.disabled = true;
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name,
+                email,
+                phone,
+                password,
+                role: 'requester', 
+                department: 'news', // Default role for registration
+                avatar: name.charAt(0).toUpperCase(), // First letter as avatar
+            avatarColor: '#3498db', // Default color
+            status: 'active',
+            lastLogin: new Date().toISOString()
+            })
+        });
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password,
-                        phone
-
-
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.error || data.message || 'Registration failed');
-                }
-
-                showToast('✅ Registration successful! Redirecting to login...', 'success');
-
-                document.getElementById('registerForm').reset();
-                document.querySelectorAll('.role-option').forEach(option => {
-                    option.classList.remove('selected');
-                });
-
-
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 2000);
-
-            } catch (error) {
-                console.error('❌ Registration error:', error);
-
-                let errorMessage = 'Registration failed. Please try again.';
-
-                if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
-                    errorMessage = 'Network error. Please check your connection.';
-                } else if (error.message.includes('already registered')) {
-                    errorMessage = 'This email or phone is already registered.';
-                } else if (error.message.includes('Ethiopian format')) {
-                    errorMessage = 'Phone must be in Ethiopian format: +251XXXXXXXXX';
-                } else if (error.message.includes('role')) {
-                    errorMessage = 'Invalid role selected.';
-                } else if (error.message.includes('email')) {
-                    errorMessage = 'Please enter a valid email address.';
-                } else {
-                    errorMessage = error.message;
-                }
-
-                showToast(errorMessage, 'error');
-
-            } finally {
-                registerBtn.innerHTML = originalText;
-                registerBtn.disabled = false;
-            }
+        const data = await response.json();
+    console.log('📦 Request payload:', {
+        name, email, phone, password, role: 'requester'
+    });
+       console.log('📥 Response:', data);
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || data.message || 'Registration failed');
         }
 
+        showToast('✅ Registration successful! Redirecting to login...', 'success');
+
+        // Reset form
+        document.getElementById('registerForm').reset();
+
+        // Redirect to login after success
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
+
+    } catch (error) {
+        console.error('❌ Registration error:', error);
+
+        let errorMessage = 'Registration failed. Please try again.';
+
+        if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error. Please check your connection.';
+        } else if (error.message.includes('already registered') || error.message.includes('duplicate')) {
+            errorMessage = 'This email or phone is already registered.';
+        } else if (error.message.includes('Ethiopian format')) {
+            errorMessage = 'Phone must be in Ethiopian format: +251XXXXXXXXX';
+        } else if (error.message.includes('email')) {
+            errorMessage = 'Please enter a valid email address.';
+        } else {
+            errorMessage = error.message;
+        }
+
+        showToast(errorMessage, 'error');
+
+    } finally {
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+    }
+}
         // ===========================================
         // DEMO & UTILITY FUNCTIONS
         // ===========================================

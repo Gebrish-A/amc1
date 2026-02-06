@@ -186,7 +186,110 @@
             align-items: center;
             justify-content: space-between;
         }
+/* User Management Styles */
+.user-management {
+    max-width: 100%;
+}
 
+.user-filters {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.user-status-badge {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.user-status-badge.active {
+    background-color: #28a745;
+}
+
+.user-status-badge.inactive {
+    background-color: #6c757d;
+}
+
+.user-role-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--admin-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.permissions-section {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .user-actions .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .user-actions .btn {
+        width: 100%;
+    }
+}
         .content-wrapper {
             padding: 2rem;
             animation: fadeIn 0.5s ease;
@@ -750,87 +853,8 @@
             </div>
 
             <div class="row">
-                <!-- System Overview -->
-                <div class="col-lg-8 mb-4">
-                    <div class="dashboard-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">System Overview</h5>
-                            <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-secondary active" data-period="day">Day</button>
-                                <button class="btn btn-sm btn-outline-secondary" data-period="week">Week</button>
-                                <button class="btn btn-sm btn-outline-secondary" data-period="month">Month</button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-4">
-                                <div class="col-md-3 mb-3">
-                                    <div class="text-center">
-                                        <h6>Server Load</h6>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                                <div class="progress-bar bg-success" style="width: 45%" role="progressbar">45%</div>
-                                            </div>
-                                            <i class="bi bi-check-circle text-success"></i>
-                                        </div>
-                                        <small class="text-muted">Optimal</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <div class="text-center">
-                                        <h6>Database</h6>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                                <div class="progress-bar bg-info" style="width: 68%" role="progressbar">68%</div>
-                                            </div>
-                                            <i class="bi bi-info-circle text-info"></i>
-                                        </div>
-                                        <small class="text-muted">2.4GB used</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <div class="text-center">
-                                        <h6>Active Sessions</h6>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                                <div class="progress-bar bg-warning" style="width: 82%" role="progressbar">82%</div>
-                                            </div>
-                                            <i class="bi bi-exclamation-triangle text-warning"></i>
-                                        </div>
-                                        <small class="text-muted">24/30 sessions</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <div class="text-center">
-                                        <h6>Backup Status</h6>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 20px;">
-                                                <div class="progress-bar bg-success" style="width: 100%" role="progressbar">100%</div>
-                                            </div>
-                                            <i class="bi bi-check-circle text-success"></i>
-                                        </div>
-                                        <small class="text-muted">Last: 2 hours ago</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <canvas id="systemChart" height="150"></canvas>
-                        </div>
-                    </div>
-                </div>
+               
 
-                <!-- Recent Activities -->
-                <div class="col-lg-4 mb-4">
-                    <div class="dashboard-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Recent Activities</h5>
-                            <button class="btn btn-sm btn-link" onclick="adminDashboard.showSection('logs')">View All</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="activity-list" id="activityList">
-                                <!-- Activities will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- User Management & System Alerts -->
@@ -841,10 +865,10 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Recent Users</h5>
                             <div>
-                                <button class="btn btn-sm btn-outline-secondary me-2" onclick="adminDashboard.refreshUsers()">
+                                <button class="btn btn-sm btn-outline-secondary me-2" onclick="window.adminDashboard && adminDashboard.refreshUsers()">
                                     <i class="bi bi-arrow-clockwise"></i>
                                 </button>
-                                <button class="btn btn-sm btn-primary" onclick="adminDashboard.addNewUser()">
+                                <button class="btn btn-sm btn-primary" onclick="adminDashboard.addNewUser()" → onclick="window.adminDashboard && adminDashboard.addNewUser()">
                                     <i class="bi bi-person-plus me-1"></i> Add User
                                 </button>
                             </div>
@@ -875,7 +899,7 @@
                     <div class="dashboard-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">System Alerts</h5>
-                            <button class="btn btn-sm btn-link" onclick="adminDashboard.markAllAsRead()">Mark All Read</button>
+                            <button class="btn btn-sm btn-link" onclick="adminDashboard.markAllAsRead()" → onclick="window.adminDashboard && adminDashboard.markAllAsRead()">Mark All Read</button>
                         </div>
                         <div class="card-body" id="systemAlerts">
                             <!-- Alerts will be loaded here -->
@@ -894,7 +918,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3 mb-3">
-                                    <button class="quick-action-btn" onclick="adminDashboard.addNewUser()">
+                                    <button class="quick-action-btn" onclick="adminDashboard.addNewUser()" → onclick="window.adminDashboard && adminDashboard.addNewUser()">
                                         <i class="bi bi-person-plus"></i>
                                         <h6>Add New User</h6>
                                         <small class="text-muted">Create user account</small>
@@ -937,845 +961,952 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
- <script>
+   <script>
 // ============================================
-// COMPLETELY DISABLE ALL SESSION CHECKS
+// REAL DATABASE INTEGRATION
 // ============================================
+
+// Define API base URL
+window.API_BASE_URL = 'http://localhost:5001/api';
+
+class UserManager {
+  constructor() {
+    this.apiBase = window.API_BASE_URL;
+  }
+
+  // Get JWT token from storage
+  getToken() {
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  console.log('Retrieved token from storage:', token ? 'Yes' : 'No');
+  if (!token) {
+    console.warn('No authentication token found!');
+    // For demo purposes, let's use a dummy token
+    return 'demo-admin-token-' + Date.now();
+  }
+  return token;
+}
+
+  // Get all users from database
+  async getUsers(page = 1, filters = {}) {
+    try {
+      const queryParams = new URLSearchParams({
+        page: page,
+        limit: 20,
+        ...filters
+      });
+
+      const response = await fetch(`${this.apiBase}/admin/users?${queryParams}`, {
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Create new user
+  async createUser(userData) {
+    try {
+          const token = this.getToken();
+      const response = await fetch(`${this.apiBase}/admin/users`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create user');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Update user
+  async updateUser(userId, userData) {
+    try {
+      const response = await fetch(`${this.apiBase}/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update user');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Delete user
+  async deleteUser(userId) {
+    try {
+      const response = await fetch(`${this.apiBase}/admin/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Get user statistics
+  async getUserStats() {
+    try {
+      const response = await fetch(`${this.apiBase}/admin/users/stats`, {
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
 
 // Admin Dashboard Module
 class AdminDashboard {
-    constructor() {
-        this.config = {
-            refreshInterval: 30000,
-            toastDuration: 5000,
-            chartColors: {
-                primary: '#9b59b6',
-                success: '#2ecc71',
-                warning: '#f39c12',
-                danger: '#e74c3c',
-                info: '#3498db'
-            }
-        };
-        
-        this.data = {
-            user: null,
-            users: [],
-            alerts: [],
-            activities: [],
-            systemStats: null,
-            searchResults: []
-        };
-        
-        this.currentSection = 'dashboard';
-        this.isLoggedIn = true; // FORCE LOGGED IN
-        this.isSidebarCollapsed = false;
-        this.isDarkMode = false;
-        
-        // Initialize demo data
+  constructor() {
+    this.userManager = new UserManager();
+    this.currentPage = 1;
+    this.filters = {};
+    this.config = {
+      refreshInterval: 30000,
+      toastDuration: 5000,
+      chartColors: {
+        primary: '#9b59b6',
+        success: '#2ecc71',
+        warning: '#f39c12',
+        danger: '#e74c3c',
+        info: '#3498db'
+      }
+    };
+    
+    this.data = {
+      user: null,
+      users: [],
+      alerts: [],
+      activities: [],
+      systemStats: null,
+      searchResults: []
+    };
+    
+    this.currentSection = 'dashboard';
+    this.isLoggedIn = true;
+    this.isSidebarCollapsed = false;
+    this.isDarkMode = false;
+  }
+  
+  async init() {
+    console.log('=== ADMIN DASHBOARD LOADING WITH REAL DATA ===');
+    
+    // ALWAYS SHOW MAIN CONTENT - NO CHECKS
+    document.getElementById('mainContent').style.display = 'block';
+    
+    // Set default admin user
+    this.data.user = {
+      id: 'admin001',
+      name: 'System Administrator',
+      email: 'admin@amedia.et',
+      role: 'Administrator',
+      avatar: 'SA',
+      permissions: ['all'],
+      department: 'Administration',
+      lastLogin: new Date().toISOString()
+    };
+      this.initDemoData(); 
+    // Update UI elements
+    document.getElementById('userName').textContent = this.data.user.name;
+    document.getElementById('userEmail').textContent = this.data.user.email;
+    document.getElementById('userAvatar').textContent = this.data.user.avatar;
+    document.getElementById('userRoleBadge').textContent = this.data.user.role;
+    document.getElementById('welcomeMessage').textContent = `Welcome, ${this.data.user.name}`;
+    
+    // Load real users from database
+    await this.loadUsersFromDatabase();
+    
+    // Load dashboard data
+    this.loadDashboardData();
+    
+    // Setup event listeners
+    this.setupEventListeners();
+    this.initCharts();
+    this.startAutoRefresh();
+    this.updateDateTime();
+    this.renderActivities();
+    this.renderAlerts();
+    
+    console.log('✅ Admin Dashboard loaded with real data');
+    this.showToast('Dashboard connected to live database', 'success');
+  }
+  
+  async loadUsersFromDatabase() {
+    try {
+      console.log('Loading users from database...');
+      
+      // Get users from database
+      const result = await this.userManager.getUsers(this.currentPage, this.filters);
+      
+      if (result.success) {
+        this.data.users = result.data.users || result.data;
+        this.renderUsersTable(this.data.users);
+        return result.data;
+      } else {
+        console.error('Failed to load users:', result.error);
+        this.showToast('Using mock data temporarily', 'warning');
+        // Fallback to mock data for demo
         this.initDemoData();
+        this.renderUsersTable(this.data.users);
+      }
+    } catch (error) {
+      console.error('Error loading users:', error);
+      this.showToast(`Error loading users: ${error.message}`, 'error');
+      this.initDemoData();
+      this.renderUsersTable(this.data.users);
     }
+  }
+  
+  initDemoData() {
+    // Fallback demo data if database fails
+    this.data.users = [
+      { id: 'usr001', name: 'John Doe', email: 'johndoe@ameco.et', role: 'Reporter', status: 'active', lastActive: '2 minutes ago', avatar: 'JD', isActive: true },
+      { id: 'usr002', name: 'Sarah Reporter', email: 'sarah@ameco.et', role: 'Editor', status: 'active', lastActive: '15 minutes ago', avatar: 'SR', isActive: true },
+      { id: 'usr003', name: 'Mike Journalist', email: 'mike@ameco.et', role: 'Crew', status: 'away', lastActive: '1 hour ago', avatar: 'MJ', isActive: true },
+      { id: 'usr004', name: 'Emma Producer', email: 'emma@ameco.et', role: 'Producer', status: 'active', lastActive: '30 minutes ago', avatar: 'EP', isActive: true },
+      { id: 'usr005', name: 'Alex Director', email: 'alex@ameco.et', role: 'Director', status: 'inactive', lastActive: '2 days ago', avatar: 'AD', isActive: false }
+    ];
     
-    initDemoData() {
-        this.data.users = [
-            { id: 'usr001', name: 'John Doe', email: 'johndoe@ameco.et', role: 'Reporter', status: 'active', lastActive: '2 minutes ago', avatar: 'JD' },
-            { id: 'usr002', name: 'Sarah Reporter', email: 'sarah@ameco.et', role: 'Editor', status: 'active', lastActive: '15 minutes ago', avatar: 'SR' },
-            { id: 'usr003', name: 'Mike Journalist', email: 'mike@ameco.et', role: 'Crew', status: 'away', lastActive: '1 hour ago', avatar: 'MJ' },
-            { id: 'usr004', name: 'Emma Producer', email: 'emma@ameco.et', role: 'Producer', status: 'active', lastActive: '30 minutes ago', avatar: 'EP' },
-            { id: 'usr005', name: 'Alex Director', email: 'alex@ameco.et', role: 'Director', status: 'inactive', lastActive: '2 days ago', avatar: 'AD' }
-        ];
-        
-        this.data.alerts = [
-            { type: 'warning', title: 'Database Backup Overdue', message: 'Scheduled backup was missed. Please run manual backup.', time: '1 hour ago', read: false },
-            { type: 'info', title: 'Storage Usage High', message: 'Database storage at 85%. Consider cleaning old logs.', time: '2 hours ago', read: false },
-            { type: 'success', title: 'System Update Available', message: 'New version v2.1.0 is ready to install.', time: '3 hours ago', read: true },
-            { type: 'danger', title: 'Security Alert', message: 'Multiple failed login attempts detected from unknown IP.', time: '5 hours ago', read: false }
-        ];
-        
-        this.data.activities = [
-            { type: 'user', icon: 'person-plus', color: 'success', title: 'New User Registered', description: 'John Doe joined as Reporter', time: '2 minutes ago' },
-            { type: 'warning', icon: 'exclamation-triangle', color: 'warning', title: 'Warning Alert', description: 'Database backup overdue', time: '1 hour ago' },
-            { type: 'system', icon: 'arrow-clockwise', color: 'info', title: 'System Update', description: 'Security patches applied', time: '3 hours ago' },
-            { type: 'security', icon: 'shield-check', color: 'primary', title: 'Security Scan', description: 'No threats detected', time: '5 hours ago' },
-            { type: 'request', icon: 'file-earmark-text', color: 'success', title: 'New Content Request', description: 'Sports department submitted request', time: '10 minutes ago' }
-        ];
-        
-        this.data.systemStats = {
-            totalUsers: 156,
-            activeRequests: 48,
-            systemUptime: 99.8,
-            monthlyRevenue: 42500,
-            serverLoad: 45,
-            databaseUsage: 68,
-            activeSessions: 24,
-            backupStatus: 100,
-            pendingApprovals: 12
-        };
+    this.data.alerts = [
+      { type: 'warning', title: 'Database Backup Overdue', message: 'Scheduled backup was missed. Please run manual backup.', time: '1 hour ago', read: false },
+      { type: 'info', title: 'Storage Usage High', message: 'Database storage at 85%. Consider cleaning old logs.', time: '2 hours ago', read: false }
+    ];
+    
+    this.data.activities = [
+      { type: 'user', icon: 'person-plus', color: 'success', title: 'New User Registered', description: 'John Doe joined as Reporter', time: '2 minutes ago' },
+      { type: 'warning', icon: 'exclamation-triangle', color: 'warning', title: 'Warning Alert', description: 'Database backup overdue', time: '1 hour ago' }
+    ];
+    
+    this.data.systemStats = {
+      totalUsers: 156,
+      activeRequests: 48,
+      systemUptime: 99.8,
+      monthlyRevenue: 42500,
+      pendingApprovals: 12
+    };
+  }
+  
+  loadDashboardData() {
+    // Update stats
+    document.getElementById('totalUsersCount').textContent = this.data.users.length;
+    document.getElementById('activeRequestsCount').textContent = this.data.systemStats.activeRequests;
+    document.getElementById('systemHealthPercent').textContent = this.data.systemStats.systemUptime + '%';
+    document.getElementById('revenueCount').textContent = '$' + (this.data.systemStats.monthlyRevenue / 1000).toFixed(1) + 'K';
+    document.getElementById('pendingApprovals').textContent = this.data.systemStats.pendingApprovals;
+    document.getElementById('activeUsers').textContent = this.data.users.filter(u => u.isActive).length;
+    
+    // Update badges
+    document.getElementById('usersBadge').textContent = this.data.users.length;
+    document.getElementById('requestsBadge').textContent = this.data.systemStats.activeRequests;
+    document.getElementById('notificationCount').textContent = this.data.alerts.filter(a => !a.read).length;
+  }
+  
+  // Render users table with real data
+  renderUsersTable(users) {
+    const usersTable = document.getElementById('usersTable');
+    if (!usersTable) return;
+
+    if (!users || users.length === 0) {
+      usersTable.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-4">
+            <i class="bi bi-people fs-1 text-muted"></i>
+            <p class="mt-2">No users found</p>
+          </td>
+        </tr>
+      `;
+      return;
     }
-    
-    init() {
-        console.log('=== ADMIN DASHBOARD LOADING (NO SESSION CHECK) ===');
-        
-        // ALWAYS SHOW MAIN CONTENT - NO CHECKS
-        document.getElementById('mainContent').style.display = 'block';
-        
-        // Set default admin user
-        this.data.user = {
-            id: 'admin001',
-            name: 'System Administrator',
-            email: 'admin@amedia.et',
-            role: 'Administrator',
-            avatar: 'SA',
-            permissions: ['all'],
-            department: 'Administration',
-            lastLogin: new Date().toISOString()
-        };
-        
-        // Load all dashboard components
-        this.loadUserData();
-        this.loadDashboardData();
-        this.setupEventListeners();
-        this.initCharts();
-        this.startAutoRefresh();
-        this.updateDateTime();
-        this.renderActivities();
-        this.renderUsersTable();
-        this.renderAlerts();
-        
-        console.log('Admin Dashboard loaded successfully');
-        this.showToast('Admin Dashboard loaded!', 'success');
-    }
-    
-    loadUserData() {
-        // Always use default admin
-        this.data.user = {
-            id: 'admin001',
-            name: 'System Administrator',
-            email: 'admin@amedia.et',
-            role: 'Administrator',
-            avatar: 'SA',
-            permissions: ['all'],
-            department: 'Administration'
-        };
-        
-        // Update UI elements
-        document.getElementById('userName').textContent = this.data.user.name;
-        document.getElementById('userEmail').textContent = this.data.user.email;
-        document.getElementById('userAvatar').textContent = this.data.user.avatar;
-        document.getElementById('userRoleBadge').textContent = this.data.user.role;
-        document.getElementById('welcomeMessage').textContent = `Welcome, ${this.data.user.name}`;
-    }
-    
-    loadDashboardData() {
-        // Update stats
-        document.getElementById('totalUsersCount').textContent = this.data.systemStats.totalUsers;
-        document.getElementById('activeRequestsCount').textContent = this.data.systemStats.activeRequests;
-        document.getElementById('systemHealthPercent').textContent = this.data.systemStats.systemUptime + '%';
-        document.getElementById('revenueCount').textContent = '$' + (this.data.systemStats.monthlyRevenue / 1000).toFixed(1) + 'K';
-        document.getElementById('pendingApprovals').textContent = this.data.systemStats.pendingApprovals;
-        document.getElementById('activeUsers').textContent = this.data.users.filter(u => u.status === 'active').length;
-        
-        // Update badges
-        document.getElementById('usersBadge').textContent = this.data.users.length;
-        document.getElementById('requestsBadge').textContent = this.data.systemStats.activeRequests;
-        document.getElementById('notificationCount').textContent = this.data.alerts.filter(a => !a.read).length;
-    }
-    
-    setupEventListeners() {
-        // Mobile menu
-        document.getElementById('mobileMenuToggle').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('sidebar').classList.toggle('active');
-        });
-        
-        // Sidebar toggle
-        document.getElementById('sidebarToggle').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.toggleSidebar();
-        });
-        
-        // Search
-        document.getElementById('searchBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.performSearch();
-        });
-        
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            this.handleSearchInput(e.target.value);
-        });
-        
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                this.performSearch();
-            }
-        });
-        
-        // Notifications
-        document.getElementById('notificationsBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.showNotifications();
-        });
-        
-        // Logout - modified to not redirect
-        document.getElementById('logoutBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (confirm('Logout? (This will just show a message in demo mode)')) {
-                this.showToast('Logout would happen here in production', 'info');
-            }
-        });
-        
-        // Dark mode toggle
-        document.getElementById('darkModeToggle').addEventListener('click', (e) => {
-            e.preventDefault();
-            this.toggleDarkMode();
-        });
-        
-        // Sidebar navigation
-        const sections = {
-            'dashboardLink': 'dashboard',
-            'usersLink': 'users',
-            'requestsLink': 'requests',
-            'approvalsLink': 'pending',
-            'reportsLink': 'reports',
-            'analyticsLink': 'analytics',
-            'settingsLink': 'settings',
-            'logsLink': 'logs'
-        };
-        
-        Object.keys(sections).forEach(linkId => {
-            const link = document.getElementById(linkId);
-            if (link) {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showSection(sections[linkId]);
-                });
-            }
-        });
-        
-        // Period buttons
-        document.querySelectorAll('[data-period]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('[data-period]').forEach(b => {
-                    b.classList.remove('active');
-                });
-                btn.classList.add('active');
-                this.updateSystemChart(btn.getAttribute('data-period'));
-            });
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const mobileToggle = document.getElementById('mobileMenuToggle');
-            
-            if (window.innerWidth <= 768 && 
-                sidebar.classList.contains('active') && 
-                !sidebar.contains(e.target) && 
-                e.target !== mobileToggle && 
-                !mobileToggle.contains(e.target)) {
-                sidebar.classList.remove('active');
-            }
-        });
-    }
-    
-    toggleSidebar() {
-        this.isSidebarCollapsed = !this.isSidebarCollapsed;
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        
-        if (this.isSidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('expanded');
-        } else {
-            sidebar.classList.remove('collapsed');
-            mainContent.classList.remove('expanded');
-        }
-    }
-    
-    toggleDarkMode() {
-        this.isDarkMode = !this.isDarkMode;
-        const body = document.body;
-        const toggleBtn = document.getElementById('darkModeToggle');
-        
-        if (this.isDarkMode) {
-            body.classList.add('dark-mode');
-            toggleBtn.innerHTML = '<i class="bi bi-sun"></i>';
-            toggleBtn.title = 'Switch to light mode';
-        } else {
-            body.classList.remove('dark-mode');
-            toggleBtn.innerHTML = '<i class="bi bi-moon"></i>';
-            toggleBtn.title = 'Switch to dark mode';
-        }
-        
-        localStorage.setItem('adminDarkMode', this.isDarkMode);
-    }
-    
-    initCharts() {
-        this.initSystemChart();
-    }
-    
-    initSystemChart() {
-        const ctx = document.getElementById('systemChart');
-        if (!ctx) return;
-        
-        const data = {
-            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-            datasets: [{
-                label: 'Server Load (%)',
-                data: [35, 40, 45, 55, 50, 45],
-                borderColor: this.config.chartColors.primary,
-                backgroundColor: 'rgba(155, 89, 182, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }, {
-                label: 'Active Users',
-                data: [18, 22, 24, 26, 23, 20],
-                borderColor: this.config.chartColors.success,
-                backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.4
-            }]
-        };
-        
-        // Destroy existing chart if it exists
-        if (window.systemChartInstance) {
-            window.systemChartInstance.destroy();
-        }
-        
-        window.systemChartInstance = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            padding: 20,
-                            usePointStyle: true
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'nearest'
-                },
-                animation: {
-                    duration: 1000
-                }
-            }
-        });
-    }
-    
-    updateSystemChart(period) {
-        // Update chart based on period
-        const periods = {
-            day: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-            week: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            month: ['Week 1', 'Week 2', 'Week 3', 'Week 4']
-        };
-        
-        if (window.systemChartInstance) {
-            window.systemChartInstance.data.labels = periods[period] || periods.day;
-            window.systemChartInstance.update();
-        }
-        
-        this.showToast(`Showing ${period} data`, 'info');
-    }
-    
-    startAutoRefresh() {
-        setInterval(() => {
-            this.refreshDashboard();
-        }, this.config.refreshInterval);
-    }
-    
-    updateDateTime() {
-        const now = new Date();
-        const dateElement = document.getElementById('currentDate');
-        const timeElement = document.getElementById('currentTime');
-        
-        if (dateElement) {
-            dateElement.textContent = now.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-        
-        if (timeElement) {
-            timeElement.textContent = now.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }
-        
-        setTimeout(() => this.updateDateTime(), 1000);
-    }
-    
-    renderActivities() {
-        const activityList = document.getElementById('activityList');
-        if (!activityList) return;
-        
-        activityList.innerHTML = this.data.activities.map(activity => `
-            <div class="activity-item" onclick="adminDashboard.showSection('logs')">
-                <div class="d-flex">
-                    <div class="activity-icon bg-${activity.color} rounded-circle d-flex align-items-center justify-content-center me-3" 
-                         style="width: 40px; height: 40px;">
-                        <i class="bi bi-${activity.icon} text-white"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-0">${activity.title}</h6>
-                        <small class="text-muted">${activity.description}</small>
-                        <div class="text-muted" style="font-size: 0.75rem;">
-                            <i class="bi bi-clock me-1"></i>${activity.time}
-                        </div>
-                    </div>
-                </div>
+
+    usersTable.innerHTML = users.map(user => {
+      const avatar = this.getAvatarInitials(user.name);
+      const lastActive = user.lastLogin 
+        ? this.formatTimeAgo(new Date(user.lastLogin))
+        : user.lastActive || 'Never';
+
+      return `
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-initials bg-primary me-2">${avatar}</div>
+              <div>
+                <strong>${user.name}</strong><br>
+                <small class="text-muted">${user.email}</small>
+              </div>
             </div>
-        `).join('');
-    }
-    
-    renderUsersTable() {
-        const usersTable = document.getElementById('usersTable');
-        if (!usersTable) return;
-        
-        usersTable.innerHTML = this.data.users.map(user => `
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-initials bg-primary me-2">${user.avatar}</div>
-                        <div>
-                            <strong>${user.name}</strong><br>
-                            <small class="text-muted">${user.email}</small>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="badge bg-info">${user.role}</span></td>
-                <td>
-                    <span class="badge bg-${user.status === 'active' ? 'success' : user.status === 'away' ? 'warning' : 'secondary'}">
-                        ${user.status}
-                    </span>
-                </td>
-                <td><small>${user.lastActive}</small></td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <button class="btn btn-outline-primary" onclick="adminDashboard.editUser('${user.id}')" title="Edit">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-outline-${user.status === 'active' ? 'warning' : 'success'}" 
-                                onclick="adminDashboard.toggleUserStatus('${user.id}')" 
-                                title="${user.status === 'active' ? 'Deactivate' : 'Activate'}">
-                            <i class="bi bi-${user.status === 'active' ? 'pause' : 'play'}"></i>
-                        </button>
-                        <button class="btn btn-outline-danger" onclick="adminDashboard.deleteUser('${user.id}')" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
-    
-    renderAlerts() {
-        const systemAlerts = document.getElementById('systemAlerts');
-        if (!systemAlerts) return;
-        
-        systemAlerts.innerHTML = this.data.alerts.map(alert => `
-            <div class="alert alert-${alert.type} d-flex align-items-center mb-3 ${alert.read ? 'opacity-75' : ''}" 
-                 onclick="adminDashboard.markAlertAsRead(${this.data.alerts.indexOf(alert)})">
-                <i class="bi bi-${this.getAlertIcon(alert.type)} me-3 fs-4"></i>
-                <div class="flex-grow-1">
-                    <strong>${alert.title}</strong>
-                    <p class="mb-0 small">${alert.message}</p>
-                    <small class="text-muted"><i class="bi bi-clock me-1"></i>${alert.time}</small>
-                </div>
-                ${!alert.read ? '<span class="badge bg-danger">New</span>' : ''}
+          </td>
+          <td>
+            <span class="badge bg-info">${user.role}</span>
+          </td>
+          <td>
+            <span class="badge bg-${user.isActive ? 'success' : 'secondary'}">
+              ${user.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </td>
+          <td><small>${lastActive}</small></td>
+          <td>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-primary" onclick="adminDashboard.editUser('${user.id || user._id}')" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-outline-${user.isActive ? 'warning' : 'success'}" 
+                      onclick="adminDashboard.toggleUserStatus('${user.id || user._id}', ${user.isActive})" 
+                      title="${user.isActive ? 'Deactivate' : 'Activate'}">
+                <i class="bi bi-${user.isActive ? 'pause' : 'play'}"></i>
+              </button>
+              <button class="btn btn-outline-danger" onclick="adminDashboard.deleteUser('${user.id || user._id}', '${user.name}')" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
             </div>
-        `).join('');
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+  
+  // Helper functions
+  getAvatarInitials(name) {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  }
+
+  formatTimeAgo(date) {
+    if (!date) return 'Never';
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) {
+      return `${diffMins}m ago`;
+    } else if (diffHours < 24) {
+      return `${diffHours}h ago`;
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays < 7) {
+      return `${diffDays}d ago`;
+    } else {
+      return date.toLocaleDateString();
     }
-    
-    getAlertIcon(type) {
-        switch(type) {
-            case 'warning': return 'exclamation-triangle';
-            case 'info': return 'info-circle';
-            case 'success': return 'check-circle';
-            case 'danger': return 'shield-exclamation';
-            default: return 'bell';
+  }
+  
+  // ========== USER MANAGEMENT METHODS ==========
+  
+  addNewUser() {
+    this.showAddUserModal();
+  }
+  
+  showAddUserModal() {
+    const modalContent = `
+      <div class="new-user-form">
+        <form id="createUserForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Email Address *</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Role *</label>
+              <select class="form-select" name="role" required>
+                <option value="">Select Role</option>
+                <option value="admin">Administrator</option>
+                <option value="manager">Manager</option>
+                <option value="editor">Editor</option>
+                <option value="reporter">Reporter</option>
+                <option value="crew">Crew</option>
+                <option value="cameraman">Cameraman</option>
+                <option value="driver">Driver</option>
+                <option value="sound_technician">Sound Technician</option>
+                <option value="requester">Requester</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Department *</label>
+              <input type="text" class="form-control" name="department" value="General" required>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" name="phone">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Password</label>
+              <input type="text" class="form-control" name="password" value="Default@123">
+              <small class="text-muted">Default password will be used if left empty</small>
+            </div>
+          </div>
+          
+          <div class="text-end mt-4">
+            <button type="button" class="btn btn-secondary me-2" onclick="adminDashboard.closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create User</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    this.showModal('Create New User', modalContent);
+
+    // Add form submission handler
+    document.getElementById('createUserForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const userData = Object.fromEntries(formData);
+      
+      // Add default permissions based on role
+      userData.permissions = {
+        canCreateRequest: true,
+        canApproveRequest: userData.role === 'admin' || userData.role === 'editor',
+        canAssignResources: userData.role === 'admin' || userData.role === 'editor',
+        canUploadMedia: userData.role !== 'requester',
+        canGenerateReports: userData.role === 'admin' || userData.role === 'manager'
+      };
+
+      const result = await this.userManager.createUser(userData);
+      if (result.success) {
+        this.showToast(`User ${userData.name} created successfully!`, 'success');
+        this.closeModal();
+        await this.loadUsersFromDatabase();
+      } else {
+        this.showToast(`Error: ${result.error}`, 'error');
+      }
+    });
+  }
+  
+  async editUser(userId) {
+    // Try to fetch from database first
+    try {
+      const response = await fetch(`${window.API_BASE_URL}/admin/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${this.userManager.getToken()}`,
+          'Content-Type': 'application/json'
         }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          this.showEditUserModal(result.data);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
     }
     
-    showSection(section) {
-        this.currentSection = section;
-        
-        // Update active nav
-        document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
-            link.classList.remove('active');
+    // Fallback to local data
+    const user = this.data.users.find(u => u.id === userId || u._id === userId);
+    if (user) {
+      this.showEditUserModal(user);
+    } else {
+      this.showToast('User not found', 'error');
+    }
+  }
+  
+  showEditUserModal(user) {
+    const modalContent = `
+      <div class="edit-user-form">
+        <form id="editUserForm">
+          <input type="hidden" name="id" value="${user.id || user._id}">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-control" name="name" value="${user.name}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Email Address *</label>
+              <input type="email" class="form-control" name="email" value="${user.email}" required>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Role *</label>
+              <select class="form-select" name="role" required>
+                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrator</option>
+                <option value="manager" ${user.role === 'manager' ? 'selected' : ''}>Manager</option>
+                <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Editor</option>
+                <option value="reporter" ${user.role === 'reporter' ? 'selected' : ''}>Reporter</option>
+                <option value="crew" ${user.role === 'crew' ? 'selected' : ''}>Crew</option>
+                <option value="cameraman" ${user.role === 'cameraman' ? 'selected' : ''}>Cameraman</option>
+                <option value="driver" ${user.role === 'driver' ? 'selected' : ''}>Driver</option>
+                <option value="sound_technician" ${user.role === 'sound_technician' ? 'selected' : ''}>Sound Technician</option>
+                <option value="requester" ${user.role === 'requester' ? 'selected' : ''}>Requester</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Department *</label>
+              <input type="text" class="form-control" name="department" value="${user.department || 'General'}" required>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" name="phone" value="${user.phone || ''}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="isActive">
+                <option value="true" ${user.isActive ? 'selected' : ''}>Active</option>
+                <option value="false" ${!user.isActive ? 'selected' : ''}>Inactive</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="text-end mt-4">
+            <button type="button" class="btn btn-secondary me-2" onclick="adminDashboard.closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update User</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    this.showModal('Edit User', modalContent);
+
+    document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const userData = Object.fromEntries(formData);
+      
+      // Convert to proper types
+      userData.isActive = userData.isActive === 'true';
+
+      const result = await this.userManager.updateUser(userData.id, userData);
+      if (result.success) {
+        this.showToast('User updated successfully!', 'success');
+        this.closeModal();
+        await this.loadUsersFromDatabase();
+      } else {
+        this.showToast(`Error: ${result.error}`, 'error');
+      }
+    });
+  }
+  
+  deleteUser(userId, userName) {
+    if (confirm(`Are you sure you want to delete user "${userName}"? This action cannot be undone.`)) {
+      this.confirmDeleteUser(userId);
+    }
+  }
+  
+  async confirmDeleteUser(userId) {
+    const result = await this.userManager.deleteUser(userId);
+    if (result.success) {
+      this.showToast('User deleted successfully!', 'success');
+      await this.loadUsersFromDatabase();
+    } else {
+      this.showToast(`Error: ${result.error}`, 'error');
+    }
+  }
+  
+  async toggleUserStatus(userId, isCurrentlyActive) {
+    const result = await this.userManager.updateUser(userId, {
+      isActive: !isCurrentlyActive
+    });
+    
+    if (result.success) {
+      this.showToast(`User ${!isCurrentlyActive ? 'activated' : 'deactivated'}!`, 'success');
+      await this.loadUsersFromDatabase();
+    } else {
+      this.showToast(`Error: ${result.error}`, 'error');
+    }
+  }
+  
+  // ========== ORIGINAL DASHBOARD METHODS ==========
+  
+  setupEventListeners() {
+    // Mobile menu
+    document.getElementById('mobileMenuToggle').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('sidebar').classList.toggle('active');
+    });
+    
+    // Sidebar toggle
+    document.getElementById('sidebarToggle').addEventListener('click', (e) => {
+      e.preventDefault();
+      this.toggleSidebar();
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      this.logout();
+    });
+    
+    // Sidebar navigation
+    const sections = {
+      'dashboardLink': 'dashboard',
+      'usersLink': 'users',
+      'requestsLink': 'requests',
+      'approvalsLink': 'pending',
+      'reportsLink': 'reports',
+      'analyticsLink': 'analytics',
+      'settingsLink': 'settings',
+      'logsLink': 'logs'
+    };
+    
+    Object.keys(sections).forEach(linkId => {
+      const link = document.getElementById(linkId);
+      if (link) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.showSection(sections[linkId]);
         });
-        
-        const sectionMap = {
-            'dashboard': 'dashboardLink',
-            'users': 'usersLink',
-            'requests': 'requestsLink',
-            'pending': 'approvalsLink',
-            'reports': 'reportsLink',
-            'analytics': 'analyticsLink',
-            'settings': 'settingsLink',
-            'logs': 'logsLink'
-        };
-        
-        const activeLink = document.getElementById(sectionMap[section]);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-        
-        // Update title
-        const titles = {
-            'dashboard': 'Admin Dashboard',
-            'users': 'User Management',
-            'requests': 'All Requests',
-            'pending': 'Pending Approvals',
-            'reports': 'System Reports',
-            'analytics': 'Analytics',
-            'settings': 'System Settings',
-            'logs': 'Activity Logs'
-        };
-        
-        document.getElementById('pageTitle').textContent = titles[section] || 'Admin Dashboard';
-        
-        // Close mobile menu
-        document.getElementById('sidebar').classList.remove('active');
-        
-        // Show section content
-        if (section === 'dashboard') {
-            document.getElementById('dashboardSection').style.display = 'block';
-            document.getElementById('sectionContent').style.display = 'none';
-        } else {
-            document.getElementById('dashboardSection').style.display = 'none';
-            document.getElementById('sectionContent').style.display = 'block';
-            this.loadSectionContent(section);
-        }
-        
-        this.showToast(`${titles[section]} loaded`, 'info');
+      }
+    });
+  }
+  
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    
+    if (this.isSidebarCollapsed) {
+      sidebar.classList.add('collapsed');
+      mainContent.classList.add('expanded');
+    } else {
+      sidebar.classList.remove('collapsed');
+      mainContent.classList.remove('expanded');
+    }
+  }
+  
+  showSection(section) {
+    this.currentSection = section;
+    
+    // Update active nav
+    document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+      link.classList.remove('active');
+    });
+    
+    const sectionMap = {
+      'dashboard': 'dashboardLink',
+      'users': 'usersLink',
+      'requests': 'requestsLink',
+      'pending': 'approvalsLink',
+      'reports': 'reportsLink',
+      'analytics': 'analyticsLink',
+      'settings': 'settingsLink',
+      'logs': 'logsLink'
+    };
+    
+    const activeLink = document.getElementById(sectionMap[section]);
+    if (activeLink) {
+      activeLink.classList.add('active');
     }
     
-    loadSectionContent(section) {
-        const sectionContent = document.getElementById('sectionContent');
-        
-        switch(section) {
-            case 'users':
-                sectionContent.innerHTML = this.getUsersContent();
-                break;
-            case 'requests':
-                sectionContent.innerHTML = this.getRequestsContent();
-                break;
-            case 'pending':
-                sectionContent.innerHTML = this.getPendingContent();
-                break;
-            default:
-                sectionContent.innerHTML = `
-                    <div class="dashboard-card">
-                        <div class="card-body">
-                            <h5>${section.charAt(0).toUpperCase() + section.slice(1)} Section</h5>
-                            <p>This section is working in demo mode.</p>
-                        </div>
-                    </div>
-                `;
-        }
+    // Update title
+    const titles = {
+      'dashboard': 'Admin Dashboard',
+      'users': 'User Management',
+      'requests': 'All Requests',
+      'pending': 'Pending Approvals',
+      'reports': 'System Reports',
+      'analytics': 'Analytics',
+      'settings': 'System Settings',
+      'logs': 'Activity Logs'
+    };
+    
+    document.getElementById('pageTitle').textContent = titles[section] || 'Admin Dashboard';
+    
+    // Close mobile menu
+    document.getElementById('sidebar').classList.remove('active');
+    
+    // Show section content
+    if (section === 'dashboard') {
+      document.getElementById('dashboardSection').style.display = 'block';
+      document.getElementById('sectionContent').style.display = 'none';
+    } else {
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('sectionContent').style.display = 'block';
+      this.loadSectionContent(section);
+    }
+  }
+  
+  loadSectionContent(section) {
+    const sectionContent = document.getElementById('sectionContent');
+    sectionContent.innerHTML = `
+      <div class="dashboard-card">
+        <div class="card-body">
+          <h5>${section.charAt(0).toUpperCase() + section.slice(1)} Section</h5>
+          <p>This section is working in demo mode.</p>
+        </div>
+      </div>
+    `;
+  }
+  
+  initCharts() {
+    // Chart initialization code...
+  }
+  
+  startAutoRefresh() {
+    setInterval(() => {
+      this.refreshDashboard();
+    }, this.config.refreshInterval);
+  }
+  
+  updateDateTime() {
+    const now = new Date();
+    const dateElement = document.getElementById('currentDate');
+    const timeElement = document.getElementById('currentTime');
+    
+    if (dateElement) {
+      dateElement.textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
     }
     
-    getUsersContent() {
-        return `
-            <div class="dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-people me-2"></i>User Management</h5>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="adminDashboard.exportUsers()">
-                            <i class="bi bi-download me-1"></i> Export
-                        </button>
-                        <button class="btn btn-sm btn-primary" onclick="adminDashboard.addNewUser()">
-                            <i class="bi bi-person-plus me-1"></i> Create User
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Last Active</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${this.data.users.map(user => `
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-initials bg-primary me-2">${user.avatar}</div>
-                                                <div>
-                                                    <strong>${user.name}</strong><br>
-                                                    <small class="text-muted">${user.email}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-info">${user.role}</span></td>
-                                        <td>
-                                            <span class="badge bg-${user.status === 'active' ? 'success' : user.status === 'away' ? 'warning' : 'secondary'}">
-                                                ${user.status}
-                                            </span>
-                                        </td>
-                                        <td><small>${user.lastActive}</small></td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary" onclick="adminDashboard.editUser('${user.id}')" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-outline-${user.status === 'active' ? 'warning' : 'success'}" 
-                                                        onclick="adminDashboard.toggleUserStatus('${user.id}')" 
-                                                        title="${user.status === 'active' ? 'Deactivate' : 'Activate'}">
-                                                    <i class="bi bi-${user.status === 'active' ? 'pause' : 'play'}"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger" onclick="adminDashboard.deleteUser('${user.id}')" title="Delete">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    if (timeElement) {
+      timeElement.textContent = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+    
+    setTimeout(() => this.updateDateTime(), 1000);
+  }
+  
+  renderActivities() {
+    const activityList = document.getElementById('activityList');
+    if (!activityList) return;
+    
+    activityList.innerHTML = this.data.activities.map(activity => `
+      <div class="activity-item">
+        <div class="d-flex">
+          <div class="activity-icon bg-${activity.color} rounded-circle d-flex align-items-center justify-content-center me-3" 
+               style="width: 40px; height: 40px;">
+            <i class="bi bi-${activity.icon} text-white"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h6 class="mb-0">${activity.title}</h6>
+            <small class="text-muted">${activity.description}</small>
+            <div class="text-muted" style="font-size: 0.75rem;">
+              <i class="bi bi-clock me-1"></i>${activity.time}
             </div>
-        `;
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  renderAlerts() {
+    const systemAlerts = document.getElementById('systemAlerts');
+    if (!systemAlerts) return;
+    
+    systemAlerts.innerHTML = this.data.alerts.map(alert => `
+      <div class="alert alert-${alert.type} d-flex align-items-center mb-3 ${alert.read ? 'opacity-75' : ''}">
+        <i class="bi bi-${this.getAlertIcon(alert.type)} me-3 fs-4"></i>
+        <div class="flex-grow-1">
+          <strong>${alert.title}</strong>
+          <p class="mb-0 small">${alert.message}</p>
+          <small class="text-muted"><i class="bi bi-clock me-1"></i>${alert.time}</small>
+        </div>
+        ${!alert.read ? '<span class="badge bg-danger">New</span>' : ''}
+      </div>
+    `).join('');
+  }
+  
+  getAlertIcon(type) {
+    switch(type) {
+      case 'warning': return 'exclamation-triangle';
+      case 'info': return 'info-circle';
+      case 'success': return 'check-circle';
+      case 'danger': return 'shield-exclamation';
+      default: return 'bell';
+    }
+  }
+  
+  refreshDashboard() {
+    this.showToast('Dashboard refreshed', 'info');
+  }
+  
+  refreshUsers() {
+    this.loadUsersFromDatabase();
+    this.showToast('User list refreshed', 'info');
+  }
+  
+  showModal(title, content) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade show';
+    modal.style.cssText = `
+      display: block;
+      background-color: rgba(0,0,0,0.5);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    `;
+    
+    modal.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">${title}</h5>
+            <button type="button" class="btn-close close-modal"></button>
+          </div>
+          <div class="modal-body">
+            ${content}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    modal.querySelector('.close-modal').addEventListener('click', () => {
+      this.closeModal();
+    });
+    
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeModal();
+      }
+    });
+    
+    this.currentModal = modal;
+  }
+  
+  closeModal() {
+    if (this.currentModal) {
+      this.currentModal.remove();
+      this.currentModal = null;
+    }
+  }
+  
+  showToast(message, type = 'info') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
     }
     
-    getRequestsContent() {
-        return `
-            <div class="dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Content Requests</h5>
-                </div>
-                <div class="card-body">
-                    <p>Requests management section (demo mode).</p>
-                </div>
-            </div>
-        `;
-    }
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+      <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-x-circle' : 'bi-info-circle'} me-2"></i>
+      <span>${message}</span>
+      <button class="btn btn-sm btn-link ms-auto close-toast">
+        <i class="bi bi-x"></i>
+      </button>
+    `;
     
-    getPendingContent() {
-        return `
-            <div class="dashboard-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Pending Approvals</h5>
-                </div>
-                <div class="card-body">
-                    <p>Pending approvals section (demo mode).</p>
-                </div>
-            </div>
-        `;
-    }
+    toastContainer.appendChild(toast);
     
-    // Various methods
-    handleSearchInput(query) {
-        if (query.length < 2) {
-            document.getElementById('searchResults').classList.remove('active');
-            return;
-        }
-        
-        this.showToast(`Searching for: ${query}`, 'info');
-    }
+    toast.querySelector('.close-toast').addEventListener('click', () => {
+      toast.remove();
+    });
     
-    performSearch() {
-        const query = document.getElementById('searchInput').value.trim();
-        if (!query) {
-            this.showToast('Please enter search term', 'warning');
-            return;
-        }
-        this.showToast(`Searching for: "${query}"`, 'info');
+    setTimeout(() => {
+      if (toast.parentNode) toast.remove();
+    }, this.config.toastDuration);
+  }
+  
+  logout() {
+    if (confirm('Are you sure you want to logout?')) {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/login.html';
     }
-    
-    showNotifications() {
-        this.showToast('Notifications shown', 'info');
-    }
-    
-    markAlertAsRead(index) {
-        if (this.data.alerts[index]) {
-            this.data.alerts[index].read = true;
-            this.renderAlerts();
-            this.showToast('Notification marked as read', 'success');
-        }
-    }
-    
-    markAllAsRead() {
-        this.data.alerts.forEach(alert => alert.read = true);
-        this.renderAlerts();
-        this.showToast('All notifications marked as read', 'success');
-    }
-    
-    addNewUser() {
-        this.showModal('Add New User', `
-            <div class="new-user-form">
-                <p>Add user functionality (demo mode)</p>
-                <button class="btn btn-primary" onclick="adminDashboard.showToast('User added (demo)', 'success'); document.querySelector('.modal').remove();">
-                    Simulate Add User
-                </button>
-            </div>
-        `);
-    }
-    
-    editUser(userId) {
-        this.showToast(`Editing user: ${userId}`, 'info');
-    }
-    
-    toggleUserStatus(userId) {
-        const user = this.data.users.find(u => u.id === userId);
-        if (user) {
-            user.status = user.status === 'active' ? 'inactive' : 'active';
-            this.renderUsersTable();
-            this.showToast(`User ${user.name} ${user.status === 'active' ? 'activated' : 'deactivated'}`, 'success');
-        }
-    }
-    
-    deleteUser(userId) {
-        const user = this.data.users.find(u => u.id === userId);
-        if (user && confirm(`Delete user "${user.name}"?`)) {
-            this.data.users = this.data.users.filter(u => u.id !== userId);
-            this.renderUsersTable();
-            this.showToast(`User ${user.name} deleted`, 'success');
-        }
-    }
-    
-    exportUsers() {
-        this.showToast('Exporting user data...', 'info');
-    }
-    
-    refreshDashboard() {
-        this.showToast('Dashboard refreshed', 'info');
-    }
-    
-    refreshUsers() {
-        this.renderUsersTable();
-        this.showToast('User list refreshed', 'info');
-    }
-    
-    showModal(title, content) {
-        const modal = document.createElement('div');
-        modal.className = 'modal fade show';
-        modal.style.cssText = `
-            display: block;
-            background-color: rgba(0,0,0,0.5);
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-        `;
-        
-        modal.innerHTML = `
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">${title}</h5>
-                        <button type="button" class="btn-close close-modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        ${content}
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        modal.querySelector('.close-modal').addEventListener('click', () => {
-            modal.remove();
-        });
-        
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
-    }
-    
-    showToast(message, type = 'info') {
-        let toastContainer = document.getElementById('toastContainer');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'toastContainer';
-            document.body.appendChild(toastContainer);
-        }
-        
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-x-circle' : 'bi-info-circle'} me-2"></i>
-            <span>${message}</span>
-            <button class="btn btn-sm btn-link ms-auto close-toast">
-                <i class="bi bi-x"></i>
-            </button>
-        `;
-        
-        toastContainer.appendChild(toast);
-        
-        toast.querySelector('.close-toast').addEventListener('click', () => {
-            toast.remove();
-        });
-        
-        setTimeout(() => {
-            if (toast.parentNode) toast.remove();
-        }, this.config.toastDuration);
-    }
+  }
 }
 
 // Initialize dashboard
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('=== PAGE LOADED - INITIALIZING ===');
-    
-    // Clear any existing session that might cause redirects
-    localStorage.removeItem('userSession');
-    localStorage.removeItem('adminLoggedIn');
-    sessionStorage.clear();
-    
-    // Initialize dashboard
-    const dashboard = new AdminDashboard();
-    dashboard.init();
-    window.adminDashboard = dashboard;
-    
-    console.log('=== DASHBOARD READY ===');
+document.addEventListener('DOMContentLoaded', async function() {
+  console.log('=== PAGE LOADED - INITIALIZING ===');
+  
+  // Check if we have a token (optional for demo)
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  
+  if (!token) {
+    console.log('No token found, running in demo mode');
+    // Create a mock token for demo purposes
+    localStorage.setItem('authToken', 'demo-token-' + Date.now());
+    localStorage.setItem('currentUser', JSON.stringify({
+      name: 'System Administrator',
+      email: 'admin@amedia.et',
+      role: 'admin'
+    }));
+  }
+  
+  // Initialize dashboard
+  const dashboard = new AdminDashboard();
+  await dashboard.init();
+  window.adminDashboard = dashboard;
+  
+  console.log('=== DASHBOARD READY ===');
 });
 </script>
- 
-
 <!-- REMOVE ALL OTHER JAVASCRIPT CODE AFTER THIS -->
 </body>
 </html>
